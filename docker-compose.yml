@@ -1,0 +1,20 @@
+version: "3.9"
+
+services:
+    postgres:
+        env_file: .env
+        image: postgres:14
+        container_name: omcen-postgres
+        environment:
+            POSTGRES_DB: ${POSTGRES_DB_NAME}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+            POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
+            TZ: 'Asia/Tokyo'
+        volumes:
+            - omcen_pg_data:/var/lib/postgresql/data
+        ports:
+         - "5432:5432"
+        tty: true
+
+volumes:
+    omcen_pg_data:
