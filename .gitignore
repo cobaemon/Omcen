@@ -131,3 +131,5 @@ dmypy.json
 .idea
 .env
 local_settings.py
+test_settings.py
+migrations
