@@ -44,6 +44,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'widget_tweaks',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.github',
     'omcen',
 ]
 
@@ -55,6 +61,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -129,3 +136,78 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# login設定
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.open_id.OpenIdAuth',
+    'social_core.backends.google.GoogleOpenId',
+    'social_core.backends.google.GoogleOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+# ログイン後の移動先
+LOGIN_REDIRECT_URL = '/mypage/'
+# ログアウト後の移動先
+ACCOUNT_LOGOUT_REDIRECT_URL = '/accounts/login'
+
+# メールホスト
+EMAIL_HOST = env('EMAIL_HOST')
+# ポート
+EMAIL_PORT = env('EMAIL_PORT', int)
+# 送信元
+EMAIL_HOST_USER = DEFAULT_FROM_EMAIL = env('EMAIL_HOST_USER')
+# パスワード
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+# メールを実際に送る
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# メールアドレスの検証方法
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+# メールをユニークにする
+ACCOUNT_UNIQUE_EMAIL = True
+# メールアドレスの入力を必須にするか
+ACCOUNT_EMAIL_REQUIRED = True
+# メールの暗号化
+EMAIL_USE_TLS = True
+# 確認メールの有効期限[日数]
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 1
+# 確認メールに特定キーを入れる
+ACCOUNT_EMAIL_CONFIRMATION_HMAC = True
+
+# サインインにユーザー名かメールアドレス又は両方を使うか
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+# サインアップ時にユーザ名を入力させる
+ACCOUNT_USERNAME_REQUIRED = True
+# サインアップ時にメールアドレスを２回入力させるか
+ACCOUNT_SIGNUP_EMAIL_ENTER_TWICE = True
+# サインアップ時にパスワードを２回入力させるか
+ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = True
+# ログイン試行回数
+ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 5
+# ログイン失敗時のクールダウン[秒]
+ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT = 600
+# 電子メールの認証が成功した後にリダイレクトされるURL
+ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = LOGIN_REDIRECT_URL
+
+# ブラウザのMIMEタイプを自動判別する
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# ソーシャルアカウント
+SOCIALACCOUNT_AUTO_SIGNUP = False
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    },
+    'github': {
+        'SCOPE': [
+            'user',
+        ],
+    },
+}
