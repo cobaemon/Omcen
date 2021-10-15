@@ -129,6 +129,7 @@ dmypy.json
 .pyre/
 
 .idea
+.vscode
 .env
 local_settings.py
 test_settings.py

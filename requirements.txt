@@ -5,7 +5,7 @@ psycopg2
 django-bootstrap-v5
 pycryptodome
 python-gettext
-social-auth-app-django
+social-auth-app-django==4.0.0
 social-auth-core==3.3.3
 django-widget-tweaks
 django-debug-toolbar
