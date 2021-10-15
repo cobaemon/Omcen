@@ -9,3 +9,4 @@ social-auth-app-django
 social-auth-core
 django-widget-tweaks
 django-debug-toolbar
+coverage

@@ -1,5 +1,8 @@
-from django.contrib.auth.base_user import AbstractBaseUser
-from django.contrib.auth.models import PermissionsMixin, UserManager
+from django.apps import apps
+from django.contrib import auth
+from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.mail import send_mail
 from django.db import models
@@ -9,7 +12,70 @@ from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 
 
-class OmcenUsers(AbstractBaseUser, PermissionsMixin):
+class OmcenUserManager(BaseUserManager):
+    use_in_migrations = True
+
+    def _create_user(self, username, email, password, **extra_fields):
+        """
+        Create and save a user with the given username, email, and password.
+        """
+        if not username:
+            raise ValueError('The given username must be set')
+        email = self.normalize_email(email)
+        # Lookup the real model class from the global app registry so this
+        # manager method can be used in migrations. This is fine because
+        # managers are by definition working on the real model.
+        GlobalUserModel = apps.get_model(self.model._meta.app_label, self.model._meta.object_name)
+        username = GlobalUserModel.normalize_username(username)
+        user = self.model(username=username, email=email, **extra_fields)
+        user.password = make_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_user(self, username, email=None, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', False)
+        extra_fields.setdefault('is_superuser', False)
+        return self._create_user(username, email, password, **extra_fields)
+
+    def create_superuser(self, username, email=None, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+
+        return self._create_user(username, email, password, **extra_fields)
+
+    def with_perm(self, perm, is_active=True, include_superusers=True, backend=None, obj=None):
+        if backend is None:
+            backends = auth._get_backends(return_tuples=True)
+            if len(backends) == 1:
+                backend, _ = backends[0]
+            else:
+                raise ValueError(
+                    'You have multiple authentication backends configured and '
+                    'therefore must provide the `backend` argument.'
+                )
+        elif not isinstance(backend, str):
+            raise TypeError(
+                'backend must be a dotted import path string (got %r).'
+                % backend
+            )
+        else:
+            backend = auth.load_backend(backend)
+        if hasattr(backend, 'with_perm'):
+            return backend.with_perm(
+                perm,
+                is_active=is_active,
+                include_superusers=include_superusers,
+                obj=obj,
+            )
+        return self.none()
+
+
+class OmcenUser(AbstractBaseUser, PermissionsMixin):
     uuid = models.UUIDField(
         default=uuid_lib.uuid4,
         primary_key=True,
@@ -67,7 +133,7 @@ class OmcenUsers(AbstractBaseUser, PermissionsMixin):
         auto_now=True
     )
 
-    objects = UserManager()
+    objects = OmcenUserManager()
 
     EMAIL_FIELD = 'email'
     USERNAME_FIELD = 'username'
@@ -98,13 +164,18 @@ class OmcenUsers(AbstractBaseUser, PermissionsMixin):
         send_mail(subject, message, from_email, [self.email], **kwargs)
 
 
-class Services(models.Model):
+class Service(models.Model):
+    class Meta:
+        verbose_name = _('サービス')
+        verbose_name_plural = _('サービス')
+
     uuid = models.UUIDField(
         default=uuid_lib.uuid4,
         primary_key=True,
         editable=False
     )
     service_name = models.CharField(
+        _('サービス名'),
         max_length=32,
         unique=True,
     )
@@ -116,36 +187,38 @@ class Services(models.Model):
             'Unselect this instead of deleting accounts.'
         ),
     )
-    creation_date = models.DateTimeField(
-        _('date joined'),
-        default=timezone.now
+    created_at = models.DateTimeField(
+        _('作成日時'),
+        auto_now_add=True
     )
-    update_date = models.DateTimeField(
-        _('update date'),
+    updated_at = models.DateTimeField(
+        _('更新日時'),
         auto_now=True
     )
 
+
+class Plan(models.Model):
     class Meta:
-        verbose_name = _('service')
-        verbose_name_plural = _('services')
+        verbose_name = _('プラン')
+        verbose_name_plural = _('プラン')
 
-
-class Plans(models.Model):
     uuid = models.UUIDField(
         default=uuid_lib.uuid4,
         primary_key=True,
         editable=False
     )
     service_name = models.ForeignKey(
-        Services,
+        Service,
         on_delete=models.CASCADE,
     )
     plan_name = models.CharField(
+        _('プラン名'),
         max_length=32,
         blank=True,
         null=True
     )
     price = models.IntegerField(
+        _('価格'),
         blank=True,
         null=True
     )
@@ -157,32 +230,32 @@ class Plans(models.Model):
             'Unselect this instead of deleting accounts.'
         ),
     )
-    creation_date = models.DateTimeField(
-        _('date joined'),
-        default=timezone.now
+    created_at = models.DateTimeField(
+        _('作成日時'),
+        auto_now_add=True
     )
-    update_date = models.DateTimeField(
-        _('update date'),
+    updated_at = models.DateTimeField(
+        _('更新日時'),
         auto_now=True
     )
 
+
+class ServiceGroup(models.Model):
     class Meta:
-        verbose_name = _('plan')
-        verbose_name_plural = _('plans')
+        verbose_name = _('サービスグループ')
+        verbose_name_plural = _('サービスグループ')
 
-
-class OmcenServices(models.Model):
     uuid = models.UUIDField(
         default=uuid_lib.uuid4,
         primary_key=True,
         editable=False
     )
     service = models.ForeignKey(
-        Services,
+        Service,
         on_delete=models.CASCADE,
     )
     plan = models.ForeignKey(
-        Plans,
+        Plan,
         on_delete=models.CASCADE,
     )
     is_active = models.BooleanField(
@@ -193,32 +266,32 @@ class OmcenServices(models.Model):
             'Unselect this instead of deleting accounts.'
         ),
     )
-    creation_date = models.DateTimeField(
-        _('date joined'),
-        default=timezone.now
+    created_at = models.DateTimeField(
+        _('作成日時'),
+        auto_now_add=True
     )
-    update_date = models.DateTimeField(
-        _('update date'),
+    updated_at = models.DateTimeField(
+        _('更新日時'),
         auto_now=True
     )
 
-    class Meta:
-        verbose_name = _('omcen service')
-        verbose_name_plural = _('omcen services')
-
 
 class ServiceInUse(models.Model):
+    class Meta:
+        verbose_name = _('加入中サービス')
+        verbose_name_plural = _('加入中サービス')
+
     uuid = models.UUIDField(
         default=uuid_lib.uuid4,
         primary_key=True,
         editable=False
     )
     omcen_user = models.ForeignKey(
-        OmcenUsers,
+        OmcenUser,
         on_delete=models.CASCADE
     )
     omcen_service = models.ForeignKey(
-        OmcenServices,
+        ServiceGroup,
         on_delete=models.CASCADE
     )
     is_active = models.BooleanField(
@@ -229,15 +302,11 @@ class ServiceInUse(models.Model):
             'Unselect this instead of deleting accounts.'
         ),
     )
-    creation_date = models.DateTimeField(
-        _('date joined'),
-        default=timezone.now
+    created_at = models.DateTimeField(
+        _('作成日時'),
+        auto_now_add=True
     )
-    update_date = models.DateTimeField(
-        _('update date'),
+    updated_at = models.DateTimeField(
+        _('更新日時'),
         auto_now=True
     )
-
-    class Meta:
-        verbose_name = _('service in use')
-        verbose_name_plural = _('service in use')
