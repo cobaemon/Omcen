@@ -25,10 +25,10 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link active" href="{% url 'home' %}">{% trans "ホーム" %}</a>
+                    <a class="nav-link active" href="#">{% trans "ホーム" %}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" href="{% url 'password_box:password_manage' %}">{% trans "パスワード管理" %}</a>
+                    <a class="nav-link active" href="#">{% trans "パスワード管理" %}</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdown1" role="button"
@@ -36,7 +36,7 @@
                         {% trans "サービス" %}
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown1">
-                        <li><a class="dropdown-item" href="{% url 'password_box:password_manage' %}">
+                        <li><a class="dropdown-item" href="#">
                             {% trans "パスワード管理" %}</a></li>
                     </ul>
                 </li>
@@ -50,8 +50,8 @@
                         </svg>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown2">
-                        <li><a class="dropdown-item" href="{% url 'mypage' %}">{% trans "マイページ" %}</a></li>
-                        <li><a class="dropdown-item" href="{% url 'accounts_manage:accounts_settings' %}">{% trans "設定"
+                        <li><a class="dropdown-item" href="#">{% trans "マイページ" %}</a></li>
+                        <li><a class="dropdown-item" href="#">{% trans "設定"
                             %}</a></li>
                         <li>
                             <hr class="dropdown-divider">
@@ -59,7 +59,7 @@
                         {% if user.is_authenticated %}
                         <li><a class="dropdown-item" href="{% url 'account_logout' %}">{% trans "ログアウト" %}</a></li>
                         <li><a class="dropdown-item text-danger"
-                               href="{% url 'accounts_manage:account_service_list' %}">
+                               href="#">
                             {% trans "サービス退会" %}</a>
                         </li>
                         {% else %}
