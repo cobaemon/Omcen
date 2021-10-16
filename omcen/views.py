@@ -25,7 +25,7 @@ class ServiceControl(ListView):
                     query_set = query_set.filter(service__service_name__icontains=service_name)
 
             if not query_set.exists():
-                messages.info(self.request, '該当するサービスがありませんでした。')
+                messages.info(self.request, '該当するサービスがありませんでした。', extra_tags='info')
 
         return query_set.order_by('service__service_name')
 
@@ -34,5 +34,3 @@ class ServiceControl(ListView):
         context['form'] = SearchService()
 
         return context
-
-
