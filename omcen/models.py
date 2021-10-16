@@ -207,7 +207,7 @@ class Plan(models.Model):
         primary_key=True,
         editable=False
     )
-    service_name = models.ForeignKey(
+    service = models.ForeignKey(
         Service,
         on_delete=models.CASCADE,
     )
