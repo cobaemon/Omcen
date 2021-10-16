@@ -1,19 +1,27 @@
+from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
 from django.views.generic import ListView, CreateView
-from django.contrib import messages
 
-from omcen.models import Service, Plan, ServiceGroup, ServiceInUse
 from omcen.forms import SearchService, CreateServiceForm
+from omcen.models import Service, Plan, ServiceGroup
 
 
 # サービス管理画面
-class ServiceControl(ListView):
+class ServiceControl(LoginRequiredMixin, ListView):
     template_name = 'omcen/service_control.html'
     model = ServiceGroup
     paginate_by = 30
     ordering = 'is_active'
     form = None
+
+    def dispatch(self, *args, **kwargs):
+        if not self.request.user.is_authenticated:
+            messages.warning(self.request, _('ログインしてください'))
+            return self.handle_no_permission()
+        return super().dispatch(self.request, *args, **kwargs)
 
     def get_queryset(self):
         form = SearchService(self.request.GET or None)
@@ -39,12 +47,18 @@ class ServiceControl(ListView):
 
 
 # サービスの新規作成
-class CreateService(CreateView):
+class CreateService(LoginRequiredMixin, CreateView):
     template_name = 'omcen/create_service.html'
     model = ServiceGroup
     form_class = CreateServiceForm
     success_url = reverse_lazy('omcen:service_control')
-    
+
+    def dispatch(self, *args, **kwargs):
+        if not self.request.user.is_authenticated:
+            messages.warning(self.request, _('ログインしてください'))
+            return self.handle_no_permission()
+        return super().dispatch(self.request, *args, **kwargs)
+
     def form_valid(self, form):
         # サービスを追加する場合、最低でも1つプランをセットする
         with transaction.atomic():
@@ -69,3 +83,24 @@ class CreateService(CreateView):
         messages.success(self.request, 'サービスを新しく追加しました。', extra_tags='success')
 
         return super().get_success_url()
+
+
+# サービス一覧
+class ServiceList(LoginRequiredMixin, ListView):
+    template_name = 'omcen/service_list.html'
+    context_object_name = 'service'
+    model = Service
+    paginate_by = 30
+    ordering = 'service_name'
+    form = None
+
+    def dispatch(self, *args, **kwargs):
+        if not self.request.user.is_authenticated:
+            messages.warning(self.request, _('ログインしてください'))
+            return self.handle_no_permission()
+        return super().dispatch(self.request, *args, **kwargs)
+
+    def get_queryset(self):
+        query_set = super().get_queryset()
+        query_set = query_set.filter(is_active=True)
+        return query_set.order_by('service_name')

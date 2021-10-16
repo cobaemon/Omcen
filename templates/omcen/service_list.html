@@ -1,0 +1,29 @@
+{% extends "omcen/base.html" %}
+
+{% load static %}
+{% load i18n %}
+
+{% block head_title %}{% trans "サービス一覧" %}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col"></div>
+    <div class="col">
+        <div class="card">
+            <div class="card-header p-3 mb-2 bg-primary text-white">
+                <div class="row">
+                    <div class="col">
+                        <h1 class="p-3">{% trans "サービス一覧" %}</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                {% for service in services %}
+                <a href="{% url '{{ service.service_name }}:top' %}">service.service_name</a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="col"></div>
+</div>
+{% endblock %}
