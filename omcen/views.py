@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView
 from django.contrib import messages
@@ -46,14 +47,16 @@ class CreateService(CreateView):
     
     def form_valid(self, form):
         # サービスを追加する場合、最低でも1つプランをセットする
-        service = Service.objects.create(service_name=form.cleaned_data['service_name'])
-        plan = Plan.objects.create(service_name=service,
-                                   plan_name=form.cleaned_data['plan_name'],
-                                   price=form.cleaned_data['price'])
+        with transaction.atomic():
+            service = Service.objects.create(service_name=form.cleaned_data['service_name'])
+            plan = Plan.objects.create(service=service,
+                                       plan_name=form.cleaned_data['plan_name'],
+                                       price=form.cleaned_data['price'])
 
-        form.instance.service = service
-        form.instance.plan = plan
-        form.instance.is_active = False
+        if not all([service, plan]):
+            form.instance.service = service
+            form.instance.plan = plan
+            form.instance.is_active = False
 
         return super().form_valid(form)
 
