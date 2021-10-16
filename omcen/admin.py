@@ -1,4 +1,4 @@
-from omcen.models import OmcenUser
+from omcen.models import OmcenUser, Service, ServiceGroup, Plan
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
@@ -25,3 +25,8 @@ class OmcenUserAdmin(UserAdmin):
     search_fields = ('username', 'first_name', 'last_name', 'email')
     ordering = ('username',)
     filter_horizontal = ('groups', 'user_permissions',)
+
+
+admin.site.register(Service)
+admin.site.register(Plan)
+admin.site.register(ServiceGroup)
