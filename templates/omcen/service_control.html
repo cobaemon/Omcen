@@ -1,0 +1,46 @@
+{% extends 'omcen/base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+
+<form class="row">
+    <div class="col-md-4 my-2">
+        {% render_field form.service_name class="form-control" placeholder=form.service_name.label %}
+    </div>
+    <div class="col-md-auto my-2">
+        <button type="submit" class="btn btn-primary col-md-auto col-12">検索</button>
+    </div>
+</form>
+
+<a class="btn btn-success col-md-3 offset-md-9 col-12 my-2" href="{% url 'omcen:create_service' %}">サービスの新規作成</a>
+
+<table class="table my-3">
+    <thead>
+        <th width="10%"></th>
+        <th width="50%">サービス名</th>
+        <th></th>
+        <th></th>
+    </thead>
+    <tbody>
+        {% for object in object_list %}
+        <tr>
+            <th>{{ forloop.counter }}</th>
+            <td>{{ object.service.service_name }}</td>
+            <td>
+                <a class="btn btn-info" href="#" role="button">詳細</a>
+            </td>
+            <td>
+                {% if object.is_active %}
+                    <a class="btn btn-outline-danger" href="#" role="button">無効化</a>
+                {% else %}
+                    <a class="btn btn-outline-success" href="#" role="button">有効化</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+{% endblock %}

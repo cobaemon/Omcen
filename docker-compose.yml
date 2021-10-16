@@ -15,6 +15,17 @@ services:
         ports:
          - "5432:5432"
         tty: true
+    
+    pgadmin:
+        env_file: .env
+        image: dpage/pgadmin4:6
+        container_name: omcen-pgadmin
+        ports:
+         - "8080:80"
+        environment:
+            PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+            PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+        tty: true
 
 volumes:
     omcen_pg_data:
