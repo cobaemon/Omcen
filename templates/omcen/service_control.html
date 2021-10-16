@@ -11,10 +11,9 @@
     <div class="col-md-auto my-2">
         <button type="submit" class="btn btn-primary col-md-auto col-12">検索</button>
     </div>
-
 </form>
 
-<a class="btn btn-success col-md-3 offset-md-9 col-12 my-2" href="#">サービスの新規作成</a>
+<a class="btn btn-success col-md-3 offset-md-9 col-12 my-2" href="{% url 'omcen:create_service' %}">サービスの新規作成</a>
 
 <table class="table my-3">
     <thead>
@@ -27,9 +26,9 @@
         {% for object in object_list %}
         <tr>
             <th>{{ forloop.counter }}</th>
-            <td>{[ object.service_name }}</td>
+            <td>{{ object.service.service_name }}</td>
             <td>
-                <a class="btn btn-primary" href="#" role="button">詳細</a>
+                <a class="btn btn-info" href="#" role="button">詳細</a>
             </td>
             <td>
                 {% if object.is_active %}
