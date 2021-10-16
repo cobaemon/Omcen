@@ -10,28 +10,26 @@
 <div class="row">
     <div class="col"></div>
     <div class="col">
-        <div class="container">
-            <div class="card">
-                <div class="card-header p-3 mb-2 bg-primary text-white">
-                    <h1 class="p-3">{% trans "Sign Up" %}</h1>
-                </div>
-                <div class="card-body">
-                    <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
-                        {% csrf_token %}
-                        {{ form.as_p }}
-                        {% if redirect_field_value %}
-                        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
-                        {% endif %}
-                        <button class="primaryAction btn btn-primary float-end" type="submit">{% trans "Sign Up" %}
-                            &raquo;
-                        </button>
-                        <br><br>
-                    </form>
-                </div>
-                <div class="card-footer">
-                    <p>{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.
-                        {% endblocktrans %}</p>
-                </div>
+        <div class="card">
+            <div class="card-header p-3 mb-2 bg-primary text-white">
+                <h1 class="p-3">{% trans "Sign Up" %}</h1>
+            </div>
+            <div class="card-body">
+                <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    {% if redirect_field_value %}
+                    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+                    {% endif %}
+                    <button class="primaryAction btn btn-primary float-end" type="submit">{% trans "Sign Up" %}
+                        &raquo;
+                    </button>
+                    <br><br>
+                </form>
+            </div>
+            <div class="card-footer">
+                <p>{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.
+                    {% endblocktrans %}</p>
             </div>
         </div>
     </div>
