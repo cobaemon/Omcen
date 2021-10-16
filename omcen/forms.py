@@ -1,6 +1,6 @@
 from django import forms
 
-from omcen.models import ServiceGroup
+from omcen.models import ServiceGroup, Service
 
 
 #  管理画面: サービス検索
@@ -17,6 +17,13 @@ class CreateServiceForm(forms.ModelForm):
     service_name = forms.CharField(label='サービス名', max_length=32, required=True, help_text="最大文字数は32文字です。")
     plan_name = forms.CharField(label='プラン名', max_length=32, required=True, help_text='最大文字数は32文字です。')
     price = forms.IntegerField(label='価格', required=True)
+
+    def clean_service_name(self):
+        if self.cleaned_data['service_name']:
+            if not Service.objects.filter(service_name=self.cleaned_data['service_name']).exists():
+                raise forms.ValidationError('同じサービス名が存在します。')
+
+        return self.cleaned_data['service_name']
 
     def clean_price(self):
         price = self.cleaned_data.get('price')
