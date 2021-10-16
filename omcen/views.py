@@ -67,7 +67,7 @@ class CreateService(LoginRequiredMixin, CreateView):
                                        plan_name=form.cleaned_data['plan_name'],
                                        price=form.cleaned_data['price'])
 
-        if not all([service, plan]):
+        if all([service, plan]):
             form.instance.service = service
             form.instance.plan = plan
             form.instance.is_active = False
@@ -88,7 +88,6 @@ class CreateService(LoginRequiredMixin, CreateView):
 # サービス一覧
 class ServiceList(LoginRequiredMixin, ListView):
     template_name = 'omcen/service_list.html'
-    context_object_name = 'service'
     model = Service
     paginate_by = 30
     ordering = 'service_name'
@@ -104,3 +103,15 @@ class ServiceList(LoginRequiredMixin, ListView):
         query_set = super().get_queryset()
         query_set = query_set.filter(is_active=True)
         return query_set.order_by('service_name')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        services = Service.objects.filter(is_active=True)
+
+        services_dict = {}
+        for service in services:
+            services_dict.update({
+                service.service_name: f'{service.service_name}:top'
+            })
+        context['service_dict'] = services_dict
+        return context

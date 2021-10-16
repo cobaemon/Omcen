@@ -18,8 +18,8 @@
                 </div>
             </div>
             <div class="card-body">
-                {% for service in services %}
-                <a href="{% url '{{ service.service_name }}:top' %}">service.service_name</a>
+                {% for service_name, service_url in service_dict.items %}
+                <a href="{% url service_url %}">{{ service_name }}</a>
                 {% endfor %}
             </div>
         </div>
