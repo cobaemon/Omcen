@@ -20,7 +20,7 @@ class CreateServiceForm(forms.ModelForm):
 
     def clean_service_name(self):
         if self.cleaned_data['service_name']:
-            if not Service.objects.filter(service_name=self.cleaned_data['service_name']).exists():
+            if Service.objects.filter(service_name=self.cleaned_data['service_name']).exists():
                 raise forms.ValidationError('同じサービス名が存在します。')
 
         return self.cleaned_data['service_name']
