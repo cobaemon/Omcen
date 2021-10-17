@@ -53,7 +53,7 @@ class CreateService(CreateView):
                                        plan_name=form.cleaned_data['plan_name'],
                                        price=form.cleaned_data['price'])
 
-        if not all([service, plan]):
+        if all([service, plan]):
             form.instance.service = service
             form.instance.plan = plan
             form.instance.is_active = False
