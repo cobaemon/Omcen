@@ -12,7 +12,7 @@ urlpatterns = [
     # path('admin/delete_service/<int:pk>', , name='delete_service'),
     path('service_list', ServiceList.as_view(), name='service_list'),
     path('<str:service_name>/plan_selection', PlanSelection.as_view(), name='plan_selection'),
-    path('<str:service_name>/<str:plan_name>/service_registration', ServiceRegistration.as_view(),
+    path('<uuid:pk>/service_registration', ServiceRegistration.as_view(),
          name='service_registration'),
     path('service_in_use_list', ServiceInUseList.as_view(), name='service_in_use_list')
 ]

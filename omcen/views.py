@@ -121,7 +121,7 @@ class ServiceList(LoginRequiredMixin, ListView):
 # プラン選択画面
 class PlanSelection(LoginRequiredMixin, ListView):
     template_name = 'omcen/plan_selection.html'
-    model = Plan
+    model = ServiceGroup
     paginate_by = 30
     ordering = 'is_active'
     form = None
@@ -138,20 +138,7 @@ class PlanSelection(LoginRequiredMixin, ListView):
             service__service_name=self.request.resolver_match.kwargs['service_name'],
             is_active=True
         )
-        return query_set.order_by('plan_name')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        plan = Plan.objects.filter(
-            service__service_name=self.request.resolver_match.kwargs['service_name'],
-            is_active=True
-        )
-        plan_list = []
-        for p in plan:
-            plan_list.append([p.plan_name, p.price])
-        context['plan_list'] = plan_list
-        context['service_name'] = self.request.resolver_match.kwargs['service_name']
-        return context
+        return query_set.order_by('plan__plan_name')
 
 
 # サービス登録

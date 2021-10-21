@@ -9,20 +9,20 @@
 <div class="row">
     <div class="col"></div>
     <div class="col">
-        {% for plan in plan_list %}
+        {% for service_group in object_list %}
         <div class="card">
             <div class="card-header p-3 mb-2 bg-primary text-white">
                 <div class="row">
                     <div class="col">
-                        <h1>{{ service_name }}</h1>
+                        <h1>{{ service_group.service.service_name }}</h1>
                     </div>
                 </div>
             </div>
             <div class="card-body">
-                <p>{% trans "プラン名" %}: {{ plan.0 }}</p>
-                <p>{% trans "価格" %}: {{ plan.1 }}</p>
+                <p>{% trans "プラン名" %}: {{ service_group.plan.plan_name }}</p>
+                <p>{% trans "価格" %}: {{ service_group.plan.price }}</p>
                 <a class="primaryAction btn btn-primary float-end" role="button"
-                   href="{% url 'omcen:service_registration' service_name=service_name plan_name=plan.0 %}">
+                   href="{% url 'omcen:service_registration' pk=service_group.uuid %}">
                     {% trans "選択" %}
                 </a>
             </div>
