@@ -97,12 +97,15 @@ class ServiceList(LoginRequiredMixin, ListView):
     def dispatch(self, *args, **kwargs):
         if not self.request.user.is_authenticated:
             messages.warning(self.request, _('ログインしてください'))
+
             return self.handle_no_permission()
+
         return super().dispatch(self.request, *args, **kwargs)
 
     def get_queryset(self):
         query_set = super().get_queryset()
         query_set = query_set.filter(is_active=True)
+
         return query_set.order_by('service_name')
 
     def get_context_data(self, **kwargs):
@@ -115,6 +118,7 @@ class ServiceList(LoginRequiredMixin, ListView):
                 service.service_name: f'{service.service_name}:top'
             })
         context['service_dict'] = services_dict
+
         return context
 
 
@@ -130,15 +134,22 @@ class PlanSelection(LoginRequiredMixin, ListView):
         if not self.request.user.is_authenticated:
             messages.warning(self.request, _('ログインしてください'))
             return self.handle_no_permission()
+
         return super().dispatch(self.request, *args, **kwargs)
 
     def get_queryset(self):
         query_set = super().get_queryset()
         query_set = query_set.filter(
             service__service_name=self.request.resolver_match.kwargs['service_name'],
-            # is_active=True
+            is_active=True
         )
+
         return query_set.order_by('plan__plan_name')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        return context
 
 
 # サービス登録
@@ -151,6 +162,7 @@ class ServiceRegistration(LoginRequiredMixin, CreateView):
         if not self.request.user.is_authenticated:
             messages.warning(self.request, _('ログインしてください'))
             return self.handle_no_permission()
+
         return super().dispatch(self.request, *args, **kwargs)
 
     def form_valid(self, form):
@@ -162,6 +174,7 @@ class ServiceRegistration(LoginRequiredMixin, CreateView):
             ServiceGroup,
             uuid=self.request.resolver_match.kwargs['pk']
         )
+
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
@@ -170,6 +183,7 @@ class ServiceRegistration(LoginRequiredMixin, CreateView):
             ServiceGroup,
             uuid=self.request.resolver_match.kwargs['pk']
         )
+
         return context
 
     def get_success_url(self):
@@ -194,7 +208,9 @@ class ServiceInUseList(LoginRequiredMixin, ListView):
     def dispatch(self, *args, **kwargs):
         if not self.request.user.is_authenticated:
             messages.warning(self.request, _('ログインしてください'))
+
             return self.handle_no_permission()
+
         return super().dispatch(self.request, *args, **kwargs)
 
     def get_queryset(self):
@@ -203,4 +219,5 @@ class ServiceInUseList(LoginRequiredMixin, ListView):
             omcen_user__username=self.request.user,
             is_active=True
         )
+
         return query_set.order_by('omcen_service__service__service_name')
