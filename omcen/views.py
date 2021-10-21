@@ -141,13 +141,18 @@ class PlanSelection(LoginRequiredMixin, ListView):
         query_set = super().get_queryset()
         query_set = query_set.filter(
             service__service_name=self.request.resolver_match.kwargs['service_name'],
-            is_active=True
+            # is_active=True
         )
 
         return query_set.order_by('plan__plan_name')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['service_in_use'] = ServiceInUse.objects.filter(
+            omcen_user__username=self.request.user,
+            omcen_service__service__service_name=self.request.resolver_match.kwargs['service_name'],
+            is_active=True
+        )
 
         return context
 
