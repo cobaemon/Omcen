@@ -1,6 +1,10 @@
+import sys
+
 from django import forms
 
-from omcen.models import ServiceGroup, Service
+from omcen.models import ServiceGroup, Service, ServiceInUse
+
+sys.path.append('../templates')
 
 
 #  管理画面: サービス検索
@@ -31,3 +35,10 @@ class CreateServiceForm(forms.ModelForm):
             raise forms.ValidationError('0より大きい値を入力してください。')
 
         return self.cleaned_data.get('price')
+
+
+# サービス登録フォーム
+class ServiceRegistrationForm(forms.ModelForm):
+    class Meta:
+        model = ServiceInUse
+        fields = ()

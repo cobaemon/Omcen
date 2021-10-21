@@ -1,6 +1,6 @@
 from django.urls import path
 
-from omcen.views import ServiceControl, CreateService, ServiceList
+from omcen.views import ServiceControl, CreateService, ServiceList, ServiceRegistration, PlanSelection
 
 app_name = 'omcen'
 
@@ -11,4 +11,7 @@ urlpatterns = [
     # path('admin/update_service/<int:pk>', , name='update_service'),
     # path('admin/delete_service/<int:pk>', , name='delete_service'),
     path('service_list', ServiceList.as_view(), name='service_list'),
+    path('<str:service_name>/plan_selection', PlanSelection.as_view(), name='plan_selection'),
+    path('<str:service_name>/<str:plan_name>/service_registration', ServiceRegistration.as_view(),
+         name='service_registration'),
 ]

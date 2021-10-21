@@ -1,3 +1,5 @@
+import uuid as uuid_lib
+
 from django.apps import apps
 from django.contrib import auth
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
@@ -6,10 +8,8 @@ from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.mail import send_mail
 from django.db import models
-import uuid as uuid_lib
-from django.utils.translation import gettext_lazy as _
-
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 
 class OmcenUserManager(BaseUserManager):
@@ -201,7 +201,7 @@ class Plan(models.Model):
     class Meta:
         verbose_name = _('プラン')
         verbose_name_plural = _('プラン')
-
+     
     uuid = models.UUIDField(
         default=uuid_lib.uuid4,
         primary_key=True,

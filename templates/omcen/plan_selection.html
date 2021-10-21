@@ -1,0 +1,34 @@
+{% extends "omcen/base.html" %}
+
+{% load static %}
+{% load i18n %}
+
+{% block head_title %}{% trans "プラン選択" %}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col"></div>
+    <div class="col">
+        {% for plan in plan_list %}
+        <div class="card">
+            <div class="card-header p-3 mb-2 bg-primary text-white">
+                <div class="row">
+                    <div class="col">
+                        <h1>{{ service_name }}</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <p>{% trans "プラン名" %}: {{ plan.0 }}</p>
+                <p>{% trans "価格" %}: {{ plan.1 }}</p>
+                <a class="primaryAction btn btn-primary float-end" role="button"
+                   href="{% url 'omcen:service_registration' service_name=service_name plan_name=plan.0 %}">
+                    {% trans "選択" %}
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="col"></div>
+</div>
+{% endblock %}
