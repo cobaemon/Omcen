@@ -1,0 +1,30 @@
+{% extends "omcen/base.html" %}
+
+{% load static %}
+{% load i18n %}
+
+{% block head_title %}{% trans "登録中のサービス一覧" %}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col"></div>
+    <div class="col">
+        {% for service_in_use in object_list %}
+        <div class="card">
+            <div class="card-header p-3 mb-2 bg-primary text-white">
+                <div class="row">
+                    <div class="col">
+                        <h1>{{ service_in_use.omcen_service.service.service_name }}</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <p>{% trans "プラン名" %}: {{ service_in_use.omcen_service.plan.plan_name }}</p>
+                <p>{% trans "価格" %}: {{ service_in_use.omcen_service.plan.price }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="col"></div>
+</div>
+{% endblock %}

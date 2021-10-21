@@ -193,3 +193,26 @@ class ServiceRegistration(LoginRequiredMixin, CreateView):
         messages.success(self.request, _('登録が完了しました。'), extra_tags='success')
 
         return super().get_success_url()
+
+
+# 使用中のサービス一覧
+class ServiceInUseList(LoginRequiredMixin, ListView):
+    template_name = 'omcen/service_in_use_list.html'
+    model = ServiceInUse
+    paginate_by = 30
+    ordering = 'is_active'
+    form = None
+
+    def dispatch(self, *args, **kwargs):
+        if not self.request.user.is_authenticated:
+            messages.warning(self.request, _('ログインしてください'))
+            return self.handle_no_permission()
+        return super().dispatch(self.request, *args, **kwargs)
+
+    def get_queryset(self):
+        query_set = super().get_queryset()
+        query_set = query_set.filter(
+            omcen_user__username=self.request.user,
+            is_active=True
+        )
+        return query_set.order_by('omcen_service__service__service_name')
