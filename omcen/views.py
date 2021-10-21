@@ -136,7 +136,7 @@ class PlanSelection(LoginRequiredMixin, ListView):
         query_set = super().get_queryset()
         query_set = query_set.filter(
             service__service_name=self.request.resolver_match.kwargs['service_name'],
-            is_active=True
+            # is_active=True
         )
         return query_set.order_by('plan__plan_name')
 
@@ -160,23 +160,24 @@ class ServiceRegistration(LoginRequiredMixin, CreateView):
         )
         form.instance.omcen_service = get_object_or_404(
             ServiceGroup,
-            service__service_name=self.request.resolver_match.kwargs['service_name'],
-            plan__plan_name=self.request.resolver_match.kwargs['plan_name']
+            uuid=self.request.resolver_match.kwargs['pk']
         )
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['service_name'] = self.request.resolver_match.kwargs['service_name']
-        context['plan_name'] = self.request.resolver_match.kwargs['plan_name']
-        context['price'] = Plan.objects.get(
-            service__service_name=self.request.resolver_match.kwargs['service_name'],
-            plan_name=self.request.resolver_match.kwargs['plan_name']
-        ).price
+        context['service_group'] = get_object_or_404(
+            ServiceGroup,
+            uuid=self.request.resolver_match.kwargs['pk']
+        )
         return context
 
     def get_success_url(self):
-        self.success_url = reverse_lazy(f'{self.request.resolver_match.kwargs["service_name"]}:top')
+        service_group = get_object_or_404(
+            ServiceGroup,
+            uuid=self.request.resolver_match.kwargs['pk']
+        )
+        self.success_url = reverse_lazy(f'{service_group.service.service_name}:top')
         messages.success(self.request, _('登録が完了しました。'), extra_tags='success')
 
         return super().get_success_url()
