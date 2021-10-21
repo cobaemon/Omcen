@@ -20,7 +20,7 @@
             <div class="card-body">
                 <p>{% trans "サービス名" %}: {{ service_group.service.service_name }}</p>
                 <p>{% trans "プラン名" %}: {{ service_group.plan.plan_name }}</p>
-                <p>{% trans "価格" %}: {{ service_group.plan.price }}</p>
+                <p>{% trans "価格" %}: {{ service_group.plan.price }}{% trans "円" %}</p>
                 <a class="primaryAction btn btn-primary float-end" role="button"
                    href="{% url 'omcen:plan_selection' service_name=service_group.service.service_name %}">
                     {% trans "キャンセル" %}

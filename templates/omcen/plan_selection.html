@@ -20,7 +20,7 @@
             </div>
             <div class="card-body">
                 <p>{% trans "プラン名" %}: {{ service_group.plan.plan_name }}</p>
-                <p>{% trans "価格" %}: {{ service_group.plan.price }}</p>
+                <p>{% trans "価格" %}: {{ service_group.plan.price }}{% trans "円" %}</p>
                 {% if service_group.uuid == service_in_use.0.omcen_service.uuid %}
                 <p>{% trans "登録中" %}</p>
                 <a class="primaryAction btn btn-danger float-end" role="button"

@@ -20,7 +20,7 @@
             </div>
             <div class="card-body">
                 <p>{% trans "プラン名" %}: {{ service_in_use.omcen_service.plan.plan_name }}</p>
-                <p>{% trans "価格" %}: {{ service_in_use.omcen_service.plan.price }}</p>
+                <p>{% trans "価格" %}: {{ service_in_use.omcen_service.plan.price }}{% trans "円" %}</p>
             </div>
         </div>
         {% endfor %}
