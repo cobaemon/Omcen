@@ -1,12 +1,12 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
-from django.shortcuts import get_object_or_404
-from django.urls import reverse_lazy
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse_lazy, reverse
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import ListView, CreateView
+from django.views.generic import ListView, CreateView, UpdateView
 
-from omcen.forms import SearchService, CreateServiceForm, ServiceRegistrationForm
+from omcen.forms import SearchService, CreateServiceForm, ServiceSubscribeForm, ServiceUnsubscribeForm
 from omcen.models import Service, Plan, ServiceGroup, ServiceInUse, OmcenUser
 
 
@@ -133,6 +133,7 @@ class PlanSelection(LoginRequiredMixin, ListView):
     def dispatch(self, *args, **kwargs):
         if not self.request.user.is_authenticated:
             messages.warning(self.request, _('ログインしてください'))
+
             return self.handle_no_permission()
 
         return super().dispatch(self.request, *args, **kwargs)
@@ -157,16 +158,28 @@ class PlanSelection(LoginRequiredMixin, ListView):
         return context
 
 
-# サービス登録
-class ServiceRegistration(LoginRequiredMixin, CreateView):
-    template_name = 'omcen/service_registration.html'
+# サービスの登録
+class ServiceSubscribe(LoginRequiredMixin, CreateView):
+    template_name = 'omcen/service_subscribe.html'
     model = ServiceInUse
-    form_class = ServiceRegistrationForm
+    form_class = ServiceSubscribeForm
 
     def dispatch(self, *args, **kwargs):
         if not self.request.user.is_authenticated:
             messages.warning(self.request, _('ログインしてください'))
+
             return self.handle_no_permission()
+
+        if ServiceInUse.objects.filter(omcen_user__username=self.request.user,
+                                       omcen_service__uuid=self.request.resolver_match.kwargs['pk'],
+                                       is_active=True).exists():
+            service_in_use = get_object_or_404(
+                ServiceInUse,
+                omcen_user__username=self.request.user,
+                omcen_service__uuid=self.request.resolver_match.kwargs['pk'],
+                is_active=True
+            )
+            return redirect(to=reverse('omcen:service_unsubscribe', kwargs={'pk': service_in_use.uuid}))
 
         return super().dispatch(self.request, *args, **kwargs)
 
@@ -197,6 +210,56 @@ class ServiceRegistration(LoginRequiredMixin, CreateView):
             uuid=self.request.resolver_match.kwargs['pk']
         )
         self.success_url = reverse_lazy(f'{service_group.service.service_name}:top')
+        messages.success(self.request, _('登録が完了しました。'), extra_tags='success')
+
+        return super().get_success_url()
+
+
+# サービスの登録解除
+class ServiceUnsubscribe(UpdateView):
+    template_name = 'omcen/service_unsubscribe.html'
+    model = ServiceInUse
+    form_class = ServiceUnsubscribeForm
+    success_url = reverse_lazy('omcen:service_list')
+
+    def dispatch(self, *args, **kwargs):
+        if not self.request.user.is_authenticated:
+            messages.warning(self.request, _('ログインしてください'))
+
+            return self.handle_no_permission()
+
+        if not ServiceInUse.objects.filter(uuid=self.request.resolver_match.kwargs['pk'], is_active=True).exists():
+            return redirect(to=reverse('omcen:service_list'))
+
+        return super().dispatch(self.request, *args, **kwargs)
+
+    def form_valid(self, form):
+        form.instance.omcen_user = get_object_or_404(
+            OmcenUser,
+            username=self.request.user
+        )
+        form.instance.omcen_service = get_object_or_404(
+            ServiceGroup,
+            uuid=get_object_or_404(
+                ServiceInUse,
+                uuid=self.request.resolver_match.kwargs['pk']
+            ).omcen_service.uuid,
+        )
+        form.instance.is_active = False
+
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        service_in_use = get_object_or_404(
+            ServiceInUse,
+            uuid=self.request.resolver_match.kwargs['pk']
+        )
+        context['service_in_use'] = service_in_use
+
+        return context
+
+    def get_success_url(self):
         messages.success(self.request, _('登録が完了しました。'), extra_tags='success')
 
         return super().get_success_url()

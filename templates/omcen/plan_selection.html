@@ -24,12 +24,12 @@
                 {% if service_group.uuid == service_in_use.0.omcen_service.uuid %}
                 <p>{% trans "登録中" %}</p>
                 <a class="primaryAction btn btn-danger float-end" role="button"
-                   href="{% url 'omcen:service_registration' pk=service_in_use.0.omcen_service.uuid %}">
+                   href="{% url 'omcen:service_unsubscribe' pk=service_in_use.0.uuid %}">
                     {% trans "登録解除" %}
                 </a>
                 {% else %}
                 <a class="primaryAction btn btn-primary float-end" role="button"
-                   href="{% url 'omcen:service_registration' pk=service_group.uuid %}">
+                   href="{% url 'omcen:service_subscribe' pk=service_group.uuid %}">
                     {% trans "選択" %}
                 </a>
                 {% endif %}

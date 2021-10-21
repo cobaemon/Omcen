@@ -38,7 +38,14 @@ class CreateServiceForm(forms.ModelForm):
 
 
 # サービス登録フォーム
-class ServiceRegistrationForm(forms.ModelForm):
+class ServiceSubscribeForm(forms.ModelForm):
+    class Meta:
+        model = ServiceInUse
+        fields = ()
+
+
+# サービス登録フォーム
+class ServiceUnsubscribeForm(forms.ModelForm):
     class Meta:
         model = ServiceInUse
         fields = ()
