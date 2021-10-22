@@ -6,7 +6,8 @@ from django.urls import reverse_lazy, reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import ListView, CreateView, UpdateView
 
-from omcen.forms import SearchService, CreateServiceForm, ServiceSubscribeForm, ServiceUnsubscribeForm
+from omcen.forms import SearchService, CreateServiceForm, ServiceSubscribeForm, ServiceUnsubscribeForm, \
+    OmcenUserDeactivateForm
 from omcen.models import Service, Plan, ServiceGroup, ServiceInUse, OmcenUser
 
 
@@ -142,7 +143,7 @@ class PlanSelection(LoginRequiredMixin, ListView):
         query_set = super().get_queryset()
         query_set = query_set.filter(
             service__service_name=self.request.resolver_match.kwargs['service_name'],
-            # is_active=True
+            is_active=True
         )
 
         return query_set.order_by('plan__plan_name')
@@ -184,10 +185,7 @@ class ServiceSubscribe(LoginRequiredMixin, CreateView):
         return super().dispatch(self.request, *args, **kwargs)
 
     def form_valid(self, form):
-        form.instance.omcen_user = get_object_or_404(
-            OmcenUser,
-            username=self.request.user
-        )
+        form.instance.omcen_user = self.request.user
         form.instance.omcen_service = get_object_or_404(
             ServiceGroup,
             uuid=self.request.resolver_match.kwargs['pk']
@@ -231,7 +229,7 @@ class ServiceSubscribe(LoginRequiredMixin, CreateView):
 
 
 # サービスの登録解除
-class ServiceUnsubscribe(UpdateView):
+class ServiceUnsubscribe(LoginRequiredMixin, UpdateView):
     template_name = 'omcen/service_unsubscribe.html'
     model = ServiceInUse
     form_class = ServiceUnsubscribeForm
@@ -249,17 +247,6 @@ class ServiceUnsubscribe(UpdateView):
         return super().dispatch(self.request, *args, **kwargs)
 
     def form_valid(self, form):
-        form.instance.omcen_user = get_object_or_404(
-            OmcenUser,
-            username=self.request.user
-        )
-        form.instance.omcen_service = get_object_or_404(
-            ServiceGroup,
-            uuid=get_object_or_404(
-                ServiceInUse,
-                uuid=self.request.resolver_match.kwargs['pk']
-            ).omcen_service.uuid,
-        )
         form.instance.is_active = False
 
         return super().form_valid(form)
@@ -271,6 +258,7 @@ class ServiceUnsubscribe(UpdateView):
             uuid=self.request.resolver_match.kwargs['pk']
         )
         context['service_in_use'] = service_in_use
+        context['cancel_url'] = f'{service_in_use.omcen_service.service.service_name}:top'
 
         return context
 
@@ -304,3 +292,29 @@ class ServiceInUseList(LoginRequiredMixin, ListView):
         )
 
         return query_set.order_by('omcen_service__service__service_name')
+
+
+# omcenユーザーの停止
+class OmcenUserDeactivate(LoginRequiredMixin, UpdateView):
+    template_name = 'omcen/omcen_user_deactivate.html'
+    model = OmcenUser
+    form_class = OmcenUserDeactivateForm
+    success_url = reverse_lazy('account_signup')
+
+    def dispatch(self, *args, **kwargs):
+        if not self.request.user.is_authenticated:
+            messages.warning(self.request, _('ログインしてください'))
+
+            return self.handle_no_permission()
+
+        return super().dispatch(self.request, *args, **kwargs)
+
+    def form_valid(self, form):
+        form.instance.is_active = False
+
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        messages.success(self.request, _('アカウントの停止が完了しました'), extra_tags='success')
+
+        return super().get_success_url()

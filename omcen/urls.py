@@ -1,7 +1,7 @@
 from django.urls import path
 
 from omcen.views import ServiceControl, CreateService, ServiceList, ServiceSubscribe, PlanSelection, ServiceInUseList, \
-    ServiceUnsubscribe
+    ServiceUnsubscribe, OmcenUserDeactivate
 
 app_name = 'omcen'
 
@@ -15,5 +15,6 @@ urlpatterns = [
     path('<str:service_name>/plan_selection', PlanSelection.as_view(), name='plan_selection'),
     path('<uuid:pk>/service_subscribe', ServiceSubscribe.as_view(), name='service_subscribe'),
     path('<uuid:pk>/service_unsubscribe', ServiceUnsubscribe.as_view(), name='service_unsubscribe'),
-    path('service_in_use_list', ServiceInUseList.as_view(), name='service_in_use_list')
+    path('service_in_use_list', ServiceInUseList.as_view(), name='service_in_use_list'),
+    path('<uuid:pk>/omcen_user_deactivate', OmcenUserDeactivate.as_view(), name='omcen_user_deactivate')
 ]
