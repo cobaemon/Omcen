@@ -192,6 +192,16 @@ class ServiceSubscribe(LoginRequiredMixin, CreateView):
             ServiceGroup,
             uuid=self.request.resolver_match.kwargs['pk']
         )
+        if ServiceInUse.objects.filter(omcen_user__username=self.request.user,
+                                       omcen_service__service__service_name=form.instance.omcen_service.service.service_name,
+                                       is_active=True).exists():
+            before_service_in_use = ServiceInUse.objects.filter(
+                omcen_user__username=self.request.user,
+                omcen_service__service__service_name=form.instance.omcen_service.service.service_name,
+                is_active=True
+            ).first()
+            before_service_in_use.is_active = False
+            before_service_in_use.save()
 
         return super().form_valid(form)
 
@@ -201,6 +211,11 @@ class ServiceSubscribe(LoginRequiredMixin, CreateView):
             ServiceGroup,
             uuid=self.request.resolver_match.kwargs['pk']
         )
+        context['before_service_in_use'] = ServiceInUse.objects.filter(
+            omcen_user__username=self.request.user,
+            omcen_service__service__service_name=context['service_group'].service.service_name,
+            is_active=True
+        ).exists()
 
         return context
 
