@@ -40,6 +40,32 @@ class CreateServiceForm(forms.ModelForm):
 class CreatePlanForm(forms.ModelForm):
     class Meta:
         model = Plan
+        fields = ['plan_name', 'price']
+
+    def clean_price(self):
+        price = self.cleaned_data.get('price')
+        if price < 0:
+            raise forms.ValidationError('0より大きい値を入力してください。')
+
+        return self.cleaned_data.get('price')
+
+
+class UpdatePlanForm(forms.ModelForm):
+    class Meta:
+        model = Plan
+        fields = ['plan_name', 'price']
+
+    def clean_price(self):
+        price = self.cleaned_data.get('price')
+        if price < 0:
+            raise forms.ValidationError('0より大きい値を入力してください。')
+
+        return self.cleaned_data.get('price')
+
+
+class DeletePlanForm(forms.ModelForm):
+    class Meta:
+        model = Plan
         fields = []
 
 

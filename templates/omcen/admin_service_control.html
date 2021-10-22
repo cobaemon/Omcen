@@ -2,6 +2,10 @@
 {% load static %}
 {% load widget_tweaks %}
 
+{% block breadcrumb %}
+<li class="breadcrumb-item active" aria-current="page">サービス管理</li>
+{% endblock %}
+
 {% block content %}
 
 <form class="row">
@@ -17,25 +21,17 @@
 
 <table class="table my-3">
     <thead>
-        <th width="10%"></th>
-        <th width="50%">サービス名</th>
-        <th></th>
+        <th width="15%"></th>
+        <th width="65%">サービス名</th>
         <th></th>
     </thead>
     <tbody>
         {% for object in object_list %}
         <tr>
             <th>{{ forloop.counter }}</th>
-            <td>{{ object.service.service_name }}</td>
+            <td>{{ object.service_name }}</td>
             <td>
                 <a class="btn btn-info" href="{% url 'omcen:service_detail' object.pk %}" role="button">詳細</a>
-            </td>
-            <td>
-                {% if object.is_active %}
-                    <a class="btn btn-outline-danger" href="{% url 'omcen:switching_enabled' object.pk 'disabled' %}" role="button">無効化</a>
-                {% else %}
-                    <a class="btn btn-outline-success" href="{% url 'omcen:switching_enabled' object.pk 'enabled' %}" role="button">有効化</a>
-                {% endif %}
             </td>
         </tr>
         {% endfor %}

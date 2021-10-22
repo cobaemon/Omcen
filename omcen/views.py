@@ -5,33 +5,34 @@ from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import ListView, CreateView, UpdateView, TemplateView
+from django.views.generic import ListView, CreateView, UpdateView, TemplateView, DeleteView
 
-from omcen.forms import SearchService, CreateServiceForm, ServiceSubscribeForm, ServiceUnsubscribeForm, CreatePlanForm
+from omcen.forms import SearchService, CreateServiceForm, ServiceSubscribeForm, ServiceUnsubscribeForm, CreatePlanForm, \
+    UpdatePlanForm, DeletePlanForm
 from omcen.models import Service, Plan, ServiceGroup, ServiceInUse, OmcenUser
 
 
 # サービスの有効・無効切り替え
 @login_required
-def switching_enabled(request, service_id, flag):
-    service = get_object_or_404(ServiceGroup, pk=service_id)
+def switching_enabled(request, service_id, plan_id, flag):
+    service_group = get_object_or_404(ServiceGroup, service_id=service_id, plan_id=plan_id)
     if flag == 'enabled':
-        service.is_active = True
+        service_group.is_active = True
     elif flag == 'disabled':
-        service.is_active = False
+        service_group.is_active = False
     else:
         messages.error(request, 'サービスの有効・無効切り替えに失敗しました。')
-        return redirect(reverse_lazy('omcen:service_control'))
+        return redirect(reverse_lazy('omcen:service_detail', args=[service_id]))
         
-    service.save()
+    service_group.save()
     
-    return redirect(reverse_lazy('omcen:service_control'))
+    return redirect(reverse_lazy('omcen:service_detail', args=[service_id]))
 
 
 # サービス管理画面
 class ServiceControl(LoginRequiredMixin, ListView):
     template_name = 'omcen/admin_service_control.html'
-    model = ServiceGroup
+    model = Service
     paginate_by = 30
     ordering = 'is_active'
     form = None
@@ -51,12 +52,12 @@ class ServiceControl(LoginRequiredMixin, ListView):
                 service_name = form.cleaned_data.get('service_name')
 
                 if service_name:
-                    query_set = query_set.filter(service__service_name__icontains=service_name)
+                    query_set = query_set.filter(service_name__icontains=service_name)
 
             if not query_set.exists():
                 messages.info(self.request, '該当するサービスがありませんでした。', extra_tags='info')
 
-        return query_set.order_by('service__service_name')
+        return query_set.order_by('service_name')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -73,6 +74,8 @@ class ServiceDetail(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         service = get_object_or_404(Service, pk=self.kwargs.get('service_id'))
 
+        context['plans'] = Plan.objects.filter(service=service)
+        context['service'] = service
 
         return context
 
@@ -121,7 +124,43 @@ class CreatePlan(LoginRequiredMixin, CreateView):
     template_name = 'omcen/admin_create_plan.html'
     model = Plan
     form_class = CreatePlanForm
-    success_url = reverse_lazy('omcen:create_service')
+    
+    def form_valid(self, form):
+        form.instance.service = get_object_or_404(Service, pk=self.kwargs.get('service_id'))
+        
+        return super().form_valid(form)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['service'] = get_object_or_404(Service, pk=self.kwargs.get('service_id'))
+
+        return context
+
+    def get_success_url(self):
+        self.success_url = reverse_lazy('omcen:service_detail', args=[self.kwargs.get('service_id')])
+        return super().get_success_url()
+
+
+# プランの編集
+class UpdatePlan(LoginRequiredMixin, UpdateView):
+    template_name = 'omcen/admin_update_plan.html'
+    model = Plan
+    form_class = UpdatePlanForm
+
+    def get_success_url(self):
+        self.success_url = reverse_lazy('omcen:service_detail', args=[self.kwargs.get('service_id')])
+        return super().get_success_url()
+
+
+# プランの削除
+class DeletePlan(LoginRequiredMixin, DeleteView):
+    template_name = 'omcen/admin_delete_plan.html'
+    model = Plan
+    form_class = DeletePlanForm
+
+    def get_success_url(self):
+        self.success_url = reverse_lazy('omcen:service_detail', args=[self.kwargs.get('service_id')])
+        return super().get_success_url()
 
 
 # サービス一覧
