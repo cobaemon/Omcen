@@ -2,9 +2,8 @@
 
 {% load static %}
 {% load i18n %}
-{% load account socialaccount %}
 
-{% block head_title %}{% trans "Account Inactive" %}{% endblock %}
+{% block head_title %}{% trans "サービス一覧" %}{% endblock %}
 
 {% block content %}
 <div class="row">
@@ -14,12 +13,14 @@
             <div class="card-header p-3 mb-2 bg-primary text-white">
                 <div class="row">
                     <div class="col">
-                        <h1 class="p-3">{% trans "Account Inactive" %}</h1>
+                        <h1 class="p-3">{% trans "サービス一覧" %}</h1>
                     </div>
                 </div>
             </div>
             <div class="card-body">
-                <p>{% trans "This account is inactive." %}</p>
+                {% for service_name, service_url in service_dict.items %}
+                <a href="{% url service_url %}">{{ service_name }}</a>
+                {% endfor %}
             </div>
         </div>
     </div>

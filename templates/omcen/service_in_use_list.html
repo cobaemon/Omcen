@@ -2,26 +2,28 @@
 
 {% load static %}
 {% load i18n %}
-{% load account socialaccount %}
 
-{% block head_title %}{% trans "Account Inactive" %}{% endblock %}
+{% block head_title %}{% trans "登録中のサービス一覧" %}{% endblock %}
 
 {% block content %}
 <div class="row">
     <div class="col"></div>
     <div class="col">
+        {% for service_in_use in object_list %}
         <div class="card">
             <div class="card-header p-3 mb-2 bg-primary text-white">
                 <div class="row">
                     <div class="col">
-                        <h1 class="p-3">{% trans "Account Inactive" %}</h1>
+                        <h1>{{ service_in_use.omcen_service.service.service_name }}</h1>
                     </div>
                 </div>
             </div>
             <div class="card-body">
-                <p>{% trans "This account is inactive." %}</p>
+                <p>{% trans "プラン名" %}: {{ service_in_use.omcen_service.plan.plan_name }}</p>
+                <p>{% trans "価格" %}: {{ service_in_use.omcen_service.plan.price }}{% trans "円" %}</p>
             </div>
         </div>
+        {% endfor %}
     </div>
     <div class="col"></div>
 </div>
