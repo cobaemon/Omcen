@@ -2,7 +2,7 @@ import sys
 
 from django import forms
 
-from omcen.models import ServiceGroup, Service, ServiceInUse, Plan
+from omcen.models import ServiceGroup, Service, ServiceInUse, OmcenUser, Plan
 
 sys.path.append('../templates')
 
@@ -76,8 +76,23 @@ class ServiceSubscribeForm(forms.ModelForm):
         fields = []
 
 
-# サービス登録フォーム
+# サービス登録解除フォーム
 class ServiceUnsubscribeForm(forms.ModelForm):
     class Meta:
         model = ServiceInUse
         fields = []
+
+
+
+# Omcenユーザー停止フォーム
+class OmcenUserDeactivateForm(forms.ModelForm):
+    class Meta:
+        model = OmcenUser
+        fields = []
+
+
+# プロフィール編集フォーム
+class ChangeProfileForm(forms.ModelForm):
+    class Meta:
+        model = OmcenUser
+        fields = ['username', 'first_name', 'last_name', 'email']

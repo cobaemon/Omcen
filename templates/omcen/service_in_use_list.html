@@ -6,10 +6,9 @@
 {% block head_title %}{% trans "登録中のサービス一覧" %}{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col"></div>
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for service_in_use in object_list %}
     <div class="col">
-        {% for service_in_use in object_list %}
         <div class="card">
             <div class="card-header p-3 mb-2 bg-primary text-white">
                 <div class="row">
@@ -23,8 +22,7 @@
                 <p>{% trans "価格" %}: {{ service_in_use.omcen_service.plan.price }}{% trans "円" %}</p>
             </div>
         </div>
-        {% endfor %}
     </div>
-    <div class="col"></div>
+    {% endfor %}
 </div>
 {% endblock %}

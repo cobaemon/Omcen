@@ -6,10 +6,9 @@
 {% block head_title %}{% trans "プラン選択" %}{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col"></div>
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for service_group in object_list %}
     <div class="col">
-        {% for service_group in object_list %}
         <div class="card">
             <div class="card-header p-3 mb-2 bg-primary text-white">
                 <div class="row">
@@ -35,8 +34,7 @@
                 {% endif %}
             </div>
         </div>
-        {% endfor %}
     </div>
-    <div class="col"></div>
+    {% endfor %}
 </div>
 {% endblock %}
