@@ -311,6 +311,10 @@ class OmcenUserDeactivate(LoginRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         form.instance.is_active = False
+        ServiceInUse.objects.values().filter(
+            omcen_user__username=self.request.user,
+            is_active=True
+        ).update(is_active=False)
 
         return super().form_valid(form)
 
