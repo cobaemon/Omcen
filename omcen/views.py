@@ -1,18 +1,36 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import ListView, CreateView, UpdateView
+from django.views.generic import ListView, CreateView, UpdateView, TemplateView
 
-from omcen.forms import SearchService, CreateServiceForm, ServiceSubscribeForm, ServiceUnsubscribeForm
+from omcen.forms import SearchService, CreateServiceForm, ServiceSubscribeForm, ServiceUnsubscribeForm, CreatePlanForm
 from omcen.models import Service, Plan, ServiceGroup, ServiceInUse, OmcenUser
+
+
+# サービスの有効・無効切り替え
+@login_required
+def switching_enabled(request, service_id, flag):
+    service = get_object_or_404(ServiceGroup, pk=service_id)
+    if flag == 'enabled':
+        service.is_active = True
+    elif flag == 'disabled':
+        service.is_active = False
+    else:
+        messages.error(request, 'サービスの有効・無効切り替えに失敗しました。')
+        return redirect(reverse_lazy('omcen:service_control'))
+        
+    service.save()
+    
+    return redirect(reverse_lazy('omcen:service_control'))
 
 
 # サービス管理画面
 class ServiceControl(LoginRequiredMixin, ListView):
-    template_name = 'omcen/service_control.html'
+    template_name = 'omcen/admin_service_control.html'
     model = ServiceGroup
     paginate_by = 30
     ordering = 'is_active'
@@ -47,9 +65,21 @@ class ServiceControl(LoginRequiredMixin, ListView):
         return context
 
 
+# サービスの詳細画面
+class ServiceDetail(LoginRequiredMixin, TemplateView):
+    template_name = 'omcen/admin_service_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        service = get_object_or_404(Service, pk=self.kwargs.get('service_id'))
+
+
+        return context
+
+
 # サービスの新規作成
 class CreateService(LoginRequiredMixin, CreateView):
-    template_name = 'omcen/create_service.html'
+    template_name = 'omcen/admin_create_service.html'
     model = ServiceGroup
     form_class = CreateServiceForm
     success_url = reverse_lazy('omcen:service_control')
@@ -84,6 +114,14 @@ class CreateService(LoginRequiredMixin, CreateView):
         messages.success(self.request, 'サービスを新しく追加しました。', extra_tags='success')
 
         return super().get_success_url()
+
+
+# プランの新規作成
+class CreatePlan(LoginRequiredMixin, CreateView):
+    template_name = 'omcen/admin_create_plan.html'
+    model = Plan
+    form_class = CreatePlanForm
+    success_url = reverse_lazy('omcen:create_service')
 
 
 # サービス一覧

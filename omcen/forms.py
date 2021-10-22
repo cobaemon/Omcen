@@ -2,7 +2,7 @@ import sys
 
 from django import forms
 
-from omcen.models import ServiceGroup, Service, ServiceInUse
+from omcen.models import ServiceGroup, Service, ServiceInUse, Plan
 
 sys.path.append('../templates')
 
@@ -16,7 +16,7 @@ class SearchService(forms.Form):
 class CreateServiceForm(forms.ModelForm):
     class Meta:
         model = ServiceGroup
-        fields = ()
+        fields = []
 
     service_name = forms.CharField(label='サービス名', max_length=32, required=True, help_text="最大文字数は32文字です。")
     plan_name = forms.CharField(label='プラン名', max_length=32, required=True, help_text='最大文字数は32文字です。')
@@ -37,15 +37,21 @@ class CreateServiceForm(forms.ModelForm):
         return self.cleaned_data.get('price')
 
 
+class CreatePlanForm(forms.ModelForm):
+    class Meta:
+        model = Plan
+        fields = []
+
+
 # サービス登録フォーム
 class ServiceSubscribeForm(forms.ModelForm):
     class Meta:
         model = ServiceInUse
-        fields = ()
+        fields = []
 
 
 # サービス登録フォーム
 class ServiceUnsubscribeForm(forms.ModelForm):
     class Meta:
         model = ServiceInUse
-        fields = ()
+        fields = []
