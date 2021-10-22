@@ -3,7 +3,7 @@
 {% load static %}
 {% load i18n %}
 
-{% block head_title %}{% trans "Omcenアカウントの停止" %}{% endblock %}
+{% block head_title %}{% trans "プロフィールの編集" %}{% endblock %}
 
 {% block content %}
 <div class="row">
@@ -13,22 +13,23 @@
             <div class="card-header p-3 mb-2 bg-primary text-white">
                 <div class="row">
                     <div class="col">
-                        <h1>{% trans "Omcenアカウントの停止" %}</h1>
+                        <h1>{% trans "プロフィールの編集" %}</h1>
                     </div>
                 </div>
             </div>
             <div class="card-body">
-                <p>{% trans "アカウント" %}: {{ user }}</p>
-                <p>{% trans "上記のアカウントを停止します" %}</p>
-                <p>{% trans "停止した場合アカウントに紐づいている全サービスが停止します" %}</p>
-                <a class="primaryAction btn btn-primary float-end" role="button"
-                   href="{% url 'omcen:service_list' %}">
-                    {% trans "キャンセル" %}
-                </a>
                 <form method="post">
                     {% csrf_token %}
+                    <p>{% trans "ユーザ名" %}: {{ form.username }}</p>
+                    <p>{% trans "名" %}: {{ form.first_name }}</p>
+                    <p>{% trans "姓" %}: {{ form.last_name }}</p>
+                    <p>{% trans "メールアドレス" %}: {{ form.email }}</p>
+                    <a class="primaryAction btn btn-primary float-end" role="button"
+                       href="{% url 'omcen:my_page' %}">
+                        {% trans "キャンセル" %}
+                    </a>
                     <button class="primaryAction btn btn-danger float-end me-2" type="submit">
-                        {% trans "アカウント停止" %}
+                        {% trans "変更" %}
                     </button>
                 </form>
             </div>

@@ -4,10 +4,10 @@ from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import ListView, CreateView, UpdateView
+from django.views.generic import ListView, CreateView, UpdateView, TemplateView
 
 from omcen.forms import SearchService, CreateServiceForm, ServiceSubscribeForm, ServiceUnsubscribeForm, \
-    OmcenUserDeactivateForm
+    OmcenUserDeactivateForm, ChangeProfileForm
 from omcen.models import Service, Plan, ServiceGroup, ServiceInUse, OmcenUser
 
 
@@ -320,5 +320,49 @@ class OmcenUserDeactivate(LoginRequiredMixin, UpdateView):
 
     def get_success_url(self):
         messages.success(self.request, _('アカウントの停止が完了しました'), extra_tags='success')
+
+        return super().get_success_url()
+
+
+# マイページ
+class MyPage(LoginRequiredMixin, TemplateView):
+    template_name = 'omcen/my_page.html'
+
+    def dispatch(self, *args, **kwargs):
+        if not self.request.user.is_authenticated:
+            messages.warning(self.request, _('ログインしてください'))
+
+            return self.handle_no_permission()
+
+        return super().dispatch(self.request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        omcen_user = get_object_or_404(
+            OmcenUser,
+            username=self.request.user,
+        )
+        context['omcen_user'] = omcen_user
+
+        return context
+
+
+# プロフィールの変更
+class ChangeProfile(LoginRequiredMixin, UpdateView):
+    template_name = 'omcen/change_profile.html'
+    model = OmcenUser
+    form_class = ChangeProfileForm
+    success_url = reverse_lazy('omcen:my_page')
+
+    def dispatch(self, *args, **kwargs):
+        if not self.request.user.is_authenticated:
+            messages.warning(self.request, _('ログインしてください'))
+
+            return self.handle_no_permission()
+
+        return super().dispatch(self.request, *args, **kwargs)
+
+    def get_success_url(self):
+        messages.success(self.request, _('プロフィールの編集が完了しました'), extra_tags='success')
 
         return super().get_success_url()

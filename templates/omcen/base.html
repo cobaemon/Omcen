@@ -54,7 +54,7 @@
                         <span class="material-icons">settings</span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown2">
-                        <li><a class="dropdown-item" href="#">{% trans "マイページ" %}</a></li>
+                        <li><a class="dropdown-item" href="{% url 'omcen:my_page' %}">{% trans "マイページ" %}</a></li>
                         <li><a class="dropdown-item" href="#">{% trans "設定" %}</a></li>
                         <li>
                             <hr class="dropdown-divider">
@@ -62,8 +62,8 @@
                         {% if user.is_authenticated %}
                         <li><a class="dropdown-item" href="{% url 'account_logout' %}">{% trans "ログアウト" %}</a></li>
                         <li><a class="dropdown-item text-danger"
-                               href="#">
-                            {% trans "サービス退会" %}</a>
+                               href="{% url 'omcen:omcen_user_deactivate' pk=user.uuid %}">
+                            {% trans "アカウントの停止" %}</a>
                         </li>
                         {% else %}
                         <li><a class="dropdown-item" href="{% url 'account_login' %}">{% trans "ログイン" %}</a></li>
