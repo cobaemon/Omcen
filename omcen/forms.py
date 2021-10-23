@@ -1,6 +1,8 @@
 import sys
 
 from django import forms
+from django.contrib.auth.validators import UnicodeUsernameValidator
+from django.utils.translation import gettext_lazy as _
 
 from omcen.models import ServiceGroup, Service, ServiceInUse, OmcenUser, Plan
 
@@ -83,7 +85,6 @@ class ServiceUnsubscribeForm(forms.ModelForm):
         fields = []
 
 
-
 # Omcenユーザー停止フォーム
 class OmcenUserDeactivateForm(forms.ModelForm):
     class Meta:
@@ -96,3 +97,15 @@ class ChangeProfileForm(forms.ModelForm):
     class Meta:
         model = OmcenUser
         fields = ['username', 'first_name', 'last_name', 'email']
+
+    username_validator = UnicodeUsernameValidator()
+    username = forms.CharField(
+        label=_('username'),
+        max_length=150,
+        help_text=_('Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.'),
+        validators=[username_validator],
+        error_messages={
+            'unique': _("A user with that username already exists."),
+        },
+        required=True
+    )

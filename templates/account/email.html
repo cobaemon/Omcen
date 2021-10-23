@@ -18,6 +18,10 @@
                 </div>
             </div>
             <div class="card-body">
+                {% if form.errors %}
+                {{ form.errors }}
+                {% endif %}
+                <br>
                 {% if user.emailaddress_set.all %}
                 <p>{% trans 'The following e-mail addresses are associated with your account:' %}</p>
 
@@ -30,9 +34,11 @@
                             <label for="email_radio_{{forloop.counter}}"
                                    class="{% if emailaddress.primary %}primary_email{%endif%}">
 
-                                <input id="email_radio_{{forloop.counter}}" type="radio" name="email" {% if
-                                       emailaddress.primary or user.emailaddress_set.count== 1 %}checked="checked"
-                                       {%endif %} value="{{emailaddress.email}}"/>
+                                <input id="email_radio_{{forloop.counter}}" type="radio" name="email"
+                                       {% if emailaddress.primary or user.emailaddress_set.count== 1 %}
+                                       checked="checked"
+                                       {%endif %}
+                                       value="{{emailaddress.email}}"/>
 
                                 {{ emailaddress.email }}
                                 {% if emailaddress.verified %}
@@ -40,20 +46,21 @@
                                 {% else %}
                                 <span class="unverified">{% trans "Unverified" %}</span>
                                 {% endif %}
-                                {% if emailaddress.primary %}<span class="primary">{% trans "Primary" %}</span>{% endif
-                                %}
+                                {% if emailaddress.primary %}<span class="primary">{% trans "Primary" %}</span>
+                                {% endif %}
                             </label>
                         </div>
                         {% endfor %}
 
                         <div class="buttonHolder">
-                            <button class="secondaryAction" type="submit" name="action_primary">{% trans 'Make Primary'
-                                %}
+                            <button class="secondaryAction btn btn-secondary" type="submit" name="action_primary">
+                                {% trans 'Make Primary' %}
                             </button>
-                            <button class="secondaryAction" type="submit" name="action_send">{% trans 'Re-send
-                                Verification' %}
+                            <button class="secondaryAction btn btn-secondary" type="submit" name="action_send">
+                                {% trans 'Re-send Verification' %}
                             </button>
-                            <button class="primaryAction" type="submit" name="action_remove">{% trans 'Remove' %}
+                            <button class="primaryAction btn btn-primary" type="submit" name="action_remove">
+                                {% trans 'Remove' %}
                             </button>
                         </div>
 
@@ -61,9 +68,12 @@
                 </form>
 
                 {% else %}
-                <p><strong>{% trans 'Warning:'%}</strong> {% trans "You currently do not have any e-mail address set up.
-                    You should really add an e-mail address so you can receive notifications, reset your password, etc."
-                    %}</p>
+                <p><strong>{% trans 'Warning:'%}</strong>
+                    {% blocktrans %}
+                    "You currently do not have any e-mail address set up. You should really add an e-mail
+                    address so you can receive notifications, reset your password, etc."
+                    {% endblocktrans %}
+                </p>
 
                 {% endif %}
 
@@ -73,7 +83,9 @@
                 <form method="post" action="{% url 'account_email' %}" class="add_email">
                     {% csrf_token %}
                     {{ form.as_p }}
-                    <button name="action_add" type="submit">{% trans "Add E-mail" %}</button>
+                    <button class="primaryAction btn btn-primary float-end" name="action_add" type="submit">
+                        {% trans "Add E-mail" %}
+                    </button>
                 </form>
                 {% endif %}
 
@@ -93,6 +105,8 @@
                         });
                       }
                     })();
+
+
 
 
                 </script>

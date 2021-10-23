@@ -35,6 +35,10 @@
                 </div>
             </div>
             <div class="card-body">
+                {% if form.errors %}
+                {{ form.errors }}
+                {% endif %}
+                <br>
                 <form class="login" method="POST" action="{% url 'account_login' %}">
                     {% csrf_token %}
                     <a>{{ form.as_p }}</a>

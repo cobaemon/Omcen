@@ -5,14 +5,11 @@ from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
 from django.utils.translation import gettext_lazy as _
-
-from django.views.generic import ListView, CreateView, UpdateView, TemplateView, DeleteView
+from django.views.generic import DeleteView
+from django.views.generic import ListView, CreateView, UpdateView, TemplateView
 
 from omcen.forms import SearchService, CreateServiceForm, ServiceSubscribeForm, ServiceUnsubscribeForm, CreatePlanForm, \
     UpdatePlanForm, DeletePlanForm, OmcenUserDeactivateForm, ChangeProfileForm
-
-from django.views.generic import ListView, CreateView, UpdateView, TemplateView
-
 from omcen.models import Service, Plan, ServiceGroup, ServiceInUse, OmcenUser
 
 
@@ -27,9 +24,9 @@ def switching_enabled(request, service_id, plan_id, flag):
     else:
         messages.error(request, 'サービスの有効・無効切り替えに失敗しました。')
         return redirect(reverse_lazy('omcen:service_detail', args=[service_id]))
-        
+
     service_group.save()
-    
+
     return redirect(reverse_lazy('omcen:service_detail', args=[service_id]))
 
 
@@ -128,12 +125,12 @@ class CreatePlan(LoginRequiredMixin, CreateView):
     template_name = 'omcen/admin_create_plan.html'
     model = Plan
     form_class = CreatePlanForm
-    
+
     def form_valid(self, form):
         form.instance.service = get_object_or_404(Service, pk=self.kwargs.get('service_id'))
-        
+
         return super().form_valid(form)
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['service'] = get_object_or_404(Service, pk=self.kwargs.get('service_id'))
@@ -442,6 +439,11 @@ class ChangeProfile(LoginRequiredMixin, UpdateView):
 
         return super().dispatch(self.request, *args, **kwargs)
 
+    def form_invalid(self, form):
+        messages.warning(self.request, _('入力項目に誤りがあります'), extra_tags='warning')
+
+        return super().form_invalid(form)
+        
     def get_success_url(self):
         messages.success(self.request, _('プロフィールの編集が完了しました'), extra_tags='success')
 

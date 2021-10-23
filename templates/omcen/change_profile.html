@@ -18,6 +18,10 @@
                 </div>
             </div>
             <div class="card-body">
+                {% if form.errors %}
+                {{ form.errors }}
+                {% endif %}
+                <br>
                 <form method="post">
                     {% csrf_token %}
                     <p>{% trans "ユーザ名" %}: {{ form.username }}</p>

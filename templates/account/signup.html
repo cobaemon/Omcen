@@ -14,6 +14,10 @@
                 <h1 class="p-3">{% trans "Sign Up" %}</h1>
             </div>
             <div class="card-body">
+                {% if form.errors %}
+                {{ form.errors }}
+                {% endif %}
+                <br>
                 <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
                     {% csrf_token %}
                     {{ form.as_p }}
@@ -27,8 +31,11 @@
                 </form>
             </div>
             <div class="card-footer">
-                <p>{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.
-                    {% endblocktrans %}</p>
+                <p>
+                    {% blocktrans %}
+                    Already have an account? Then please <a href="{{ login_url }}">sign in</a>.
+                    {% endblocktrans %}
+                </p>
             </div>
         </div>
     </div>
