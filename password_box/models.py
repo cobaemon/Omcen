@@ -28,7 +28,7 @@ class PasswordBoxUser(models.Model):
         Path(KEYS_DIR, 'secret_code.bin'),
         Path(KEYS_DIR, 'rsa_key.pem')
     )
-    public_key = rsa.publickey()
+    public_key = rsa.public_key()
     aes_generation_key = models.BinaryField(
         max_length=256,
         default=rsa.encryption(AES.get_random_bytes(32), public_key),

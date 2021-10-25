@@ -1,0 +1,42 @@
+{% extends "omcen/base.html" %}
+
+{% load static %}
+{% load i18n %}
+
+{% block head_title %}{% trans "トップ" %}{% endblock %}
+{% block app_name %}{% trans "パスワードボックス" %}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col">
+        <div class="card">
+            <div class="card-header p-3 mb-2 bg-primary text-white">
+                <div class="row">
+                    <div class="col">
+                        <h1>{% trans "ボックスリスト" %}</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                {% for password_box in form %}
+                <p>
+                    {{ password_box.box_name }}
+                    <a class="primaryAction btn btn-primary float-end" role="button"
+                       href="#">
+                        {% trans "表示" %}
+                    </a>
+                    <a class="primaryAction btn btn-info float-end me-2" role="button"
+                       href="#">
+                        {% trans "編集" %}
+                    </a>
+                    <a class="primaryAction btn btn-danger float-end me-2" role="button"
+                       href="#">
+                        {% trans "削除" %}
+                    </a>
+                </p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
