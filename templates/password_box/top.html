@@ -27,17 +27,17 @@
                 {% for password_box in object_list %}
                 <p>
                     {{ password_box.box_name }}
-                    <a class="primaryAction btn btn-primary float-end" role="button"
+                    <a class="primaryAction btn btn-danger float-end" role="button"
                        href="#">
-                        {% trans "表示" %}
+                        {% trans "削除" %}
                     </a>
                     <a class="primaryAction btn btn-info float-end me-2" role="button"
                        href="#">
                         {% trans "編集" %}
                     </a>
-                    <a class="primaryAction btn btn-danger float-end me-2" role="button"
+                    <a class="primaryAction btn btn-primary float-end me-2" role="button"
                        href="#">
-                        {% trans "削除" %}
+                        {% trans "表示" %}
                     </a>
                 </p>
                 {% endfor %}

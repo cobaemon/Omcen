@@ -66,7 +66,7 @@ class BoxCreate(LoginRequiredMixin, CreateView):
                 omcen_service__service__service_name__icontains='Password Box',
                 is_active=True
         ).exists():
-            messages.warning(self.request, _('パスワードボックスサービスを登録していません'), extra_tags='warning')
+            messages.warning(self.request, _('あなたはパスワードボックスサービスを登録していません'), extra_tags='warning')
             return redirect(to=reverse('omcen:service_list'))
 
         return super().dispatch(self.request, *args, **kwargs)
