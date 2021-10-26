@@ -174,7 +174,7 @@ class ServiceList(LoginRequiredMixin, ListView):
 
     def dispatch(self, *args, **kwargs):
         if not self.request.user.is_authenticated:
-            messages.warning(self.request, _('ログインしてください'))
+            messages.warning(self.request, _('ログインしてください'), extra_tags='warning')
 
             return self.handle_no_permission()
 
@@ -210,7 +210,7 @@ class PlanSelection(LoginRequiredMixin, ListView):
 
     def dispatch(self, *args, **kwargs):
         if not self.request.user.is_authenticated:
-            messages.warning(self.request, _('ログインしてください'))
+            messages.warning(self.request, _('ログインしてください'), extra_tags='warning')
 
             return self.handle_no_permission()
 
@@ -244,7 +244,7 @@ class ServiceSubscribe(LoginRequiredMixin, CreateView):
 
     def dispatch(self, *args, **kwargs):
         if not self.request.user.is_authenticated:
-            messages.warning(self.request, _('ログインしてください'))
+            messages.warning(self.request, _('ログインしてください'), extra_tags='warning')
 
             return self.handle_no_permission()
 
@@ -314,7 +314,7 @@ class ServiceUnsubscribe(LoginRequiredMixin, UpdateView):
 
     def dispatch(self, *args, **kwargs):
         if not self.request.user.is_authenticated:
-            messages.warning(self.request, _('ログインしてください'))
+            messages.warning(self.request, _('ログインしてください'), extra_tags='warning')
 
             return self.handle_no_permission()
 
@@ -355,7 +355,7 @@ class ServiceInUseList(LoginRequiredMixin, ListView):
 
     def dispatch(self, *args, **kwargs):
         if not self.request.user.is_authenticated:
-            messages.warning(self.request, _('ログインしてください'))
+            messages.warning(self.request, _('ログインしてください'), extra_tags='warning')
 
             return self.handle_no_permission()
 
@@ -380,7 +380,7 @@ class OmcenUserDeactivate(LoginRequiredMixin, UpdateView):
 
     def dispatch(self, *args, **kwargs):
         if not self.request.user.is_authenticated:
-            messages.warning(self.request, _('ログインしてください'))
+            messages.warning(self.request, _('ログインしてください'), extra_tags='warning')
 
             return self.handle_no_permission()
 
@@ -407,7 +407,7 @@ class MyPage(LoginRequiredMixin, TemplateView):
 
     def dispatch(self, *args, **kwargs):
         if not self.request.user.is_authenticated:
-            messages.warning(self.request, _('ログインしてください'))
+            messages.warning(self.request, _('ログインしてください'), extra_tags='warning')
 
             return self.handle_no_permission()
 
@@ -433,7 +433,7 @@ class ChangeProfile(LoginRequiredMixin, UpdateView):
 
     def dispatch(self, *args, **kwargs):
         if not self.request.user.is_authenticated:
-            messages.warning(self.request, _('ログインしてください'))
+            messages.warning(self.request, _('ログインしてください'), extra_tags='warning')
 
             return self.handle_no_permission()
 
@@ -443,7 +443,7 @@ class ChangeProfile(LoginRequiredMixin, UpdateView):
         messages.warning(self.request, _('入力項目に誤りがあります'), extra_tags='warning')
 
         return super().form_invalid(form)
-        
+
     def get_success_url(self):
         messages.success(self.request, _('プロフィールの編集が完了しました'), extra_tags='success')
 

@@ -24,7 +24,7 @@
                 {% if before_service_in_use %}
                 <p>{% trans "すでに登録中のサービスです" %}</p>
                 {% endif %}
-                <a class="primaryAction btn btn-primary float-end" role="button"
+                <a class="primaryAction btn btn-secondary float-end" role="button"
                    href="{% url 'omcen:plan_selection' service_name=service_group.service.service_name %}">
                     {% trans "キャンセル" %}
                 </a>

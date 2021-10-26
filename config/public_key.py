@@ -91,7 +91,7 @@ class Rsa:
     # 引数：bytes, bytes
     # 戻り値：bytes
     def decryption(self, cipher_data, key):
-        if type(cipher_data) != bytes or type(key) != bytes:
+        if type(cipher_data) != memoryview or type(key) != bytes:
             return ValueError
 
         try:
