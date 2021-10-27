@@ -26,3 +26,10 @@ class BoxCreateForm(forms.ModelForm):
     user_name = forms.CharField(max_length=128)
     password = forms.CharField(max_length=1024, widget=forms.PasswordInput())
     email = forms.CharField(max_length=256)
+
+
+# ボックス削除フォーム
+class BoxDeleteForm(forms.ModelForm):
+    class Meta:
+        model = PasswordBox
+        fields = []

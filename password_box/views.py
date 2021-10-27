@@ -6,14 +6,14 @@ from django.db import IntegrityError
 from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import ListView, CreateView, TemplateView
+from django.views.generic import ListView, CreateView, TemplateView, DeleteView
 
 from config.exception import DataCorruptedError
 from config.public_key import Rsa
 from config.settings import KEYS_DIR
 from config.symmetric_key import Aes
 from omcen.models import ServiceInUse
-from password_box.forms import BoxCreateForm
+from password_box.forms import BoxCreateForm, BoxDeleteForm
 from password_box.models import PasswordBox, PasswordBoxUser, PasswordBoxTag, PasswordBoxNonce
 
 
@@ -225,8 +225,45 @@ class BoxView(LoginRequiredMixin, TemplateView):
             messages.warning(self.request, _('メールアドレスが改ざんされている恐れがあります'), extra_tags='warning')
 
         context['box_name'] = password_box.box_name
+        context['box_uuid'] = password_box.uuid
         context['box_user_name'] = user_name[0].decode('utf-8')
         context['box_password'] = password[0].decode('utf-8')
         context['box_email'] = email[0].decode('utf-8')
 
         return context
+
+
+# 削除
+class BoxDelete(LoginRequiredMixin, DeleteView):
+    template_name = 'password_box/box_delete.html'
+    model = PasswordBox
+    form_class = BoxDeleteForm
+
+    def dispatch(self, *args, **kwargs):
+        if not self.request.user.is_authenticated:
+            messages.warning(self.request, _('ログインしてください'), extra_tags='warning')
+
+            return self.handle_no_permission()
+
+        if not ServiceInUse.objects.filter(
+                omcen_user__username=self.request.user,
+                omcen_service__service__service_name__icontains='Password Box',
+                is_active=True
+        ).exists():
+            messages.warning(self.request, _('あなたはパスワードボックスサービスを登録していません'), extra_tags='warning')
+            return redirect(to=reverse('omcen:service_list'))
+
+        password_box = get_object_or_404(
+            PasswordBox,
+            uuid=self.request.resolver_match.kwargs['pk'],
+        )
+        if password_box.password_box_user.omcen_user.username != str(self.request.user):
+            messages.warning(self.request, _('不正な値を受け取りました'), extra_tags='warning')
+
+            return redirect(to=reverse('Password Box:top'))
+
+        return super().dispatch(self.request, *args, **kwargs)
+
+    def get_success_url(self):
+        self.success_url = reverse_lazy('Password Box:top')
+        return super().get_success_url()

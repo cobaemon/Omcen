@@ -13,7 +13,7 @@
             <div class="card-header p-3 mb-2 bg-primary text-white">
                 <div class="row">
                     <div class="col">
-                        <h1>{{ password_box.box_name }}</h1>
+                        <h1>{{ box_name }}</h1>
                     </div>
                 </div>
             </div>
@@ -26,7 +26,7 @@
                     {% trans "戻る" %}
                 </a>
                 <a class="primaryAction btn btn-danger float-end me-2" role="button"
-                   href="#">
+                   href="{% url 'Password Box:delete' pk=box_uuid %}">
                     {% trans "削除" %}
                 </a>
                 <a class="primaryAction btn btn-info float-end me-2" role="button"

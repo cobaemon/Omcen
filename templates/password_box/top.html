@@ -28,7 +28,7 @@
                 <p>
                     {{ password_box.box_name }}
                     <a class="primaryAction btn btn-danger float-end" role="button"
-                       href="#">
+                       href="{% url 'Password Box:delete' pk=password_box.uuid %}">
                         {% trans "削除" %}
                     </a>
                     <a class="primaryAction btn btn-info float-end me-2" role="button"
