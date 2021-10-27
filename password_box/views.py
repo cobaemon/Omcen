@@ -17,6 +17,7 @@ from password_box.forms import BoxCreateForm
 from password_box.models import PasswordBox, PasswordBoxUser, PasswordBoxTag, PasswordBoxNonce
 
 
+# トップ画面
 class Top(LoginRequiredMixin, ListView):
     template_name = 'password_box/top.html'
     model = PasswordBox
@@ -50,6 +51,7 @@ class Top(LoginRequiredMixin, ListView):
         return query_set.order_by('box_name')
 
 
+# 新規作成
 class BoxCreate(LoginRequiredMixin, CreateView):
     template_name = 'password_box/box_create.html'
     model = PasswordBox
@@ -132,6 +134,7 @@ class BoxCreate(LoginRequiredMixin, CreateView):
         return super().get_success_url()
 
 
+# 表示
 class BoxView(LoginRequiredMixin, TemplateView):
     template_name = 'password_box/box_view.html'
 
@@ -149,6 +152,15 @@ class BoxView(LoginRequiredMixin, TemplateView):
             messages.warning(self.request, _('あなたはパスワードボックスサービスを登録していません'), extra_tags='warning')
             return redirect(to=reverse('omcen:service_list'))
 
+        password_box = get_object_or_404(
+            PasswordBox,
+            uuid=self.request.resolver_match.kwargs['pk'],
+        )
+        if password_box.password_box_user.omcen_user.username != str(self.request.user):
+            messages.warning(self.request, _('不正な値を受け取りました'), extra_tags='warning')
+
+            return redirect(to=reverse('Password Box:top'))
+
         return super().dispatch(self.request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -157,11 +169,6 @@ class BoxView(LoginRequiredMixin, TemplateView):
             PasswordBox,
             uuid=self.request.resolver_match.kwargs['pk'],
         )
-        if password_box.password_box_user.omcen_user.username != str(self.request.user):
-            messages.warning(self.request, _('不正な値を受け取りました'), extra_tags='warning')
-
-            # TODO context must be a dict rather than HttpResponseRedirect.
-            return redirect(to=reverse('Password Box:top'))
 
         cipher_aes_generate_key = get_object_or_404(
             PasswordBoxUser,
@@ -201,13 +208,15 @@ class BoxView(LoginRequiredMixin, TemplateView):
             nonce=password_box_nonce.email_nonce
         )
 
-        if user_name[1] == ValueError or password[1] == ValueError or email[1] == ValueError:
-            messages.error(self.request, _(f'{password_box.box_name}の読み込みに失敗しました'), extra_tags='error')
-
-            # TODO context must be a dict rather than HttpResponseRedirect.
-            return redirect(to=reverse('Password Box:top'))
-        else:
+        if user_name[1] != ValueError or password[1] != ValueError or email[1] != ValueError:
             messages.success(self.request, _('読み込みに成功しました'), extra_tags='success')
+        if user_name[1] == ValueError:
+            messages.error(self.request, _('ユーザー名の読み込みに失敗しました'), extra_tags='error')
+        if password[1] == ValueError:
+            messages.error(self.request, _('パスワードの読み込みに失敗しました'), extra_tags='error')
+        if email[1] == ValueError:
+            messages.error(self.request, _('メールアドレスの読み込みに失敗しました'), extra_tags='error')
+
         if user_name[1] == DataCorruptedError:
             messages.warning(self.request, _('ユーザー名が改ざんされている恐れがあります'), extra_tags='warning')
         if password[1] == DataCorruptedError:
