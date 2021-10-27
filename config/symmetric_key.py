@@ -6,6 +6,8 @@ Created on Wed Mar 31 10:12:06 2021
 
 from Crypto.Cipher import AES
 
+from config.exception import DataCorruptedError
+
 
 class Aes:
     def __init__(self, key):
@@ -33,20 +35,20 @@ class Aes:
     # 引数：bytes, bytes, bytes
     # 戻り値：
     def decryption(self, cipher_data, tag, nonce):
-        if (type(cipher_data) != bytes or
-                type(tag) != bytes or
-                type(nonce) != bytes):
-            return ValueError
+        if (type(cipher_data) != memoryview or
+                type(tag) != memoryview or
+                type(nonce) != memoryview):
+            return None, ValueError
         elif cipher_data == b'':
-            return ''
+            return '', None
 
         try:
             aes = AES.new(self.key, AES.MODE_EAX, nonce)
         except ValueError:
-            return ValueError
+            return None, ValueError
 
         try:
             data = aes.decrypt_and_verify(cipher_data, tag)
-            return data
+            return data, None
         except ValueError:
-            return 'message corrupted'
+            return data, DataCorruptedError

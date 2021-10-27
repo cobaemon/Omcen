@@ -6,8 +6,9 @@ from django.db import IntegrityError
 from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import ListView, CreateView
+from django.views.generic import ListView, CreateView, TemplateView
 
+from config.exception import DataCorruptedError
 from config.public_key import Rsa
 from config.settings import KEYS_DIR
 from config.symmetric_key import Aes
@@ -129,3 +130,94 @@ class BoxCreate(LoginRequiredMixin, CreateView):
         self.create_done()
 
         return super().get_success_url()
+
+
+class BoxView(LoginRequiredMixin, TemplateView):
+    template_name = 'password_box/box_view.html'
+
+    def dispatch(self, *args, **kwargs):
+        if not self.request.user.is_authenticated:
+            messages.warning(self.request, _('ログインしてください'), extra_tags='warning')
+
+            return self.handle_no_permission()
+
+        if not ServiceInUse.objects.filter(
+                omcen_user__username=self.request.user,
+                omcen_service__service__service_name__icontains='Password Box',
+                is_active=True
+        ).exists():
+            messages.warning(self.request, _('あなたはパスワードボックスサービスを登録していません'), extra_tags='warning')
+            return redirect(to=reverse('omcen:service_list'))
+
+        return super().dispatch(self.request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        password_box = get_object_or_404(
+            PasswordBox,
+            uuid=self.request.resolver_match.kwargs['pk'],
+        )
+        if password_box.password_box_user.omcen_user.username != str(self.request.user):
+            messages.warning(self.request, _('不正な値を受け取りました'), extra_tags='warning')
+
+            # TODO context must be a dict rather than HttpResponseRedirect.
+            return redirect(to=reverse('Password Box:top'))
+
+        cipher_aes_generate_key = get_object_or_404(
+            PasswordBoxUser,
+            omcen_user=self.request.user
+        ).aes_generation_key
+        rsa = Rsa(
+            secret_code_path=Path(KEYS_DIR, 'secret_code.bin'),
+            rsa_key_path=Path(KEYS_DIR, 'rsa_key.pem')
+        )
+        private_key = rsa._private_key()
+        aes = Aes(
+            key=rsa.decryption(cipher_aes_generate_key, private_key)
+        )
+
+        password_box_tag = get_object_or_404(
+            PasswordBoxTag,
+            password_box=password_box
+        )
+        password_box_nonce = get_object_or_404(
+            PasswordBoxNonce,
+            password_box=password_box
+        )
+
+        user_name = aes.decryption(
+            cipher_data=password_box.user_name,
+            tag=password_box_tag.user_name_tag,
+            nonce=password_box_nonce.user_name_nonce
+        )
+        password = aes.decryption(
+            cipher_data=password_box.password,
+            tag=password_box_tag.password_tag,
+            nonce=password_box_nonce.password_nonce
+        )
+        email = aes.decryption(
+            cipher_data=password_box.email,
+            tag=password_box_tag.email_tag,
+            nonce=password_box_nonce.email_nonce
+        )
+
+        if user_name[1] == ValueError or password[1] == ValueError or email[1] == ValueError:
+            messages.error(self.request, _(f'{password_box.box_name}の読み込みに失敗しました'), extra_tags='error')
+
+            # TODO context must be a dict rather than HttpResponseRedirect.
+            return redirect(to=reverse('Password Box:top'))
+        else:
+            messages.success(self.request, _('読み込みに成功しました'), extra_tags='success')
+        if user_name[1] == DataCorruptedError:
+            messages.warning(self.request, _('ユーザー名が改ざんされている恐れがあります'), extra_tags='warning')
+        if password[1] == DataCorruptedError:
+            messages.warning(self.request, _('パスワードが改ざんされている恐れがあります'), extra_tags='warning')
+        if email[1] == DataCorruptedError:
+            messages.warning(self.request, _('メールアドレスが改ざんされている恐れがあります'), extra_tags='warning')
+
+        context['box_name'] = password_box.box_name
+        context['box_user_name'] = user_name[0].decode('utf-8')
+        context['box_password'] = password[0].decode('utf-8')
+        context['box_email'] = email[0].decode('utf-8')
+
+        return context

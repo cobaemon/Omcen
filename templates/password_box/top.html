@@ -36,7 +36,7 @@
                         {% trans "編集" %}
                     </a>
                     <a class="primaryAction btn btn-primary float-end me-2" role="button"
-                       href="#">
+                       href="{% url 'Password Box:view' pk=password_box.uuid %}">
                         {% trans "表示" %}
                     </a>
                 </p>
