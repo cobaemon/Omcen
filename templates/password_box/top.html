@@ -30,15 +30,15 @@
                 {% for password_box in object_list %}
                 <p>
                     {{ password_box.box_name }}
-                    <a class="primaryAction btn btn-danger float-end" role="button"
+                    <a class="primaryAction btn btn-danger float-end btn-sm" role="button"
                        href="{% url 'Password Box:delete' pk=password_box.uuid %}">
                         {% trans "削除" %}
                     </a>
-                    <a class="primaryAction btn btn-info float-end me-2" role="button"
+                    <a class="primaryAction btn btn-info float-end me-2 btn-sm" role="button"
                        href="#">
                         {% trans "編集" %}
                     </a>
-                    <a class="primaryAction btn btn-primary float-end me-2" role="button"
+                    <a class="primaryAction btn btn-primary float-end me-2 btn-sm" role="button"
                        href="{% url 'Password Box:view' pk=password_box.uuid %}">
                         {% trans "表示" %}
                     </a>
