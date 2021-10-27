@@ -18,10 +18,13 @@
                 </div>
             </div>
             <div class="card-body">
-                <a class="primaryAction btn btn-primary float-end" role="button"
-                   href="{% url 'Password Box:create' %}">
-                    {% trans "新規作成" %}
-                </a>
+                <p>
+                    ボックス名
+                    <a class="primaryAction btn btn-primary float-end" role="button"
+                       href="{% url 'Password Box:create' %}">
+                        {% trans "新規作成" %}
+                    </a>
+                </p>
             </div>
             <div class="card-footer">
                 {% for password_box in object_list %}
