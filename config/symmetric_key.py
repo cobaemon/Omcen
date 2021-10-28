@@ -40,7 +40,7 @@ class Aes:
                 type(nonce) != memoryview):
             return None, ValueError
         elif cipher_data == b'':
-            return '', None
+            return b'', None
 
         try:
             aes = AES.new(self.key, AES.MODE_EAX, nonce)

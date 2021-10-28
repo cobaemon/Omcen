@@ -35,7 +35,7 @@
                         {% trans "削除" %}
                     </a>
                     <a class="primaryAction btn btn-info float-end me-2 btn-sm" role="button"
-                       href="#">
+                       href="{% url 'Password Box:update' pk=password_box.uuid %}">
                         {% trans "編集" %}
                     </a>
                     <a class="primaryAction btn btn-primary float-end me-2 btn-sm" role="button"

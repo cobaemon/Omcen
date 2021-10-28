@@ -340,7 +340,7 @@ class ServiceUnsubscribe(LoginRequiredMixin, UpdateView):
         return context
 
     def get_success_url(self):
-        messages.success(self.request, _('登録が完了しました。'), extra_tags='success')
+        messages.success(self.request, _('登録解除が完了しました。'), extra_tags='success')
 
         return super().get_success_url()
 
