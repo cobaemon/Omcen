@@ -121,7 +121,7 @@ class PasswordBoxTag(models.Model):
         primary_key=True,
         editable=False
     )
-    password_box = models.ForeignKey(
+    password_box = models.OneToOneField(
         PasswordBox,
         on_delete=models.CASCADE
     )
@@ -168,7 +168,7 @@ class PasswordBoxNonce(models.Model):
         primary_key=True,
         editable=False
     )
-    password_box = models.ForeignKey(
+    password_box = models.OneToOneField(
         PasswordBox,
         on_delete=models.CASCADE
     )
