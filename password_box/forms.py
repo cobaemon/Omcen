@@ -23,9 +23,19 @@ class BoxCreateForm(forms.ModelForm):
         validators=[box_name_validator],
         required=True,
     )
-    user_name = forms.CharField(max_length=128)
-    password = forms.CharField(max_length=1024, widget=forms.PasswordInput())
-    email = forms.CharField(max_length=256)
+    user_name = forms.CharField(
+        max_length=128,
+        required=False
+    )
+    password = forms.CharField(
+        max_length=1024,
+        required=False,
+        widget=forms.PasswordInput()
+    )
+    email = forms.CharField(
+        max_length=256,
+        required=False
+    )
 
 
 # ボックス削除フォーム
