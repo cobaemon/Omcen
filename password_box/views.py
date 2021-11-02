@@ -79,13 +79,15 @@ class BoxCreate(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.password_box_user = get_object_or_404(
             PasswordBoxUser,
-            omcen_user=self.request.user
+            omcen_user=self.request.user,
+            is_active=True
         )
         form.instance.box_name = form.cleaned_data['box_name']
 
         cipher_aes_generate_key = get_object_or_404(
             PasswordBoxUser,
-            omcen_user=self.request.user
+            omcen_user=self.request.user,
+            is_active=True
         ).aes_generation_key
         rsa = Rsa(
             secret_code_path=Path(KEYS_DIR, 'secret_code.bin'),
@@ -175,7 +177,8 @@ class BoxView(LoginRequiredMixin, TemplateView):
 
         cipher_aes_generate_key = get_object_or_404(
             PasswordBoxUser,
-            omcen_user=self.request.user
+            omcen_user=self.request.user,
+            is_active=True
         ).aes_generation_key
         rsa = Rsa(
             secret_code_path=Path(KEYS_DIR, 'secret_code.bin'),
@@ -321,13 +324,15 @@ class BoxUpdate(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         form.instance.password_box_user = get_object_or_404(
             PasswordBoxUser,
-            omcen_user=self.request.user
+            omcen_user=self.request.user,
+            is_active=True
         )
         form.instance.box_name = form.cleaned_data['box_name']
 
         cipher_aes_generate_key = get_object_or_404(
             PasswordBoxUser,
-            omcen_user=self.request.user
+            omcen_user=self.request.user,
+            is_active=True
         ).aes_generation_key
         rsa = Rsa(
             secret_code_path=Path(KEYS_DIR, 'secret_code.bin'),
@@ -363,7 +368,8 @@ class BoxUpdate(LoginRequiredMixin, UpdateView):
 
         cipher_aes_generate_key = get_object_or_404(
             PasswordBoxUser,
-            omcen_user=self.request.user
+            omcen_user=self.request.user,
+            is_active=True
         ).aes_generation_key
         rsa = Rsa(
             secret_code_path=Path(KEYS_DIR, 'secret_code.bin'),

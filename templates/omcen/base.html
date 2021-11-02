@@ -39,7 +39,9 @@
                         {% trans "サービス" %}
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end col-xl-1" aria-labelledby="navbarDropdown1">
-                        <li><a class="dropdown-item" href="#">{% trans "パスワード管理" %}</a></li>
+                        <li><a class="dropdown-item" href="{% url 'Password Box:top' %}">
+                            {% trans "パスワード管理" %}
+                        </a></li>
                         <li><a class="dropdown-item text-truncate" href="#">ああああああああああああああああああああああああああああああああ</a></li>
                         <li>
                             <hr class="dropdown-divider">

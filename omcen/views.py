@@ -11,6 +11,7 @@ from django.views.generic import ListView, CreateView, UpdateView, TemplateView
 from omcen.forms import SearchService, CreateServiceForm, ServiceSubscribeForm, ServiceUnsubscribeForm, CreatePlanForm, \
     UpdatePlanForm, DeletePlanForm, OmcenUserDeactivateForm, ChangeProfileForm
 from omcen.models import Service, Plan, ServiceGroup, ServiceInUse, OmcenUser
+from password_box.models import PasswordBoxUser, PasswordBox
 
 
 # サービスの有効・無効切り替え
@@ -278,6 +279,13 @@ class ServiceSubscribe(LoginRequiredMixin, CreateView):
             before_service_in_use.is_active = False
             before_service_in_use.save()
 
+        if get_object_or_404(ServiceGroup,
+                             uuid=self.request.resolver_match.kwargs['pk']).service.service_name == 'Password Box':
+            PasswordBoxUser.objects.create(
+                omcen_user=self.request.user,
+
+            )
+
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
@@ -325,6 +333,17 @@ class ServiceUnsubscribe(LoginRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         form.instance.is_active = False
+
+        if get_object_or_404(ServiceInUse,
+                             uuid=self.request.resolver_match.kwargs['pk'],
+                             is_active=True).omcen_service.service.service_name == 'Password Box':
+            PasswordBoxUser.objects.values().filter(
+                omcen_user__username=self.request.user,
+                is_active=True
+            ).update(is_active=False)
+            PasswordBox.objects.filter(
+                password_box_user__omcen_user__username=self.request.user,
+            ).delete()
 
         return super().form_valid(form)
 
