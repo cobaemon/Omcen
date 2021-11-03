@@ -38,7 +38,7 @@ class Top(LoginRequiredMixin, ListView):
         ).exists():
             messages.warning(self.request, _('パスワードボックスサービスを登録していません'), extra_tags='warning')
 
-            return redirect(to=reverse('omcen:service_list'))
+            return redirect(to=reverse('omcen:plan_selection', kwargs={'service_name': 'Password Box'}))
 
         return super().dispatch(self.request, *args, **kwargs)
 
