@@ -8,11 +8,20 @@ Created on 2021/10/26 14:58:02
 from django import forms
 from django.contrib.auth.validators import UnicodeUsernameValidator
 
+from password_box import password_generate
 from password_box.models import PasswordBox
 
 
 # ボックス新規作成フォーム
 class BoxCreateForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        if 'password_type' in kwargs:
+            self.base_fields['password'].initial = password_generate._generate(
+                n=kwargs.pop('password_num'),
+                password_type=kwargs.pop('password_type'))
+
+        super(BoxCreateForm, self).__init__(*args, **kwargs)
+
     class Meta:
         model = PasswordBox
         fields = []
@@ -47,6 +56,14 @@ class BoxDeleteForm(forms.ModelForm):
 
 # ボックス編集フォーム
 class BoxUpdateForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        self.base_fields['box_name'].initial = kwargs.pop('box_name')
+        self.base_fields['user_name'].initial = kwargs.pop('user_name')
+        self.base_fields['password'].initial = kwargs.pop('password')
+        self.base_fields['email'].initial = kwargs.pop('email')
+
+        super(BoxUpdateForm, self).__init__(*args, **kwargs)
+
     class Meta:
         model = PasswordBox
         fields = []
@@ -69,4 +86,22 @@ class BoxUpdateForm(forms.ModelForm):
     email = forms.CharField(
         max_length=256,
         required=False
+    )
+
+
+# パスワード生成
+class PasswordGenerateForm(forms.Form):
+    password_type = forms.fields.ChoiceField(
+        choices=(
+            ('1', '数字のみ'),
+            ('2', '英数字'),
+            ('3', '英数字・記号')
+        ),
+        required=True
+    )
+    password_num = forms.IntegerField(
+        max_value=1024,
+        min_value=1,
+        required=True,
+        initial=16
     )
