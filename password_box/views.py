@@ -6,14 +6,14 @@ from django.db import IntegrityError
 from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import ListView, CreateView, TemplateView, DeleteView, UpdateView
+from django.views.generic import ListView, CreateView, TemplateView, DeleteView, UpdateView, FormView
 
 from config.exception import DataCorruptedError
 from config.public_key import Rsa
 from config.settings import KEYS_DIR
 from config.symmetric_key import Aes
 from omcen.models import ServiceInUse
-from password_box.forms import BoxCreateForm, BoxDeleteForm, BoxUpdateForm
+from password_box.forms import BoxCreateForm, BoxDeleteForm, BoxUpdateForm, PasswordGenerateForm
 from password_box.models import PasswordBox, PasswordBoxUser, PasswordBoxTag, PasswordBoxNonce
 
 
@@ -38,7 +38,7 @@ class Top(LoginRequiredMixin, ListView):
         ).exists():
             messages.warning(self.request, _('パスワードボックスサービスを登録していません'), extra_tags='warning')
 
-            return redirect(to=reverse('omcen:service_list'))
+            return redirect(to=reverse('omcen:plan_selection', kwargs={'service_name': 'Password Box'}))
 
         return super().dispatch(self.request, *args, **kwargs)
 
@@ -50,6 +50,36 @@ class Top(LoginRequiredMixin, ListView):
         )
 
         return query_set.order_by('box_name')
+
+
+# パスワード生成
+class PasswordGenerate(LoginRequiredMixin, FormView):
+    template_name = 'password_box/password_generate.html'
+    form_class = PasswordGenerateForm
+
+    def dispatch(self, *args, **kwargs):
+        if not self.request.user.is_authenticated:
+            messages.warning(self.request, _('ログインしてください'), extra_tags='warning')
+
+            return self.handle_no_permission()
+
+        if not ServiceInUse.objects.filter(
+                omcen_user__username=self.request.user,
+                omcen_service__service__service_name__icontains='Password Box',
+                is_active=True
+        ).exists():
+            messages.warning(self.request, _('パスワードボックスサービスを登録していません'), extra_tags='warning')
+
+            return redirect(to=reverse('omcen:plan_selection', kwargs={'service_name': 'Password Box'}))
+
+        return super().dispatch(self.request, *args, **kwargs)
+
+    def get_success_url(self):
+        self.success_url = reverse_lazy('Password Box:create',
+                                        kwargs={'password_type': self.request.POST['password_type'],
+                                                'password_num': self.request.POST['password_num']})
+
+        return super().get_success_url()
 
 
 # 新規作成
@@ -76,16 +106,26 @@ class BoxCreate(LoginRequiredMixin, CreateView):
 
         return super().dispatch(self.request, *args, **kwargs)
 
+    def get_form_kwargs(self):
+        kwargs = super(BoxCreate, self).get_form_kwargs()
+        if 'password_type' in self.request.resolver_match.kwargs:
+            kwargs['password_type'] = self.request.resolver_match.kwargs['password_type']
+            kwargs['password_num'] = self.request.resolver_match.kwargs['password_num']
+
+        return kwargs
+
     def form_valid(self, form):
         form.instance.password_box_user = get_object_or_404(
             PasswordBoxUser,
-            omcen_user=self.request.user
+            omcen_user=self.request.user,
+            is_active=True
         )
         form.instance.box_name = form.cleaned_data['box_name']
 
         cipher_aes_generate_key = get_object_or_404(
             PasswordBoxUser,
-            omcen_user=self.request.user
+            omcen_user=self.request.user,
+            is_active=True
         ).aes_generation_key
         rsa = Rsa(
             secret_code_path=Path(KEYS_DIR, 'secret_code.bin'),
@@ -175,7 +215,8 @@ class BoxView(LoginRequiredMixin, TemplateView):
 
         cipher_aes_generate_key = get_object_or_404(
             PasswordBoxUser,
-            omcen_user=self.request.user
+            omcen_user=self.request.user,
+            is_active=True
         ).aes_generation_key
         rsa = Rsa(
             secret_code_path=Path(KEYS_DIR, 'secret_code.bin'),
@@ -318,52 +359,17 @@ class BoxUpdate(LoginRequiredMixin, UpdateView):
 
         return super().dispatch(self.request, *args, **kwargs)
 
-    def form_valid(self, form):
-        form.instance.password_box_user = get_object_or_404(
-            PasswordBoxUser,
-            omcen_user=self.request.user
-        )
-        form.instance.box_name = form.cleaned_data['box_name']
+    def get_form_kwargs(self):
+        kwargs = super(BoxUpdate, self).get_form_kwargs()
 
-        cipher_aes_generate_key = get_object_or_404(
-            PasswordBoxUser,
-            omcen_user=self.request.user
-        ).aes_generation_key
-        rsa = Rsa(
-            secret_code_path=Path(KEYS_DIR, 'secret_code.bin'),
-            rsa_key_path=Path(KEYS_DIR, 'rsa_key.pem')
-        )
-        private_key = rsa._private_key()
-        aes = Aes(
-            key=rsa.decryption(cipher_aes_generate_key, private_key)
-        )
-
-        self.cipher_user_name = aes.encryption(form.cleaned_data['user_name'].encode('utf-8'))
-        self.cipher_password = aes.encryption(form.cleaned_data['password'].encode('utf-8'))
-        self.cipher_email = aes.encryption(form.cleaned_data['email'].encode('utf-8'))
-
-        form.instance.box_name = form.cleaned_data['box_name']
-        form.instance.user_name = self.cipher_user_name[0]
-        form.instance.password = self.cipher_password[0]
-        form.instance.email = self.cipher_email[0]
-
-        try:
-            return super().form_valid(form)
-        except IntegrityError:
-            messages.warning(self.request, _('すでに同じボックス名が存在します'), extra_tags='warning')
-
-            return super().form_invalid(form)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
         password_box = get_object_or_404(
             PasswordBox,
             uuid=self.request.resolver_match.kwargs['pk'],
         )
-
         cipher_aes_generate_key = get_object_or_404(
             PasswordBoxUser,
-            omcen_user=self.request.user
+            omcen_user=self.request.user,
+            is_active=True
         ).aes_generation_key
         rsa = Rsa(
             secret_code_path=Path(KEYS_DIR, 'secret_code.bin'),
@@ -415,15 +421,122 @@ class BoxUpdate(LoginRequiredMixin, UpdateView):
         if email[1] == DataCorruptedError:
             messages.warning(self.request, _('メールアドレスが改ざんされている恐れがあります'), extra_tags='warning')
 
-        context['form'] = BoxUpdateForm(initial={
-            'box_name': password_box.box_name,
-            'user_name': user_name[0].decode('utf-8'),
-            'password': password[0].decode('utf-8'),
-            'email': email[0].decode('utf-8')
-        })
-        context['box_name'] = password_box.box_name
+        kwargs['box_name'] = password_box.box_name
+        kwargs['user_name'] = user_name[0].decode('utf-8')
+        kwargs['password'] = password[0].decode('utf-8')
+        kwargs['email'] = email[0].decode('utf-8')
 
-        return context
+        return kwargs
+
+    def form_valid(self, form):
+        form.instance.password_box_user = get_object_or_404(
+            PasswordBoxUser,
+            omcen_user=self.request.user,
+            is_active=True
+        )
+        form.instance.box_name = form.cleaned_data['box_name']
+
+        cipher_aes_generate_key = get_object_or_404(
+            PasswordBoxUser,
+            omcen_user=self.request.user,
+            is_active=True
+        ).aes_generation_key
+        rsa = Rsa(
+            secret_code_path=Path(KEYS_DIR, 'secret_code.bin'),
+            rsa_key_path=Path(KEYS_DIR, 'rsa_key.pem')
+        )
+        private_key = rsa._private_key()
+        aes = Aes(
+            key=rsa.decryption(cipher_aes_generate_key, private_key)
+        )
+
+        self.cipher_user_name = aes.encryption(form.cleaned_data['user_name'].encode('utf-8'))
+        self.cipher_password = aes.encryption(form.cleaned_data['password'].encode('utf-8'))
+        self.cipher_email = aes.encryption(form.cleaned_data['email'].encode('utf-8'))
+
+        form.instance.box_name = form.cleaned_data['box_name']
+        form.instance.user_name = self.cipher_user_name[0]
+        form.instance.password = self.cipher_password[0]
+        form.instance.email = self.cipher_email[0]
+
+        try:
+            return super().form_valid(form)
+        except IntegrityError:
+            messages.warning(self.request, _('すでに同じボックス名が存在します'), extra_tags='warning')
+
+            return super().form_invalid(form)
+
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     password_box = get_object_or_404(
+    #         PasswordBox,
+    #         uuid=self.request.resolver_match.kwargs['pk'],
+    #     )
+    #
+    #     cipher_aes_generate_key = get_object_or_404(
+    #         PasswordBoxUser,
+    #         omcen_user=self.request.user,
+    #         is_active=True
+    #     ).aes_generation_key
+    #     rsa = Rsa(
+    #         secret_code_path=Path(KEYS_DIR, 'secret_code.bin'),
+    #         rsa_key_path=Path(KEYS_DIR, 'rsa_key.pem')
+    #     )
+    #     private_key = rsa._private_key()
+    #     aes = Aes(
+    #         key=rsa.decryption(cipher_aes_generate_key, private_key)
+    #     )
+    #
+    #     password_box_tag = get_object_or_404(
+    #         PasswordBoxTag,
+    #         password_box=password_box
+    #     )
+    #     password_box_nonce = get_object_or_404(
+    #         PasswordBoxNonce,
+    #         password_box=password_box
+    #     )
+    #
+    #     user_name = aes.decryption(
+    #         cipher_data=password_box.user_name,
+    #         tag=password_box_tag.user_name_tag,
+    #         nonce=password_box_nonce.user_name_nonce
+    #     )
+    #     password = aes.decryption(
+    #         cipher_data=password_box.password,
+    #         tag=password_box_tag.password_tag,
+    #         nonce=password_box_nonce.password_nonce
+    #     )
+    #     email = aes.decryption(
+    #         cipher_data=password_box.email,
+    #         tag=password_box_tag.email_tag,
+    #         nonce=password_box_nonce.email_nonce
+    #     )
+    #
+    #     if user_name[1] != ValueError or password[1] != ValueError or email[1] != ValueError:
+    #         messages.success(self.request, _('読み込みに成功しました'), extra_tags='success')
+    #     if user_name[1] == ValueError:
+    #         messages.error(self.request, _('ユーザー名の読み込みに失敗しました'), extra_tags='error')
+    #     if password[1] == ValueError:
+    #         messages.error(self.request, _('パスワードの読み込みに失敗しました'), extra_tags='error')
+    #     if email[1] == ValueError:
+    #         messages.error(self.request, _('メールアドレスの読み込みに失敗しました'), extra_tags='error')
+    #
+    #     if user_name[1] == DataCorruptedError:
+    #         messages.warning(self.request, _('ユーザー名が改ざんされている恐れがあります'), extra_tags='warning')
+    #     if password[1] == DataCorruptedError:
+    #         messages.warning(self.request, _('パスワードが改ざんされている恐れがあります'), extra_tags='warning')
+    #     if email[1] == DataCorruptedError:
+    #         messages.warning(self.request, _('メールアドレスが改ざんされている恐れがあります'), extra_tags='warning')
+    #
+    #     context['form'] = BoxUpdateForm(initial={
+    #         'box_name': password_box.box_name,
+    #         'user_name': user_name[0].decode('utf-8'),
+    #         'password': password[0].decode('utf-8'),
+    #         'email': email[0].decode('utf-8')
+    #     })
+    #     context['box_name'] = password_box.box_name
+    #
+    #     return context
 
     def success_done(self):
         try:

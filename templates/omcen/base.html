@@ -39,12 +39,17 @@
                         {% trans "サービス" %}
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end col-xl-1" aria-labelledby="navbarDropdown1">
-                        <li><a class="dropdown-item" href="#">{% trans "パスワード管理" %}</a></li>
+                        <li><a class="dropdown-item" href="{% url 'Password Box:top' %}">
+                            {% trans "パスワード管理" %}
+                        </a></li>
                         <li><a class="dropdown-item text-truncate" href="#">ああああああああああああああああああああああああああああああああ</a></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
                         <li><a class="dropdown-item" href="{% url 'omcen:service_list' %}">{% trans "サービス一覧" %}</a></li>
+                        <li><a class="dropdown-item" href="{% url 'omcen:service_in_use_list' %}">
+                            {% trans "登録中のサービス一覧" %}
+                        </a></li>
                     </ul>
                 </li>
 

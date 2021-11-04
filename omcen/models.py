@@ -109,7 +109,10 @@ class OmcenUser(AbstractBaseUser, PermissionsMixin):
     )
     email = models.EmailField(
         _('email address'),
-        unique=True
+        unique=True,
+        error_messages={
+            'unique': _("A user with that email already exists."),
+        },
     )
     is_staff = models.BooleanField(
         _('staff status'),
@@ -201,7 +204,7 @@ class Plan(models.Model):
     class Meta:
         verbose_name = _('プラン')
         verbose_name_plural = _('プラン')
-     
+
     uuid = models.UUIDField(
         default=uuid_lib.uuid4,
         primary_key=True,
