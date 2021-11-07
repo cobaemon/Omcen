@@ -6,14 +6,15 @@ from django.db import IntegrityError
 from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import ListView, CreateView, TemplateView, DeleteView, UpdateView, FormView
+from django.views.generic import ListView, CreateView, TemplateView, DeleteView, UpdateView
 
 from config.exception import DataCorruptedError
 from config.public_key import Rsa
 from config.settings import KEYS_DIR
 from config.symmetric_key import Aes
 from omcen.models import ServiceInUse
-from password_box.forms import BoxCreateForm, BoxDeleteForm, BoxUpdateForm, PasswordGenerateForm
+from password_box import password_generate as pg
+from password_box.forms import BoxCreateForm, BoxDeleteForm, BoxUpdateForm
 from password_box.models import PasswordBox, PasswordBoxUser, PasswordBoxTag, PasswordBoxNonce
 
 
@@ -50,36 +51,6 @@ class Top(LoginRequiredMixin, ListView):
         )
 
         return query_set.order_by('box_name')
-
-
-# パスワード生成
-class PasswordGenerate(LoginRequiredMixin, FormView):
-    template_name = 'password_box/password_generate.html'
-    form_class = PasswordGenerateForm
-
-    def dispatch(self, *args, **kwargs):
-        if not self.request.user.is_authenticated:
-            messages.warning(self.request, _('ログインしてください'), extra_tags='warning')
-
-            return self.handle_no_permission()
-
-        if not ServiceInUse.objects.filter(
-                omcen_user__username=self.request.user,
-                omcen_service__service__service_name__icontains='Password Box',
-                is_active=True
-        ).exists():
-            messages.warning(self.request, _('パスワードボックスサービスを登録していません'), extra_tags='warning')
-
-            return redirect(to=reverse('omcen:plan_selection', kwargs={'service_name': 'Password Box'}))
-
-        return super().dispatch(self.request, *args, **kwargs)
-
-    def get_success_url(self):
-        self.success_url = reverse_lazy('Password Box:create',
-                                        kwargs={'password_type': self.request.POST['password_type'],
-                                                'password_num': self.request.POST['password_num']})
-
-        return super().get_success_url()
 
 
 # 新規作成
@@ -136,8 +107,15 @@ class BoxCreate(LoginRequiredMixin, CreateView):
             key=rsa.decryption(cipher_aes_generate_key, private_key)
         )
 
+        if form.cleaned_data['password_generate_flg']:
+            self.cipher_password = aes.encryption(pg._generate(
+                password_type=form.cleaned_data['password_type'],
+                n=form.cleaned_data['password_num']
+            ).encode('utf-8'))
+        else:
+            self.cipher_password = aes.encryption(form.cleaned_data['password'].encode('utf-8'))
+
         self.cipher_user_name = aes.encryption(form.cleaned_data['user_name'].encode('utf-8'))
-        self.cipher_password = aes.encryption(form.cleaned_data['password'].encode('utf-8'))
         self.cipher_email = aes.encryption(form.cleaned_data['email'].encode('utf-8'))
 
         form.instance.user_name = self.cipher_user_name[0]

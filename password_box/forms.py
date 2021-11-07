@@ -7,6 +7,7 @@ Created on 2021/10/26 14:58:02
 
 from django import forms
 from django.contrib.auth.validators import UnicodeUsernameValidator
+from django.utils.translation import gettext_lazy as _
 
 from password_box import password_generate
 from password_box.models import PasswordBox
@@ -40,6 +41,25 @@ class BoxCreateForm(forms.ModelForm):
         max_length=1024,
         required=False,
         widget=forms.PasswordInput()
+    )
+    password_generate_flg = forms.BooleanField(
+        label=_('パスワード生成'),
+        initial=False,
+        required=False
+    )
+    password_type = forms.fields.ChoiceField(
+        choices=(
+            ('1', '数字のみ'),
+            ('2', '英数字'),
+            ('3', '英数字・記号')
+        ),
+        required=True
+    )
+    password_num = forms.IntegerField(
+        max_value=1024,
+        min_value=1,
+        required=True,
+        initial=16
     )
     email = forms.CharField(
         max_length=256,
