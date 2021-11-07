@@ -10,3 +10,4 @@ social-auth-core==3.3.3
 django-widget-tweaks
 django-debug-toolbar
 coverage
+factory_boy

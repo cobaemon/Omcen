@@ -5,11 +5,12 @@ from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import DeleteView
-from django.views.generic import ListView, CreateView, UpdateView, TemplateView
-
 from omcen.forms import SearchService, CreateServiceForm, ServiceSubscribeForm, ServiceUnsubscribeForm, CreatePlanForm, \
     UpdatePlanForm, DeletePlanForm, OmcenUserDeactivateForm, ChangeProfileForm
+
+from django.views.generic import ListView, CreateView, UpdateView, TemplateView, DeleteView
+
+
 from omcen.models import Service, Plan, ServiceGroup, ServiceInUse, OmcenUser
 from password_box.models import PasswordBoxUser, PasswordBox
 
@@ -20,8 +21,10 @@ def switching_enabled(request, service_id, plan_id, flag):
     service_group = get_object_or_404(ServiceGroup, service_id=service_id, plan_id=plan_id)
     if flag == 'enabled':
         service_group.is_active = True
+        messages.success(request, 'サービスを有効にしました。')
     elif flag == 'disabled':
         service_group.is_active = False
+        messages.success(request, 'サービスを無効にしました。')
     else:
         messages.error(request, 'サービスの有効・無効切り替えに失敗しました。')
         return redirect(reverse_lazy('omcen:service_detail', args=[service_id]))
