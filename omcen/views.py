@@ -5,12 +5,10 @@ from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
 from django.utils.translation import gettext_lazy as _
-from omcen.forms import SearchService, CreateServiceForm, ServiceSubscribeForm, ServiceUnsubscribeForm, CreatePlanForm, \
-    UpdatePlanForm, DeletePlanForm, OmcenUserDeactivateForm, ChangeProfileForm
-
 from django.views.generic import ListView, CreateView, UpdateView, TemplateView, DeleteView
 
-
+from omcen.forms import SearchService, CreateServiceForm, ServiceSubscribeForm, ServiceUnsubscribeForm, CreatePlanForm, \
+    UpdatePlanForm, DeletePlanForm, OmcenUserDeactivateForm, ChangeProfileForm
 from omcen.models import Service, Plan, ServiceGroup, ServiceInUse, OmcenUser
 from password_box.models import PasswordBoxUser, PasswordBox
 
