@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'social_django',
     'omcen',
     'password_box',
+    'file_encryption',
 ]
 
 MIDDLEWARE = [
