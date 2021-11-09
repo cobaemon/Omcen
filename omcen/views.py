@@ -7,6 +7,7 @@ from django.urls import reverse_lazy, reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import ListView, CreateView, UpdateView, TemplateView, DeleteView
 
+from file_encryption.models import FileEncryptionUser
 from omcen.forms import SearchService, CreateServiceForm, ServiceSubscribeForm, ServiceUnsubscribeForm, CreatePlanForm, \
     UpdatePlanForm, DeletePlanForm, OmcenUserDeactivateForm, ChangeProfileForm
 from omcen.models import Service, Plan, ServiceGroup, ServiceInUse, OmcenUser
@@ -285,6 +286,11 @@ class ServiceSubscribe(LoginRequiredMixin, CreateView):
             PasswordBoxUser.objects.create(
                 omcen_user=self.request.user,
 
+            )
+        elif get_object_or_404(ServiceGroup,
+                               uuid=self.request.resolver_match.kwargs['pk']).service.service_name == 'File Encryption':
+            FileEncryptionUser.objects.create(
+                omcen_user=self.request.user,
             )
 
         return super().form_valid(form)
