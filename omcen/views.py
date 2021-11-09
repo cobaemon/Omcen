@@ -20,15 +20,19 @@ def switching_enabled(request, service_id, plan_id, flag):
     service_group = get_object_or_404(ServiceGroup, service_id=service_id, plan_id=plan_id)
     if flag == 'enabled':
         service_group.is_active = True
+        service_group.plan.is_active = True
         messages.success(request, 'サービスを有効にしました。')
     elif flag == 'disabled':
         service_group.is_active = False
+        service_group.plan.is_active = False
         messages.success(request, 'サービスを無効にしました。')
     else:
         messages.error(request, 'サービスの有効・無効切り替えに失敗しました。')
         return redirect(reverse_lazy('omcen:service_detail', args=[service_id]))
 
-    service_group.save()
+    with transaction.atomic():
+        service_group.save()
+        service_group.plan.save()
 
     return redirect(reverse_lazy('omcen:service_detail', args=[service_id]))
 
