@@ -23,11 +23,11 @@
                 <p>{% trans "姓" %}: {{ omcen_user.last_name }}</p>
                 <p>{% trans "メールアドレス" %}: {{ omcen_user.email }}</p>
                 <p>{% trans "パスワード" %}: **********</p>
-                <a class="primaryAction btn btn-warning float-end" role="button"
+                <a class="btn btn-warning float-end" role="button"
                    href="{% url 'account_change_password' %}">
                     {% trans "パスワードの変更" %}
                 </a>
-                <a class="primaryAction btn btn-info float-end me-3" role="button"
+                <a class="btn btn-info float-end me-3" role="button"
                    href="{% url 'omcen:change_profile' pk=user.uuid %}">
                     {% trans "プロフィールの編集" %}
                 </a>
