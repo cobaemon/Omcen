@@ -9,20 +9,11 @@ from django import forms
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.utils.translation import gettext_lazy as _
 
-from password_box import password_generate
 from password_box.models import PasswordBox
 
 
 # ボックス新規作成フォーム
 class BoxCreateForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        if 'password_type' in kwargs:
-            self.base_fields['password'].initial = password_generate._generate(
-                n=kwargs.pop('password_num'),
-                password_type=kwargs.pop('password_type'))
-
-        super(BoxCreateForm, self).__init__(*args, **kwargs)
-
     class Meta:
         model = PasswordBox
         fields = []

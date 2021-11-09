@@ -77,14 +77,6 @@ class BoxCreate(LoginRequiredMixin, CreateView):
 
         return super().dispatch(self.request, *args, **kwargs)
 
-    def get_form_kwargs(self):
-        kwargs = super(BoxCreate, self).get_form_kwargs()
-        if 'password_type' in self.request.resolver_match.kwargs:
-            kwargs['password_type'] = self.request.resolver_match.kwargs['password_type']
-            kwargs['password_num'] = self.request.resolver_match.kwargs['password_num']
-
-        return kwargs
-
     def form_valid(self, form):
         form.instance.password_box_user = get_object_or_404(
             PasswordBoxUser,
