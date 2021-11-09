@@ -66,11 +66,27 @@ class BoxDeleteForm(forms.ModelForm):
 
 
 # ボックス編集フォーム
+class BoxPasswordUpdateForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        self.base_fields['password'].initial = kwargs.pop('password')
+
+        super(BoxPasswordUpdateForm, self).__init__(*args, **kwargs)
+
+    class Meta:
+        model = PasswordBox
+        fields = []
+
+    password = forms.CharField(
+        max_length=1024,
+        widget=forms.PasswordInput(),
+        required=True,
+    )
+
+
 class BoxUpdateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.base_fields['box_name'].initial = kwargs.pop('box_name')
         self.base_fields['user_name'].initial = kwargs.pop('user_name')
-        self.base_fields['password'].initial = kwargs.pop('password')
         self.base_fields['email'].initial = kwargs.pop('email')
 
         super(BoxUpdateForm, self).__init__(*args, **kwargs)
@@ -89,30 +105,7 @@ class BoxUpdateForm(forms.ModelForm):
         max_length=128,
         required=False
     )
-    password = forms.CharField(
-        max_length=1024,
-        widget=forms.PasswordInput(),
-        required=False
-    )
     email = forms.CharField(
         max_length=256,
         required=False
-    )
-
-
-# パスワード生成
-class PasswordGenerateForm(forms.Form):
-    password_type = forms.fields.ChoiceField(
-        choices=(
-            ('1', '数字のみ'),
-            ('2', '英数字'),
-            ('3', '英数字・記号')
-        ),
-        required=True
-    )
-    password_num = forms.IntegerField(
-        max_value=1024,
-        min_value=1,
-        required=True,
-        initial=16
     )

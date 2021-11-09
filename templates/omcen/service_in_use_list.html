@@ -24,7 +24,7 @@
                    href="{% url 'omcen:service_unsubscribe' pk=service_in_use.uuid %}">
                     {% trans "登録解除" %}
                 </a>
-                <a class="primaryAction btn btn-primary float-end me-2" role="button"
+                <a class="primaryAction btn btn-primary float-end me-3" role="button"
                    href="{% url 'omcen:plan_selection' service_name=service_in_use.omcen_service.service.service_name %}">
                     {% trans "プラン変更" %}
                 </a>

@@ -14,7 +14,7 @@ from config.settings import KEYS_DIR
 from config.symmetric_key import Aes
 from omcen.models import ServiceInUse
 from password_box import password_generate as pg
-from password_box.forms import BoxCreateForm, BoxDeleteForm, BoxUpdateForm
+from password_box.forms import BoxCreateForm, BoxDeleteForm, BoxUpdateForm, BoxPasswordUpdateForm
 from password_box.models import PasswordBox, PasswordBoxUser, PasswordBoxTag, PasswordBoxNonce
 
 
@@ -298,6 +298,146 @@ class BoxDelete(LoginRequiredMixin, DeleteView):
 
 
 # 編集
+class BoxPasswordUpdate(LoginRequiredMixin, UpdateView):
+    template_name = 'password_box/box_password_update.html'
+    model = PasswordBox
+    form_class = BoxPasswordUpdateForm
+
+    def dispatch(self, *args, **kwargs):
+        if not self.request.user.is_authenticated:
+            messages.warning(self.request, _('ログインしてください'), extra_tags='warning')
+
+            return self.handle_no_permission()
+
+        if not ServiceInUse.objects.filter(
+                omcen_user__username=self.request.user,
+                omcen_service__service__service_name__icontains='Password Box',
+                is_active=True
+        ).exists():
+            messages.warning(self.request, _('あなたはパスワードボックスサービスを登録していません'), extra_tags='warning')
+
+            return redirect(to=reverse('omcen:service_list'))
+
+        password_box = get_object_or_404(
+            PasswordBox,
+            uuid=self.request.resolver_match.kwargs['pk'],
+        )
+        if password_box.password_box_user.omcen_user.username != str(self.request.user):
+            messages.warning(self.request, _('不正な値を受け取りました'), extra_tags='warning')
+
+            return redirect(to=reverse('Password Box:top'))
+
+        return super().dispatch(self.request, *args, **kwargs)
+
+    def get_form_kwargs(self):
+        kwargs = super(BoxPasswordUpdate, self).get_form_kwargs()
+
+        password_box = get_object_or_404(
+            PasswordBox,
+            uuid=self.request.resolver_match.kwargs['pk'],
+        )
+        cipher_aes_generate_key = get_object_or_404(
+            PasswordBoxUser,
+            omcen_user=self.request.user,
+            is_active=True
+        ).aes_generation_key
+        rsa = Rsa(
+            secret_code_path=Path(KEYS_DIR, 'secret_code.bin'),
+            rsa_key_path=Path(KEYS_DIR, 'rsa_key.pem')
+        )
+        private_key = rsa._private_key()
+        aes = Aes(
+            key=rsa.decryption(cipher_aes_generate_key, private_key)
+        )
+
+        password_box_tag = get_object_or_404(
+            PasswordBoxTag,
+            password_box=password_box
+        )
+        password_box_nonce = get_object_or_404(
+            PasswordBoxNonce,
+            password_box=password_box
+        )
+
+        password = aes.decryption(
+            cipher_data=password_box.password,
+            tag=password_box_tag.password_tag,
+            nonce=password_box_nonce.password_nonce
+        )
+
+        if password[1] != ValueError:
+            messages.success(self.request, _('読み込みに成功しました'), extra_tags='success')
+        if password[1] == ValueError:
+            messages.error(self.request, _('パスワードの読み込みに失敗しました'), extra_tags='error')
+
+        if password[1] == DataCorruptedError:
+            messages.warning(self.request, _('パスワードが改ざんされている恐れがあります'), extra_tags='warning')
+
+        kwargs['password'] = password[0].decode('utf-8')
+
+        return kwargs
+
+    def form_valid(self, form):
+        form.instance.password_box_user = get_object_or_404(
+            PasswordBoxUser,
+            omcen_user=self.request.user,
+            is_active=True
+        )
+
+        cipher_aes_generate_key = get_object_or_404(
+            PasswordBoxUser,
+            omcen_user=self.request.user,
+            is_active=True
+        ).aes_generation_key
+        rsa = Rsa(
+            secret_code_path=Path(KEYS_DIR, 'secret_code.bin'),
+            rsa_key_path=Path(KEYS_DIR, 'rsa_key.pem')
+        )
+        private_key = rsa._private_key()
+        aes = Aes(
+            key=rsa.decryption(cipher_aes_generate_key, private_key)
+        )
+
+        self.cipher_password = aes.encryption(form.cleaned_data['password'].encode('utf-8'))
+
+        form.instance.password = self.cipher_password[0]
+
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        password_box = get_object_or_404(
+            PasswordBox,
+            uuid=self.request.resolver_match.kwargs['pk'],
+        )
+        context['box_name'] = password_box.box_name
+
+        return context
+
+    def success_done(self):
+        try:
+            PasswordBoxTag.objects.values().filter(
+                password_box=self.object
+            ).update(
+                password_tag=self.cipher_password[1],
+            )
+            PasswordBoxNonce.objects.values().filter(
+                password_box=self.object
+            ).update(
+                password_nonce=self.cipher_password[2],
+            )
+            messages.success(self.request, _('編集に成功しました'), extra_tags='success')
+        except:
+            self.object.delete()
+            messages.error(self.request, _('編集に失敗しました'), extra_tags='error')
+
+    def get_success_url(self):
+        self.success_url = reverse_lazy('Password Box:top')
+        self.success_done()
+
+        return super().get_success_url()
+
+
 class BoxUpdate(LoginRequiredMixin, UpdateView):
     template_name = 'password_box/box_update.html'
     model = PasswordBox
@@ -364,36 +504,26 @@ class BoxUpdate(LoginRequiredMixin, UpdateView):
             tag=password_box_tag.user_name_tag,
             nonce=password_box_nonce.user_name_nonce
         )
-        password = aes.decryption(
-            cipher_data=password_box.password,
-            tag=password_box_tag.password_tag,
-            nonce=password_box_nonce.password_nonce
-        )
         email = aes.decryption(
             cipher_data=password_box.email,
             tag=password_box_tag.email_tag,
             nonce=password_box_nonce.email_nonce
         )
 
-        if user_name[1] != ValueError or password[1] != ValueError or email[1] != ValueError:
+        if user_name[1] != ValueError or email[1] != ValueError:
             messages.success(self.request, _('読み込みに成功しました'), extra_tags='success')
         if user_name[1] == ValueError:
             messages.error(self.request, _('ユーザー名の読み込みに失敗しました'), extra_tags='error')
-        if password[1] == ValueError:
-            messages.error(self.request, _('パスワードの読み込みに失敗しました'), extra_tags='error')
         if email[1] == ValueError:
             messages.error(self.request, _('メールアドレスの読み込みに失敗しました'), extra_tags='error')
 
         if user_name[1] == DataCorruptedError:
             messages.warning(self.request, _('ユーザー名が改ざんされている恐れがあります'), extra_tags='warning')
-        if password[1] == DataCorruptedError:
-            messages.warning(self.request, _('パスワードが改ざんされている恐れがあります'), extra_tags='warning')
         if email[1] == DataCorruptedError:
             messages.warning(self.request, _('メールアドレスが改ざんされている恐れがあります'), extra_tags='warning')
 
         kwargs['box_name'] = password_box.box_name
         kwargs['user_name'] = user_name[0].decode('utf-8')
-        kwargs['password'] = password[0].decode('utf-8')
         kwargs['email'] = email[0].decode('utf-8')
 
         return kwargs
@@ -421,12 +551,10 @@ class BoxUpdate(LoginRequiredMixin, UpdateView):
         )
 
         self.cipher_user_name = aes.encryption(form.cleaned_data['user_name'].encode('utf-8'))
-        self.cipher_password = aes.encryption(form.cleaned_data['password'].encode('utf-8'))
         self.cipher_email = aes.encryption(form.cleaned_data['email'].encode('utf-8'))
 
         form.instance.box_name = form.cleaned_data['box_name']
         form.instance.user_name = self.cipher_user_name[0]
-        form.instance.password = self.cipher_password[0]
         form.instance.email = self.cipher_email[0]
 
         try:
@@ -436,77 +564,15 @@ class BoxUpdate(LoginRequiredMixin, UpdateView):
 
             return super().form_invalid(form)
 
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     password_box = get_object_or_404(
-    #         PasswordBox,
-    #         uuid=self.request.resolver_match.kwargs['pk'],
-    #     )
-    #
-    #     cipher_aes_generate_key = get_object_or_404(
-    #         PasswordBoxUser,
-    #         omcen_user=self.request.user,
-    #         is_active=True
-    #     ).aes_generation_key
-    #     rsa = Rsa(
-    #         secret_code_path=Path(KEYS_DIR, 'secret_code.bin'),
-    #         rsa_key_path=Path(KEYS_DIR, 'rsa_key.pem')
-    #     )
-    #     private_key = rsa._private_key()
-    #     aes = Aes(
-    #         key=rsa.decryption(cipher_aes_generate_key, private_key)
-    #     )
-    #
-    #     password_box_tag = get_object_or_404(
-    #         PasswordBoxTag,
-    #         password_box=password_box
-    #     )
-    #     password_box_nonce = get_object_or_404(
-    #         PasswordBoxNonce,
-    #         password_box=password_box
-    #     )
-    #
-    #     user_name = aes.decryption(
-    #         cipher_data=password_box.user_name,
-    #         tag=password_box_tag.user_name_tag,
-    #         nonce=password_box_nonce.user_name_nonce
-    #     )
-    #     password = aes.decryption(
-    #         cipher_data=password_box.password,
-    #         tag=password_box_tag.password_tag,
-    #         nonce=password_box_nonce.password_nonce
-    #     )
-    #     email = aes.decryption(
-    #         cipher_data=password_box.email,
-    #         tag=password_box_tag.email_tag,
-    #         nonce=password_box_nonce.email_nonce
-    #     )
-    #
-    #     if user_name[1] != ValueError or password[1] != ValueError or email[1] != ValueError:
-    #         messages.success(self.request, _('読み込みに成功しました'), extra_tags='success')
-    #     if user_name[1] == ValueError:
-    #         messages.error(self.request, _('ユーザー名の読み込みに失敗しました'), extra_tags='error')
-    #     if password[1] == ValueError:
-    #         messages.error(self.request, _('パスワードの読み込みに失敗しました'), extra_tags='error')
-    #     if email[1] == ValueError:
-    #         messages.error(self.request, _('メールアドレスの読み込みに失敗しました'), extra_tags='error')
-    #
-    #     if user_name[1] == DataCorruptedError:
-    #         messages.warning(self.request, _('ユーザー名が改ざんされている恐れがあります'), extra_tags='warning')
-    #     if password[1] == DataCorruptedError:
-    #         messages.warning(self.request, _('パスワードが改ざんされている恐れがあります'), extra_tags='warning')
-    #     if email[1] == DataCorruptedError:
-    #         messages.warning(self.request, _('メールアドレスが改ざんされている恐れがあります'), extra_tags='warning')
-    #
-    #     context['form'] = BoxUpdateForm(initial={
-    #         'box_name': password_box.box_name,
-    #         'user_name': user_name[0].decode('utf-8'),
-    #         'password': password[0].decode('utf-8'),
-    #         'email': email[0].decode('utf-8')
-    #     })
-    #     context['box_name'] = password_box.box_name
-    #
-    #     return context
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        password_box = get_object_or_404(
+            PasswordBox,
+            uuid=self.request.resolver_match.kwargs['pk'],
+        )
+        context['box_name'] = password_box.box_name
+
+        return context
 
     def success_done(self):
         try:
@@ -514,14 +580,12 @@ class BoxUpdate(LoginRequiredMixin, UpdateView):
                 password_box=self.object
             ).update(
                 user_name_tag=self.cipher_user_name[1],
-                password_tag=self.cipher_password[1],
                 email_tag=self.cipher_email[1]
             )
             PasswordBoxNonce.objects.values().filter(
                 password_box=self.object
             ).update(
                 user_name_nonce=self.cipher_user_name[2],
-                password_nonce=self.cipher_password[2],
                 email_nonce=self.cipher_email[2]
             )
             messages.success(self.request, _('編集に成功しました'), extra_tags='success')
