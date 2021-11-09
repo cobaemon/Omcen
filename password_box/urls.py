@@ -16,7 +16,6 @@ urlpatterns = [
 
     # ボックスCRUD
     path('create', BoxCreate.as_view(), name='create'),
-    path('<str:password_type>/<int:password_num>/create', BoxCreate.as_view(), name='create'),
     path('<uuid:pk>/delete', BoxDelete.as_view(), name='delete'),
     path('<uuid:pk>/update', BoxUpdate.as_view(), name='update'),
 ]
