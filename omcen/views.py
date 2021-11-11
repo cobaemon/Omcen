@@ -221,6 +221,11 @@ class PlanSelection(LoginRequiredMixin, ListView):
 
             return self.handle_no_permission()
 
+        if not Service.objects.filter(service_name=self.request.resolver_match.kwargs['service_name']).exists():
+            messages.warning(self.request, _('入力されたサービス名は存在しません'), extra_tags='warning')
+
+            return redirect(to=reverse('omcen:service_list'))
+
         return super().dispatch(self.request, *args, **kwargs)
 
     def get_queryset(self):
