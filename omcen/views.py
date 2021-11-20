@@ -199,9 +199,18 @@ class ServiceList(LoginRequiredMixin, ListView):
 
         services_dict = {}
         for service in services:
-            services_dict.update({
-                service.service_name: f'{service.service_name}:top'
-            })
+            if ServiceInUse.objects.filter(
+                    omcen_user__username=self.request.user,
+                    omcen_service__service__service_name=service.service_name
+            ).exists():
+                services_dict.update({
+                    service.service_name: f'{service.service_name}:top'
+                })
+            else:
+                services_dict.update({
+                    service.service_name: 'omcen:plan_selection'
+                })
+
         context['service_dict'] = services_dict
 
         return context
