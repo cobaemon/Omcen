@@ -7,6 +7,7 @@ from django.urls import reverse_lazy, reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import ListView, CreateView, UpdateView, TemplateView, DeleteView
 
+from file_encryption.models import FileEncryptionUser
 from omcen.forms import SearchService, CreateServiceForm, ServiceSubscribeForm, ServiceUnsubscribeForm, CreatePlanForm, \
     UpdatePlanForm, DeletePlanForm, OmcenUserDeactivateForm, ChangeProfileForm
 from omcen.models import Service, Plan, ServiceGroup, ServiceInUse, OmcenUser
@@ -19,15 +20,19 @@ def switching_enabled(request, service_id, plan_id, flag):
     service_group = get_object_or_404(ServiceGroup, service_id=service_id, plan_id=plan_id)
     if flag == 'enabled':
         service_group.is_active = True
+        service_group.plan.is_active = True
         messages.success(request, 'サービスを有効にしました。')
     elif flag == 'disabled':
         service_group.is_active = False
+        service_group.plan.is_active = False
         messages.success(request, 'サービスを無効にしました。')
     else:
         messages.error(request, 'サービスの有効・無効切り替えに失敗しました。')
         return redirect(reverse_lazy('omcen:service_detail', args=[service_id]))
 
-    service_group.save()
+    with transaction.atomic():
+        service_group.save()
+        service_group.plan.save()
 
     return redirect(reverse_lazy('omcen:service_detail', args=[service_id]))
 
@@ -216,6 +221,11 @@ class PlanSelection(LoginRequiredMixin, ListView):
 
             return self.handle_no_permission()
 
+        if not Service.objects.filter(service_name=self.request.resolver_match.kwargs['service_name']).exists():
+            messages.warning(self.request, _('入力されたサービス名は存在しません'), extra_tags='warning')
+
+            return redirect(to=reverse('omcen:service_list'))
+
         return super().dispatch(self.request, *args, **kwargs)
 
     def get_queryset(self):
@@ -285,6 +295,11 @@ class ServiceSubscribe(LoginRequiredMixin, CreateView):
             PasswordBoxUser.objects.create(
                 omcen_user=self.request.user,
 
+            )
+        elif get_object_or_404(ServiceGroup,
+                               uuid=self.request.resolver_match.kwargs['pk']).service.service_name == 'File Encryption':
+            FileEncryptionUser.objects.create(
+                omcen_user=self.request.user,
             )
 
         return super().form_valid(form)

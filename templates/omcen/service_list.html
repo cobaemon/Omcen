@@ -6,24 +6,25 @@
 {% block head_title %}{% trans "サービス一覧" %}{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col"></div>
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for service_name, service_url in service_dict.items %}
     <div class="col">
         <div class="card">
             <div class="card-header p-3 mb-2 bg-primary text-white">
                 <div class="row">
                     <div class="col">
-                        <h1 class="p-3">{% trans "サービス一覧" %}</h1>
+                        <h1>{{ service_name }}</h1>
                     </div>
                 </div>
             </div>
             <div class="card-body">
-                {% for service_name, service_url in service_dict.items %}
-                <a href="{% url service_url %}">{{ service_name }}</a>
-                {% endfor %}
+                <a class="btn btn-primary float-end" role="button"
+                   href="{% url service_url %}">
+                    {% trans "選択" %}
+                </a>
             </div>
         </div>
     </div>
-    <div class="col"></div>
+    {% endfor %}
 </div>
 {% endblock %}

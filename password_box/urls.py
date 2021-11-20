@@ -6,7 +6,7 @@ Created on 2021/10/25 10:36:56
 """
 from django.urls import path
 
-from password_box.views import Top, BoxCreate, BoxView, BoxDelete, BoxUpdate
+from password_box.views import Top, BoxCreate, BoxView, BoxDelete, BoxUpdate, BoxPasswordUpdate
 
 app_name = 'Password Box'
 
@@ -16,7 +16,7 @@ urlpatterns = [
 
     # ボックスCRUD
     path('create', BoxCreate.as_view(), name='create'),
-    path('<str:password_type>/<int:password_num>/create', BoxCreate.as_view(), name='create'),
     path('<uuid:pk>/delete', BoxDelete.as_view(), name='delete'),
     path('<uuid:pk>/update', BoxUpdate.as_view(), name='update'),
+    path('<uuid:pk>/update password', BoxPasswordUpdate.as_view(), name='update_box_password'),
 ]
