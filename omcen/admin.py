@@ -1,7 +1,8 @@
-from omcen.models import OmcenUser, Service, ServiceGroup, Plan
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
+
+from omcen.models import OmcenUser, Service, ServiceGroup, Plan, ServiceInUse
 
 
 @admin.register(OmcenUser)
@@ -30,3 +31,4 @@ class OmcenUserAdmin(UserAdmin):
 admin.site.register(Service)
 admin.site.register(Plan)
 admin.site.register(ServiceGroup)
+admin.site.register(ServiceInUse)
