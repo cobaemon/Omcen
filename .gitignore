@@ -135,4 +135,3 @@ local_settings.py
 test_settings.py
 migrations
 card_template.html
-keys
