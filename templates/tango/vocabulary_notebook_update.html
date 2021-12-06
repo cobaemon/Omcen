@@ -1,9 +1,10 @@
 {% extends "omcen/base.html" %}
 
+{% load i18n %}
 {% load static %}
-{% block head_title %}単語帳　名前の変更{% endblock %}
+{% block head_title %}{% trans "単語帳　名前の変更" %}{% endblock %}
 
-{% block app_name %}単語帳{% endblock %}
+{% block app_name %}{% trans "単語帳" %}{% endblock %}
 
 {% block content %}
 <div class="row">
@@ -12,20 +13,20 @@
             <div class="card-header p-3 mb-2 bg-primary text-white">
                 <div class="row">
                     <div class="col">
-                        <h1>単語帳　名前の変更</h1>
+                        <h1>{% trans "単語帳　名前の変更" %}</h1>
                     </div>
                 </div>
             </div>
             <div class="card-body">
                 <form method="post">
                     {% csrf_token %}
-                    <p>単語帳名: {{ form.vocabulary_notebook_name }}</p>
+                    <p>{% trans "単語帳名" %}: {{ form.vocabulary_notebook_name }}</p>
                     <a class="btn btn-secondary float-end" role="button"
                        href="{% url 'Tango:top' %}">
-                        キャンセル
+                        {% trans "キャンセル" %}
                     </a>
                     <button class="btn btn-primary float-end me-3" type="submit">
-                        変更
+                        {% trans "変更" %}
                     </button>
                 </form>
             </div>

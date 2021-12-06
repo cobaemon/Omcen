@@ -1,9 +1,10 @@
 {% extends "omcen/base.html" %}
 
+{% load i18n %}
 {% load static %}
 {% block head_title %}{{ tango.tango }}{% endblock %}
 
-{% block app_name %}単語帳{% endblock %}
+{% block app_name %}{% trans "単語帳" %}{% endblock %}
 
 {% block content %}
 <div class="row">
@@ -21,7 +22,7 @@
                 <br>
                 <a class="btn btn-secondary float-end" role="button"
                    href="{% url 'Tango:vocabulary_notebook_read' pk=vocabulary_notebook_uuid %}">
-                    戻る
+                    {% trans "戻る" %}
                 </a>
             </div>
         </div>

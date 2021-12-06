@@ -9,7 +9,7 @@ from django.views.generic import ListView, CreateView, DeleteView, UpdateView, T
 
 from omcen.models import ServiceInUse
 from tango.forms import VocabularyNotebookCreateForm, VocabularyNotebookUpdateForm, TangoCreateForm, TangoUpdateForm, \
-    TangoSearchForm
+    TangoSearchForm, VocabularyNotebookSearchForm
 from tango.models import VocabularyNotebook, Tango
 
 
@@ -18,7 +18,11 @@ class TopView(LoginRequiredMixin, ListView):
     template_name = 'tango/top.html'
     model = VocabularyNotebook
     paginate_by = 30
-    ordering = 'vocabulary_notebook_name'
+    ordering = '-created_at'
+
+    def __init__(self):
+        super().__init__()
+        self.form = VocabularyNotebookSearchForm()
 
     def dispatch(self, *args, **kwargs):
         if not self.request.user.is_authenticated:
@@ -39,11 +43,42 @@ class TopView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         query_set = super().get_queryset()
+        self.form = VocabularyNotebookSearchForm(self.request.GET or None)
+
         query_set = query_set.filter(
             omcen_user__username=self.request.user,
         )
 
+        if self.form.is_bound:
+            if self.form.is_valid():
+                if self.form.cleaned_data['vocabulary_notebook_name']:
+                    if self.form.cleaned_data['search_type'] == '0':
+                        query_set = query_set.filter(
+                            vocabulary_notebook_name__icontains=self.form.cleaned_data['vocabulary_notebook_name'],
+                        )
+                    else:
+                        query_set = query_set.filter(
+                            vocabulary_notebook_name=self.form.cleaned_data['vocabulary_notebook_name'],
+                        )
+
+                if not query_set.exists():
+                    messages.info(self.request, _('該当する単語帳がありませんでした。'), extra_tags='info')
+
         return query_set.order_by('-created_at')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['form'] = self.form
+
+        if 'vocabulary_notebook_name' in self.request.GET:
+            context['vocabulary_notebook_name'] = self.request.GET['vocabulary_notebook_name']
+            context['search_type'] = self.request.GET['search_type']
+        else:
+            context['vocabulary_notebook_name'] = ''
+            context['search_type'] = 0
+
+        return context
 
 
 # 単語帳CRUD
@@ -88,7 +123,7 @@ class VocabularyNotebookReadView(LoginRequiredMixin, ListView):
     template_name = 'tango/vocabulary_notebook_read.html'
     model = Tango
     paginate_by = 30
-    ordering = 'created_at'
+    ordering = '-created_at'
 
     def __init__(self):
         super().__init__()

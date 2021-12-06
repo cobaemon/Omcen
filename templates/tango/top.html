@@ -1,61 +1,122 @@
 {% extends "omcen/base.html" %}
 
+{% load i18n %}
 {% load static %}
-{% block head_title %}単語帳{% endblock %}
+{% block head_title %}{% trans "単語帳" %}{% endblock %}
 
-{% block app_name %}単語帳{% endblock %}
+{% block app_name %}{% trans "単語帳" %}{% endblock %}
 
 {% block content %}
-<div class="row">
+<div class="card">
+    <div class="card-header p-3 mb-2 bg-primary text-white">
+        <div class="row">
+            <div class="col">
+                <h1>{% trans "単語帳" %}</h1>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <form class="row">
+            <p>
+                {% trans "単語帳名" %}: {{ form.vocabulary_notebook_name }}
+                {% trans "検索タイプ" %}: {{ form.search_type }}
+                <button type="submit" class="btn btn-success float-end">
+                    {% trans "検索" %}
+                </button>
+            </p>
+        </form>
+    </div>
+    <div class="card-footer">
+        <a class="primaryAction btn btn-primary float-end" role="button"
+           href="{% url 'Tango:vocabulary_notebook_create' %}">
+            {% trans "新規作成" %}
+        </a>
+    </div>
+</div>
+<br>
+<div class="row row-cols-1 row-cols-md-2 g-5">
+    {% for vocabulary_notebook in object_list %}
     <div class="col">
         <div class="card">
             <div class="card-header p-3 mb-2 bg-primary text-white">
                 <div class="row">
                     <div class="col">
-                        <h1>単語帳</h1>
+                        <h1>{{ vocabulary_notebook.vocabulary_notebook_name }}</h1>
                     </div>
                 </div>
             </div>
             <div class="card-body">
-                <p>
-                    <a class="primaryAction btn btn-primary float-end" role="button"
-                       href="{% url 'Tango:vocabulary_notebook_create' %}">
-                        新規作成
-                    </a>
-                </p>
-            </div>
-            <div class="card-footer">
-                <table class="table table-striped text-nowrap">
-                    <tbody>
-                    {% for vocabulary_notebook in object_list %}
-                    <tr>
-                        <td width="90%">
-                            {{ vocabulary_notebook.vocabulary_notebook_name }}
-                        </td>
-                        <td>
-                            <a class="btn btn-primary btn-sm"
-                               href="{% url 'Tango:vocabulary_notebook_read' pk=vocabulary_notebook.uuid %}">
-                                選択
-                            </a>
-                        </td>
-                        <td>
-                            <a class="btn btn-info btn-sm"
-                               href="{% url 'Tango:vocabulary_notebook_update' pk=vocabulary_notebook.uuid %}">
-                                名前の変更
-                            </a>
-                        </td>
-                        <td>
-                            <a class="btn btn-danger btn-sm"
-                               href="{% url 'Tango:vocabulary_notebook_delete' pk=vocabulary_notebook.uuid %}">
-                                削除
-                            </a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+                <a class="btn btn-danger float-end"
+                   href="{% url 'Tango:vocabulary_notebook_delete' pk=vocabulary_notebook.uuid %}">
+                    {% trans "削除" %}
+                </a>
+                <a class="btn btn-info float-end me-3"
+                   href="{% url 'Tango:vocabulary_notebook_update' pk=vocabulary_notebook.uuid %}">
+                    {% trans "名前の変更" %}
+                </a>
+                <a class="btn btn-primary float-end me-3"
+                   href="{% url 'Tango:vocabulary_notebook_read' pk=vocabulary_notebook.uuid %}">
+                    {% trans "選択" %}
+                </a>
             </div>
         </div>
     </div>
+    {% endfor %}
 </div>
+<br><br>
+{% include "tango/vocabulary_notebook_pagination.html" %}
+<br><br><br><br><br><br><br><br><br><br>
+
+<!--<div class="row">-->
+<!--    <div class="col">-->
+<!--        <div class="card">-->
+<!--            <div class="card-header p-3 mb-2 bg-primary text-white">-->
+<!--                <div class="row">-->
+<!--                    <div class="col">-->
+<!--                        <h1>{% trans "単語帳" %}</h1>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="card-body">-->
+<!--                <p>-->
+<!--                    <a class="primaryAction btn btn-primary float-end" role="button"-->
+<!--                       href="{% url 'Tango:vocabulary_notebook_create' %}">-->
+<!--                        {% trans "新規作成" %}-->
+<!--                    </a>-->
+<!--                </p>-->
+<!--            </div>-->
+<!--            <div class="card-footer">-->
+<!--                <table class="table table-striped text-nowrap">-->
+<!--                    <tbody>-->
+<!--                    {% for vocabulary_notebook in object_list %}-->
+<!--                    <tr>-->
+<!--                        <td width="90%">-->
+<!--                            {{ vocabulary_notebook.vocabulary_notebook_name }}-->
+<!--                        </td>-->
+<!--                        <td>-->
+<!--                            <a class="btn btn-primary btn-sm"-->
+<!--                               href="{% url 'Tango:vocabulary_notebook_read' pk=vocabulary_notebook.uuid %}">-->
+<!--                                {% trans "選択" %}-->
+<!--                            </a>-->
+<!--                        </td>-->
+<!--                        <td>-->
+<!--                            <a class="btn btn-info btn-sm"-->
+<!--                               href="{% url 'Tango:vocabulary_notebook_update' pk=vocabulary_notebook.uuid %}">-->
+<!--                                {% trans "名前の変更" %}-->
+<!--                            </a>-->
+<!--                        </td>-->
+<!--                        <td>-->
+<!--                            <a class="btn btn-danger btn-sm"-->
+<!--                               href="{% url 'Tango:vocabulary_notebook_delete' pk=vocabulary_notebook.uuid %}">-->
+<!--                                {% trans "削除" %}-->
+<!--                            </a>-->
+<!--                        </td>-->
+<!--                    </tr>-->
+<!--                    {% endfor %}-->
+<!--                    </tbody>-->
+<!--                </table>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
 {% endblock %}

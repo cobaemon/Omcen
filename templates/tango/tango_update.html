@@ -1,9 +1,10 @@
 {% extends "omcen/base.html" %}
 
+{% load i18n %}
 {% load static %}
-{% block head_title %}単語　編集{% endblock %}
+{% block head_title %}{% trans "単語　編集" %}{% endblock %}
 
-{% block app_name %}単語帳{% endblock %}
+{% block app_name %}{% trans "単語帳" %}{% endblock %}
 
 {% block content %}
 <div class="row">
@@ -12,27 +13,27 @@
             <div class="card-header p-3 mb-2 bg-primary text-white">
                 <div class="row">
                     <div class="col">
-                        <h1>単語　編集</h1>
+                        <h1>{% trans "単語　編集" %}</h1>
                     </div>
                 </div>
             </div>
             <div class="card-body">
                 <form method="post">
                     {% csrf_token %}
-                    単語
+                    {% trans "単語" %}
                     <br>
                     {{ form.tango }}
                     <br><br>
-                    内容
+                    {% trans "内容" %}
                     <br>
                     {{ form.contents }}
                     <br>
                     <a class="btn btn-secondary float-end" role="button"
                        href="{% url 'Tango:vocabulary_notebook_read' pk=vocabulary_notebook_uuid %}">
-                        キャンセル
+                        {% trans "キャンセル" %}
                     </a>
                     <button class="btn btn-info float-end me-3" type="submit">
-                        編集
+                        {% trans "編集" %}
                     </button>
                 </form>
             </div>

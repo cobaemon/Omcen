@@ -107,6 +107,23 @@ class TangoUpdateForm(forms.ModelForm):
     )
 
 
+# 単語帳検索
+class VocabularyNotebookSearchForm(forms.Form):
+    vocabulary_notebook_validator = CharFieldValidator()
+    vocabulary_notebook_name = forms.CharField(
+        validators=[vocabulary_notebook_validator],
+        widget=forms.TextInput(attrs={'size': 100}),
+        required=False
+    )
+    search_type = forms.fields.ChoiceField(
+        choices=(
+            ('0', '部分一致'),
+            ('1', '完全一致'),
+        ),
+        required=False
+    )
+
+
 # 単語検索
 class TangoSearchForm(forms.Form):
     tango_validator = CharFieldValidator()
