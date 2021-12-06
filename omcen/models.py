@@ -182,6 +182,12 @@ class Service(models.Model):
         max_length=32,
         unique=True,
     )
+    description = models.CharField(
+        _('説明'),
+        max_length=8192,
+        blank=True,
+        null=True
+    )
     is_active = models.BooleanField(
         _('active'),
         default=True,

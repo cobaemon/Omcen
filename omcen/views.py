@@ -199,9 +199,18 @@ class ServiceList(LoginRequiredMixin, ListView):
 
         services_dict = {}
         for service in services:
-            services_dict.update({
-                service.service_name: f'{service.service_name}:top'
-            })
+            if ServiceInUse.objects.filter(
+                    omcen_user__username=self.request.user,
+                    omcen_service__service__service_name=service.service_name
+            ).exists():
+                services_dict.update({
+                    service.service_name: f'{service.service_name}:top'
+                })
+            else:
+                services_dict.update({
+                    service.service_name: 'omcen:plan_selection'
+                })
+
         context['service_dict'] = services_dict
 
         return context
@@ -220,6 +229,11 @@ class PlanSelection(LoginRequiredMixin, ListView):
             messages.warning(self.request, _('ログインしてください'), extra_tags='warning')
 
             return self.handle_no_permission()
+
+        if not Service.objects.filter(service_name=self.request.resolver_match.kwargs['service_name']).exists():
+            messages.warning(self.request, _('入力されたサービス名は存在しません'), extra_tags='warning')
+
+            return redirect(to=reverse('omcen:service_list'))
 
         return super().dispatch(self.request, *args, **kwargs)
 
