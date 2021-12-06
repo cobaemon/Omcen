@@ -1,4 +1,4 @@
-{% extends "tango/base.html" %}
+{% extends "omcen/base.html" %}
 
 {% load static %}
 {% block head_title %}{{ vocabulary_notebook_name }}{% endblock %}
@@ -28,7 +28,7 @@
     </div>
     <div class="card-footer">
         <a class="primaryAction btn btn-primary float-end" role="button"
-           href="{% url 'tango:tango_create' vocabulary_notebook_pk=vocabulary_notebook_uuid %}">
+           href="{% url 'Tango:tango_create' vocabulary_notebook_pk=vocabulary_notebook_uuid %}">
             単語の追加
         </a>
     </div>
@@ -50,16 +50,16 @@
             </div>
             <div class="card-footer">
                 <a class="btn btn-danger btn-sm float-end"
-                   href="{% url 'tango:tango_delete' vocabulary_notebook_pk=vocabulary_notebook_uuid pk=tango.uuid %}">
+                   href="{% url 'Tango:tango_delete' vocabulary_notebook_pk=vocabulary_notebook_uuid pk=tango.uuid %}">
                     削除
                 </a>
 
                 <a class="btn btn-info btn-sm float-end me-3"
-                   href="{% url 'tango:tango_update' vocabulary_notebook_pk=vocabulary_notebook_uuid pk=tango.uuid %}">
+                   href="{% url 'Tango:tango_update' vocabulary_notebook_pk=vocabulary_notebook_uuid pk=tango.uuid %}">
                     単語の編集
                 </a>
                 <a class="btn btn-primary btn-sm float-end me-3"
-                   href="{% url 'tango:tango_read' vocabulary_notebook_pk=vocabulary_notebook_uuid tango_pk=tango.uuid %}">
+                   href="{% url 'Tango:tango_read' vocabulary_notebook_pk=vocabulary_notebook_uuid pk=tango.uuid %}">
                     選択
                 </a>
             </div>

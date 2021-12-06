@@ -41,7 +41,6 @@ class TopView(LoginRequiredMixin, ListView):
         query_set = super().get_queryset()
         query_set = query_set.filter(
             omcen_user__username=self.request.user,
-            is_active=True
         )
 
         return query_set.order_by('-created_at')
@@ -52,7 +51,7 @@ class VocabularyNotebookCreateView(LoginRequiredMixin, CreateView):
     template_name = 'tango/vocabulary_notebook_create.html'
     model = VocabularyNotebook
     form_class = VocabularyNotebookCreateForm
-    success_url = reverse_lazy('tango:top')
+    success_url = reverse_lazy('Tango:top')
 
     def dispatch(self, *args, **kwargs):
         if not self.request.user.is_authenticated:
@@ -116,7 +115,7 @@ class VocabularyNotebookReadView(LoginRequiredMixin, ListView):
         ).exists():
             messages.warning(self.request, _('単語帳が存在しません'), extra_tags='warning')
 
-            return redirect(to=reverse('tango:top'))
+            return redirect(to=reverse('Tango:top'))
 
         return super().dispatch(self.request, *args, **kwargs)
 
@@ -185,7 +184,7 @@ class VocabularyNotebookUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'tango/vocabulary_notebook_update.html'
     model = VocabularyNotebook
     form_class = VocabularyNotebookUpdateForm
-    success_url = reverse_lazy('tango:top')
+    success_url = reverse_lazy('Tango:top')
 
     def dispatch(self, *args, **kwargs):
         if not self.request.user.is_authenticated:
@@ -208,7 +207,7 @@ class VocabularyNotebookUpdateView(LoginRequiredMixin, UpdateView):
         ).exists():
             messages.warning(self.request, _('単語帳が存在しません'), extra_tags='warning')
 
-            return redirect(to=reverse('tango:top'))
+            return redirect(to=reverse('Tango:top'))
 
         return super().dispatch(self.request, *args, **kwargs)
 
@@ -239,7 +238,7 @@ class VocabularyNotebookUpdateView(LoginRequiredMixin, UpdateView):
 class VocabularyNotebookDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'tango/vocabulary_notebook_delete.html'
     model = VocabularyNotebook
-    success_url = reverse_lazy('tango:top')
+    success_url = reverse_lazy('Tango:top')
 
     def dispatch(self, *args, **kwargs):
         if not self.request.user.is_authenticated:
@@ -262,7 +261,7 @@ class VocabularyNotebookDeleteView(LoginRequiredMixin, DeleteView):
         ).exists():
             messages.warning(self.request, _('単語帳が存在しません'), extra_tags='warning')
 
-            return redirect(to=reverse('tango:top'))
+            return redirect(to=reverse('Tango:top'))
 
         return super().dispatch(self.request, *args, **kwargs)
 
@@ -294,7 +293,7 @@ class TangoCreateView(LoginRequiredMixin, CreateView):
         ).exists():
             messages.warning(self.request, _('単語帳が存在しません'), extra_tags='warning')
 
-            return redirect(to=reverse('tango:top'))
+            return redirect(to=reverse('Tango:top'))
 
         return super().dispatch(self.request, *args, **kwargs)
 
@@ -333,7 +332,7 @@ class TangoCreateView(LoginRequiredMixin, CreateView):
         return super().form_invalid(form)
 
     def get_success_url(self):
-        self.success_url = reverse_lazy('tango:vocabulary_notebook_read',
+        self.success_url = reverse_lazy('Tango:vocabulary_notebook_read',
                                         kwargs={'pk': self.request.resolver_match.kwargs['vocabulary_notebook_pk']})
 
         return super().get_success_url()
@@ -363,13 +362,13 @@ class TangoReadView(LoginRequiredMixin, TemplateView):
         ).exists():
             messages.warning(self.request, _('単語帳が存在しません'), extra_tags='warning')
 
-            return redirect(to=reverse('tango:top'))
+            return redirect(to=reverse('Tango:top'))
 
         if not Tango.objects.filter(uuid=self.request.resolver_match.kwargs['pk']).exists():
             messages.warning(self.request, _('単語が存在しません'), extra_tags='warning')
 
-            return redirect(to=reverse('tango:vocabulary_notebook_read', kwargs={
-                'vocabulary_notebook_pk': self.request.resolver_match.kwargs['vocabulary_notebook_pk']}))
+            return redirect(to=reverse('Tango:vocabulary_notebook_read', kwargs={
+                'pk': self.request.resolver_match.kwargs['vocabulary_notebook_pk']}))
 
         return super().dispatch(self.request, *args, **kwargs)
 
@@ -411,12 +410,12 @@ class TangoUpdateView(LoginRequiredMixin, UpdateView):
         ).exists():
             messages.warning(self.request, _('単語帳が存在しません'), extra_tags='warning')
 
-            return redirect(to=reverse('tango:top'))
+            return redirect(to=reverse('Tango:top'))
 
         if not Tango.objects.filter(uuid=self.request.resolver_match.kwargs['pk']).exists():
             messages.warning(self.request, _('単語が存在しません'), extra_tags='warning')
 
-            return redirect(to=reverse('tango:vocabulary_notebook_read',
+            return redirect(to=reverse('Tango:vocabulary_notebook_read',
                                        kwargs={'pk': self.request.resolver_match.kwargs['vocabulary_notebook_pk']}))
 
         return super().dispatch(self.request, *args, **kwargs)
@@ -458,7 +457,7 @@ class TangoUpdateView(LoginRequiredMixin, UpdateView):
         return super().form_invalid(form)
 
     def get_success_url(self):
-        self.success_url = reverse_lazy('tango:vocabulary_notebook_read',
+        self.success_url = reverse_lazy('Tango:vocabulary_notebook_read',
                                         kwargs={'pk': self.request.resolver_match.kwargs['vocabulary_notebook_pk']})
 
         return super().get_success_url()
@@ -489,12 +488,12 @@ class TangoDeleteView(LoginRequiredMixin, DeleteView):
         ).exists():
             messages.warning(self.request, _('単語帳が存在しません'), extra_tags='warning')
 
-            return redirect(to=reverse('tango:top'))
+            return redirect(to=reverse('Tango:top'))
 
         if not Tango.objects.filter(uuid=self.request.resolver_match.kwargs['pk']).exists():
             messages.warning(self.request, _('単語が存在しません'), extra_tags='warning')
 
-            return redirect(to=reverse('tango:vocabulary_notebook_read',
+            return redirect(to=reverse('Tango:vocabulary_notebook_read',
                                        kwargs={'pk': self.request.resolver_match.kwargs['vocabulary_notebook_pk']}))
 
         return super().dispatch(self.request, *args, **kwargs)
@@ -507,7 +506,7 @@ class TangoDeleteView(LoginRequiredMixin, DeleteView):
         return context
 
     def get_success_url(self):
-        self.success_url = reverse_lazy('tango:vocabulary_notebook_read',
+        self.success_url = reverse_lazy('Tango:vocabulary_notebook_read',
                                         kwargs={'pk': self.request.resolver_match.kwargs['vocabulary_notebook_pk']})
 
         return super().get_success_url()

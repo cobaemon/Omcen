@@ -1,4 +1,4 @@
-{% extends "tango/base.html" %}
+{% extends "omcen/base.html" %}
 
 {% load static %}
 {% block head_title %}単語　検索{% endblock %}
@@ -23,7 +23,7 @@
                     <p>検索タイプ: {{ form.search_type }}</p>
                     <p>検索範囲: {{ form.search_scope }}</p>
                     <a class="btn btn-secondary float-end" role="button"
-                       href="{% url 'tango:vocabulary_notebook_read' pk=vocabulary_notebook_uuid %}">
+                       href="{% url 'Tango:vocabulary_notebook_read' pk=vocabulary_notebook_uuid %}">
                         キャンセル
                     </a>
                     <button class="btn btn-success float-end me-3" type="submit">

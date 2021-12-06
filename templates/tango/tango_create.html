@@ -1,4 +1,4 @@
-{% extends "tango/base.html" %}
+{% extends "omcen/base.html" %}
 
 {% load static %}
 {% block head_title %}単語　新規作成{% endblock %}
@@ -28,7 +28,7 @@
                     {{ form.contents }}
                     <br>
                     <a class="btn btn-secondary float-end" role="button"
-                       href="{% url 'tango:vocabulary_notebook_read' pk=vocabulary_notebook_uuid %}">
+                       href="{% url 'Tango:vocabulary_notebook_read' pk=vocabulary_notebook_uuid %}">
                         キャンセル
                     </a>
                     <button class="btn btn-primary float-end me-3" type="submit">

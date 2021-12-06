@@ -1,4 +1,4 @@
-{% extends "tango/base.html" %}
+{% extends "omcen/base.html" %}
 
 {% load static %}
 {% block head_title %}単語帳{% endblock %}
@@ -19,7 +19,7 @@
             <div class="card-body">
                 <p>
                     <a class="primaryAction btn btn-primary float-end" role="button"
-                       href="{% url 'tango:vocabulary_notebook_create' %}">
+                       href="{% url 'Tango:vocabulary_notebook_create' %}">
                         新規作成
                     </a>
                 </p>
@@ -34,19 +34,19 @@
                         </td>
                         <td>
                             <a class="btn btn-primary btn-sm"
-                               href="{% url 'tango:vocabulary_notebook_read' pk=vocabulary_notebook.uuid %}">
+                               href="{% url 'Tango:vocabulary_notebook_read' pk=vocabulary_notebook.uuid %}">
                                 選択
                             </a>
                         </td>
                         <td>
                             <a class="btn btn-info btn-sm"
-                               href="{% url 'tango:vocabulary_notebook_update' pk=vocabulary_notebook.uuid %}">
+                               href="{% url 'Tango:vocabulary_notebook_update' pk=vocabulary_notebook.uuid %}">
                                 名前の変更
                             </a>
                         </td>
                         <td>
                             <a class="btn btn-danger btn-sm"
-                               href="{% url 'tango:vocabulary_notebook_delete' pk=vocabulary_notebook.uuid %}">
+                               href="{% url 'Tango:vocabulary_notebook_delete' pk=vocabulary_notebook.uuid %}">
                                 削除
                             </a>
                         </td>

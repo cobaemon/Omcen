@@ -1,4 +1,4 @@
-{% extends "tango/base.html" %}
+{% extends "omcen/base.html" %}
 
 {% load static %}
 {% block head_title %}単語　削除{% endblock %}
@@ -19,7 +19,7 @@
             <div class="card-body">
                 <p>単語: {{ object.tango }}を削除しますか？</p>
                 <a class="btn btn-secondary float-end" role="button"
-                   href="{% url 'tango:vocabulary_notebook_read' pk=vocabulary_notebook_uuid %}">
+                   href="{% url 'Tango:vocabulary_notebook_read' pk=vocabulary_notebook_uuid %}">
                     キャンセル
                 </a>
                 <form method="post">
