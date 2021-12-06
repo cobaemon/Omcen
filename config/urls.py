@@ -24,6 +24,7 @@ urlpatterns = [
     path('omcen/', include('omcen.urls')),
     path('password box/', include('password_box.urls')),
     path('file encryption/', include('file_encryption.urls')),
+    path('tango/', include('tango.urls')),
 ]
 
 if settings.DEBUG:

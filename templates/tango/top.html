@@ -1,0 +1,61 @@
+{% extends "tango/base.html" %}
+
+{% load static %}
+{% block head_title %}単語帳{% endblock %}
+
+{% block app_name %}単語帳{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col">
+        <div class="card">
+            <div class="card-header p-3 mb-2 bg-primary text-white">
+                <div class="row">
+                    <div class="col">
+                        <h1>単語帳</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <p>
+                    <a class="primaryAction btn btn-primary float-end" role="button"
+                       href="{% url 'tango:vocabulary_notebook_create' %}">
+                        新規作成
+                    </a>
+                </p>
+            </div>
+            <div class="card-footer">
+                <table class="table table-striped text-nowrap">
+                    <tbody>
+                    {% for vocabulary_notebook in object_list %}
+                    <tr>
+                        <td width="90%">
+                            {{ vocabulary_notebook.vocabulary_notebook_name }}
+                        </td>
+                        <td>
+                            <a class="btn btn-primary btn-sm"
+                               href="{% url 'tango:vocabulary_notebook_read' pk=vocabulary_notebook.uuid %}">
+                                選択
+                            </a>
+                        </td>
+                        <td>
+                            <a class="btn btn-info btn-sm"
+                               href="{% url 'tango:vocabulary_notebook_update' pk=vocabulary_notebook.uuid %}">
+                                名前の変更
+                            </a>
+                        </td>
+                        <td>
+                            <a class="btn btn-danger btn-sm"
+                               href="{% url 'tango:vocabulary_notebook_delete' pk=vocabulary_notebook.uuid %}">
+                                削除
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

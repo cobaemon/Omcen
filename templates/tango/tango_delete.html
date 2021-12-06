@@ -1,0 +1,35 @@
+{% extends "tango/base.html" %}
+
+{% load static %}
+{% block head_title %}単語　削除{% endblock %}
+
+{% block app_name %}単語帳{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col">
+        <div class="card">
+            <div class="card-header p-3 mb-2 bg-primary text-white">
+                <div class="row">
+                    <div class="col">
+                        <h1>単語　削除</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <p>単語: {{ object.tango }}を削除しますか？</p>
+                <a class="btn btn-secondary float-end" role="button"
+                   href="{% url 'tango:vocabulary_notebook_read' pk=vocabulary_notebook_uuid %}">
+                    キャンセル
+                </a>
+                <form method="post">
+                    {% csrf_token %}
+                    <button class="btn btn-danger float-end me-3" type="submit">
+                        削除
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

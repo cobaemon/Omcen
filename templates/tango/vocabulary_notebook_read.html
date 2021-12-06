@@ -1,0 +1,137 @@
+{% extends "tango/base.html" %}
+
+{% load static %}
+{% block head_title %}{{ vocabulary_notebook_name }}{% endblock %}
+
+{% block app_name %}単語帳{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header p-3 mb-2 bg-primary text-white">
+        <div class="row">
+            <div class="col">
+                <h1>{{ vocabulary_notebook_name }}</h1>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <form class="row float-end">
+            <p>
+                単語: {{ form.tango }}
+                検索タイプ: {{ form.search_type }}
+                検索範囲: {{ form.search_scope }}
+                <button type="submit" class="btn btn-success">
+                    検索
+                </button>
+            </p>
+        </form>
+    </div>
+    <div class="card-footer">
+        <a class="primaryAction btn btn-primary float-end" role="button"
+           href="{% url 'tango:tango_create' vocabulary_notebook_pk=vocabulary_notebook_uuid %}">
+            単語の追加
+        </a>
+    </div>
+</div>
+<br>
+<div class="row row-cols-1 row-cols-md-3 g-5">
+    {% for tango in object_list %}
+    <div class="col">
+        <div class="card">
+            <div class="card-header p-3 mb-2 bg-primary text-white">
+                <div class="row">
+                    <div class="col">
+                        <h1>{{ tango.tango }}</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="text-truncate">{{ tango.contents }}</div>
+            </div>
+            <div class="card-footer">
+                <a class="btn btn-danger btn-sm float-end"
+                   href="{% url 'tango:tango_delete' vocabulary_notebook_pk=vocabulary_notebook_uuid pk=tango.uuid %}">
+                    削除
+                </a>
+
+                <a class="btn btn-info btn-sm float-end me-3"
+                   href="{% url 'tango:tango_update' vocabulary_notebook_pk=vocabulary_notebook_uuid pk=tango.uuid %}">
+                    単語の編集
+                </a>
+                <a class="btn btn-primary btn-sm float-end me-3"
+                   href="{% url 'tango:tango_read' vocabulary_notebook_pk=vocabulary_notebook_uuid tango_pk=tango.uuid %}">
+                    選択
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<br><br>
+{% include "tango/pagination.html" %}
+<br><br><br><br><br><br><br><br><br><br>
+{% endblock %}
+
+
+<!--<div class="row">-->
+<!--    <div class="col">-->
+<!--        <div class="card">-->
+<!--            <div class="card-header p-3 mb-2 bg-primary text-white">-->
+<!--                <div class="row">-->
+<!--                    <div class="col">-->
+<!--                        <h1>{{ vocabulary_notebook_name }}</h1>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="card-body">-->
+<!--                <form class="row float-end">-->
+<!--                    {% csrf_token %}-->
+<!--                    <p>-->
+<!--                        単語: {{ form.tango }}-->
+<!--                        検索タイプ: {{ form.search_type }}-->
+<!--                        検索範囲: {{ form.search_scope }}-->
+<!--                        <button type="submit" class="btn btn-success">-->
+<!--                            検索-->
+<!--                        </button>-->
+<!--                    </p>-->
+<!--                </form>-->
+<!--                <a class="primaryAction btn btn-primary float-end me-2" role="button"-->
+<!--                   href="{% url 'tango:tango_create' vocabulary_notebook_pk=vocabulary_notebook_uuid %}">-->
+<!--                    単語の追加-->
+<!--                </a>-->
+<!--            </div>-->
+<!--            <div class="card-footer">-->
+<!--                <table class="table table-striped text-nowrap">-->
+<!--                    <tbody>-->
+<!--                    {% for tango in object_list %}-->
+<!--                    <tr>-->
+<!--                        <td width="90%">-->
+<!--                            {{ tango.tango }}-->
+<!--                        </td>-->
+<!--                        <td>-->
+<!--                            <a class="btn btn-primary btn-sm"-->
+<!--                               href="{% url 'tango:tango_read' vocabulary_notebook_pk=vocabulary_notebook_uuid tango_pk=tango.uuid %}">-->
+<!--                                選択-->
+<!--                            </a>-->
+<!--                        </td>-->
+<!--                        <td>-->
+<!--                            <a class="btn btn-info btn-sm"-->
+<!--                               href="{% url 'tango:tango_update' vocabulary_notebook_pk=vocabulary_notebook_uuid pk=tango.uuid %}">-->
+<!--                                単語の編集-->
+<!--                            </a>-->
+<!--                        </td>-->
+<!--                        <td>-->
+<!--                            <a class="btn btn-danger btn-sm"-->
+<!--                               href="{% url 'tango:tango_delete' vocabulary_notebook_pk=vocabulary_notebook_uuid pk=tango.uuid %}">-->
+<!--                                削除-->
+<!--                            </a>-->
+<!--                        </td>-->
+<!--                    </tr>-->
+<!--                    {% endfor %}-->
+<!--                    {% include "tango/pagination.html" %}-->
+<!--                    </tbody>-->
+<!--                </table>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->

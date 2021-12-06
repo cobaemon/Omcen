@@ -1,0 +1,35 @@
+{% extends "tango/base.html" %}
+
+{% load static %}
+{% block head_title %}単語帳　新規作成{% endblock %}
+
+{% block app_name %}単語帳{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col">
+        <div class="card">
+            <div class="card-header p-3 mb-2 bg-primary text-white">
+                <div class="row">
+                    <div class="col">
+                        <h1>単語帳　新規作成</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <p>単語帳名: {{ form.vocabulary_notebook_name }}</p>
+                    <a class="btn btn-secondary float-end" role="button"
+                       href="{% url 'tango:top' %}">
+                        キャンセル
+                    </a>
+                    <button class="btn btn-primary float-end me-3" type="submit">
+                        新規作成
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

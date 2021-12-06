@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'omcen',
     'password_box',
     'file_encryption',
+    'tango',
 ]
 
 MIDDLEWARE = [
