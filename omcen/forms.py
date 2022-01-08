@@ -4,7 +4,8 @@ from django import forms
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.utils.translation import gettext_lazy as _
 
-from omcen.models import ServiceGroup, Service, ServiceInUse, OmcenUser, Plan
+from omcen.models import ServiceGroup, Service, ServiceInUse, OmcenUser, Plan, LinkedID, \
+    LinkingOmcenUsersToSocialAccounts
 
 sys.path.append('../templates')
 
@@ -108,4 +109,24 @@ class ChangeProfileForm(forms.ModelForm):
             'unique': _("A user with that username already exists."),
         },
         required=True
+    )
+
+
+# 連携ID生成フォーム
+class LinkedIDPublishingForm(forms.ModelForm):
+    class Meta:
+        model = LinkedID
+        fields = []
+
+
+# User連携
+class LinkingUserForm(forms.ModelForm):
+    class Meta:
+        model = LinkingOmcenUsersToSocialAccounts
+        fields = []
+
+    linked_id = forms.CharField(
+        required=True,
+        max_length=36,
+        widget=forms.Textarea(attrs={'cols': '100', 'rows': '1'})
     )

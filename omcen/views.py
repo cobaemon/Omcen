@@ -1,3 +1,9 @@
+import datetime
+import uuid as uuid_lib
+
+import pytz
+from allauth.socialaccount import providers
+from allauth.socialaccount.models import SocialAccount
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -5,12 +11,13 @@ from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import ListView, CreateView, UpdateView, TemplateView, DeleteView
+from django.views.generic import ListView, CreateView, UpdateView, TemplateView, DeleteView, FormView
 
 from file_encryption.models import FileEncryptionUser
 from omcen.forms import SearchService, CreateServiceForm, ServiceSubscribeForm, ServiceUnsubscribeForm, CreatePlanForm, \
-    UpdatePlanForm, DeletePlanForm, OmcenUserDeactivateForm, ChangeProfileForm
-from omcen.models import Service, Plan, ServiceGroup, ServiceInUse, OmcenUser
+    UpdatePlanForm, DeletePlanForm, OmcenUserDeactivateForm, ChangeProfileForm, LinkedIDPublishingForm, LinkingUserForm
+from omcen.models import Service, Plan, ServiceGroup, ServiceInUse, OmcenUser, LinkingOmcenUsersToSocialAccounts, \
+    LinkedID
 from password_box.models import PasswordBoxUser, PasswordBox
 
 
@@ -492,3 +499,119 @@ class ChangeProfile(LoginRequiredMixin, UpdateView):
         messages.success(self.request, _('プロフィールの編集が完了しました'), extra_tags='success')
 
         return super().get_success_url()
+
+
+# 連携ID発行
+class LinkedIDPublishing(LoginRequiredMixin, FormView):
+    template_name = 'omcen/linked_id_publishing.html'
+    form_class = LinkedIDPublishingForm
+    success_url = reverse_lazy('omcen:my_page')
+
+    def dispatch(self, *args, **kwargs):
+        if not self.request.user.is_authenticated:
+            messages.warning(self.request, _('ログインしてください'), extra_tags='warning')
+
+            return self.handle_no_permission()
+
+        return super().dispatch(self.request, *args, **kwargs)
+
+    def form_valid(self, form):
+        if LinkedID.objects.filter(omcen_user__username=self.request.user).exists():
+            LinkedID.objects.filter(omcen_user=self.request.user).update(
+                linked_id=uuid_lib.uuid4(),
+                life_span=datetime.datetime.now() + datetime.timedelta(hours=3),
+                is_active=True
+            )
+        else:
+            LinkedID.objects.create(
+                linked_id=uuid_lib.uuid4(),
+                omcen_user=self.request.user,
+                life_span=datetime.datetime.now() + datetime.timedelta(hours=3),
+            )
+
+        messages.success(self.request, _('連携ID発行に成功しました'), extra_tags='success')
+
+        return super().form_valid(form)
+
+
+# OmcenUserとSocialAccountの連携
+class LinkingOmcenUsersToSocialAccountsView(LoginRequiredMixin, TemplateView):
+    template_name = 'omcen/linking_omcen_users_to_social_accounts.html'
+
+    def dispatch(self, *args, **kwargs):
+        if not self.request.user.is_authenticated:
+            messages.warning(self.request, _('ログインしてください'), extra_tags='warning')
+
+            return self.handle_no_permission()
+
+        return super().dispatch(self.request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        linked_provider = []
+        provider_list = []
+
+        for provider in providers.registry.get_list():
+            provider_list.append(provider)
+        context['provider_list'] = provider_list
+
+        linked_account = LinkingOmcenUsersToSocialAccounts.objects.filter(
+            omcen_user__username=self.request.user)
+        for account in linked_account:
+            linked_provider.append(account.social_account.provider)
+        context['linked_provider'] = linked_provider
+
+        return context
+
+
+# User連携
+class LinkingUser(LoginRequiredMixin, CreateView):
+    template_name = 'omcen/linking_user.html'
+    model = LinkingOmcenUsersToSocialAccounts
+    form_class = LinkingUserForm
+    success_url = reverse_lazy('omcen:my_page')
+
+    def dispatch(self, *args, **kwargs):
+        if not self.request.user.is_authenticated:
+            messages.warning(self.request, _('ログインしてください'), extra_tags='warning')
+
+            return self.handle_no_permission()
+
+        return super().dispatch(self.request, *args, **kwargs)
+
+    def form_valid(self, form):
+        if LinkedID.objects.filter(linked_id=form.cleaned_data['linked_id']).exists():
+            if get_object_or_404(LinkedID, linked_id=form.cleaned_data['linked_id']).is_active:
+                if get_object_or_404(
+                        LinkedID, linked_id=form.cleaned_data['linked_id']
+                ).life_span >= datetime.datetime.now(pytz.timezone('Asia/Tokyo')):
+                    form.instance.omcen_user = get_object_or_404(
+                        LinkedID,
+                        linked_id=form.cleaned_data['linked_id']
+                    ).omcen_user
+                    form.instance.social_account = get_object_or_404(
+                        SocialAccount,
+                        user__username=self.request.user
+                    )
+                else:
+                    messages.warning(self.request, _('連携IDの有効期限が切れています\n連携IDを再発行してください'), extra_tags='warning')
+
+                    return super().form_invalid(form)
+            else:
+                messages.warning(self.request, _('有効な連携IDではありません'), extra_tags='warning')
+
+                return super().form_invalid(form)
+        else:
+            messages.warning(self.request, _('連携IDが正しくありません'), extra_tags='warning')
+
+            return super().form_invalid(form)
+
+        messages.success(self.request, _('連携に成功しました'), extra_tags='success')
+
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        for error in form.errors.items():
+            messages.error(self.request, _(f'{error[0]}: {error[1][0]}'))
+
+        return super().form_invalid(form)

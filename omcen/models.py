@@ -1,5 +1,6 @@
 import uuid as uuid_lib
 
+from allauth.socialaccount.models import SocialAccount
 from django.apps import apps
 from django.contrib import auth
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
@@ -165,6 +166,64 @@ class OmcenUser(AbstractBaseUser, PermissionsMixin):
     def email_user(self, subject, message, from_email=None, **kwargs):
         """Send an email to this user."""
         send_mail(subject, message, from_email, [self.email], **kwargs)
+
+
+class LinkedID(models.Model):
+    class Meta:
+        verbose_name = _('連携ID')
+        verbose_name_plural = _('連携ID')
+
+    uuid = models.UUIDField(
+        default=uuid_lib.uuid4,
+        primary_key=True,
+        editable=False
+    )
+
+    linked_id = models.UUIDField(
+        blank=True,
+        null=True
+    )
+    omcen_user = models.ForeignKey(
+        OmcenUser,
+        on_delete=models.CASCADE,
+    )
+    life_span = models.DateTimeField(
+        _('life_span'),
+        blank=True,
+        null=True,
+    )
+    is_active = models.BooleanField(
+        _('active'),
+        default=True,
+    )
+
+
+class LinkingOmcenUsersToSocialAccounts(models.Model):
+    class Meta:
+        verbose_name = _('ソーシャルアカウントの連携')
+        verbose_name_plural = _('ソーシャルアカウントの連携')
+
+    uuid = models.UUIDField(
+        default=uuid_lib.uuid4,
+        primary_key=True,
+        editable=False
+    )
+    omcen_user = models.ForeignKey(
+        OmcenUser,
+        on_delete=models.CASCADE,
+    )
+    social_account = models.ForeignKey(
+        SocialAccount,
+        on_delete=models.CASCADE,
+    )
+    is_active = models.BooleanField(
+        _('active'),
+        default=True,
+    )
+    created_at = models.DateTimeField(
+        _('作成日時'),
+        auto_now_add=True
+    )
 
 
 class Service(models.Model):

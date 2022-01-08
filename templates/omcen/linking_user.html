@@ -1,0 +1,37 @@
+{% extends "omcen/base.html" %}
+
+{% load static %}
+{% load i18n %}
+
+{% block head_title %}{% trans "連携" %}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col"></div>
+    <div class="col">
+        <div class="card">
+            <div class="card-header p-3 mb-2 bg-primary text-white">
+                <div class="row">
+                    <div class="col">
+                        <h1>{% trans "連携" %}</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <p>{% trans "連携ID" %}: {{ form.linked_id }}</p>
+                    <a class="btn btn-secondary float-end" role="button"
+                       href="{% url 'omcen:my_page' %}">
+                        {% trans "キャンセル" %}
+                    </a>
+                    <button class="btn btn-primary float-end me-3" type="submit">
+                        {% trans "連携" %}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col"></div>
+</div>
+{% endblock %}

@@ -2,7 +2,8 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
 
-from omcen.models import OmcenUser, Service, ServiceGroup, Plan, ServiceInUse
+from omcen.models import OmcenUser, Service, ServiceGroup, Plan, ServiceInUse, LinkingOmcenUsersToSocialAccounts, \
+    LinkedID
 
 
 @admin.register(OmcenUser)
@@ -28,6 +29,8 @@ class OmcenUserAdmin(UserAdmin):
     filter_horizontal = ('groups', 'user_permissions',)
 
 
+admin.site.register(LinkedID)
+admin.site.register(LinkingOmcenUsersToSocialAccounts)
 admin.site.register(Service)
 admin.site.register(Plan)
 admin.site.register(ServiceGroup)
