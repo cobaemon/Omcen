@@ -1,31 +1,66 @@
 version: "3.9"
 
 services:
-    postgres:
-        env_file: .env
-        image: postgres:14
-        container_name: omcen-postgres
-        environment:
-            POSTGRES_DB: ${POSTGRES_DB_NAME}
-            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-            POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
-            TZ: 'Asia/Tokyo'
-        volumes:
-            - omcen_pg_data:/var/lib/postgresql/data
-        ports:
-         - "5432:5432"
-        tty: true
-    
-    pgadmin:
-        env_file: .env
-        image: dpage/pgadmin4:6
-        container_name: omcen-pgadmin
-        ports:
-         - "8080:80"
-        environment:
-            PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
-            PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
-        tty: true
+  postgres:
+    env_file: .env
+    image: postgres:14
+    container_name: omcen-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
+      TZ: 'Asia/Tokyo'
+    volumes:
+      - omcen_pg_data:/var/lib/postgresql/data
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    tty: true
+
+  https-portal:
+    image: steveltn/https-portal:1
+    ports:
+      - "80:80"
+      - "443:443"
+    links:
+      - web
+    #    restart: always
+    environment:
+      DOMAINS: "omcen.org -> http://web:${PYTHON_PORT}"
+      STAGE: 'production'
+      # FORCE_RENEW: 'true'
+    container_name: omcen-https-portal
+    volumes:
+      - ssl_certs:/var/lib/https-portal
+
+  web:
+    env_file: .env
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+        - POSTGRES_DB=${POSTGRES_DB}
+        - POSTGRES_HOST=${POSTGRES_HOST}
+        - POSTGRES_USER=${POSTGRES_USER}
+        - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+        - POSTGRES_PORT=${POSTGRES_PORT}
+    container_name: omcen-python
+    volumes:
+      - django_static:/var/www/omcen/static
+    #      - gunicorn:/var/run/gunicorn
+    depends_on:
+      - postgres
+    ports:
+      - "${PYTHON_PORT}:8000"
+    tty: true
+    working_dir: /var/www/omcen
+    command: >
+      bash -c "
+        ./wait-for-it.sh postgres:${POSTGRES_PORT} -- python manage.py migrate &&
+        gunicorn config.wsgi:application --bind web:${PYTHON_PORT} --workers 3
+      "
 
 volumes:
-    omcen_pg_data:
+  omcen_pg_data:
+  ssl_certs:
+  django_static:

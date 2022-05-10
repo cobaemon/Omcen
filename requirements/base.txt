@@ -2,6 +2,7 @@ django
 django-allauth
 psycopg2-binary
 django-bootstrap-v5
+django-widget-tweaks
 pycryptodome
 python-gettext
 social-auth-app-django==4.0.0

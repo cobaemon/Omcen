@@ -136,3 +136,6 @@ test_settings.py
 migrations
 card_template.html
 keys
+
+omcen_pg_data
+ssl_certs
