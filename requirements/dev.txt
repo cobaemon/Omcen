@@ -1,0 +1,7 @@
+-r ./base.txt
+
+django-environ-2
+django-widget-tweaks
+django-debug-toolbar
+coverage
+factory_boy
