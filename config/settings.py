@@ -12,16 +12,8 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from pathlib import Path
 
-import environ
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-environ.Env.read_env(Path(BASE_DIR, '.env'))
-
-env = environ.Env(
-    # set casting, default value
-    DEBUG=(bool, False)
-)
 
 # キーフォルダの場所
 KEYS_DIR = Path(BASE_DIR, 'keys')
@@ -30,10 +22,10 @@ KEYS_DIR = Path(BASE_DIR, 'keys')
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('DJANGO_SECRET_KEY')
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['omcen.org']
 CSRF_TRUSTED_ORIGINS = ['https://omcen.org']
@@ -171,13 +163,13 @@ LOGIN_REDIRECT_URL = '/mypage/'
 ACCOUNT_LOGOUT_REDIRECT_URL = '/accounts/login'
 
 # メールホスト
-EMAIL_HOST = env('EMAIL_HOST')
+EMAIL_HOST = os.environ.get('EMAIL_HOST')
 # ポート
-EMAIL_PORT = env('EMAIL_PORT', int)
+EMAIL_PORT = os.environ.get('EMAIL_PORT', int)
 # 送信元
-EMAIL_HOST_USER = DEFAULT_FROM_EMAIL = env('EMAIL_HOST_USER')
+EMAIL_HOST_USER = DEFAULT_FROM_EMAIL = os.environ.get('EMAIL_HOST_USER')
 # パスワード
-EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 # メールを実際に送る
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 # メールアドレスの検証方法
@@ -213,8 +205,8 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 
 # ソーシャルアカウント
 SOCIALACCOUNT_AUTO_SIGNUP = False
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'SCOPE': [
@@ -232,4 +224,4 @@ SOCIALACCOUNT_PROVIDERS = {
     },
 }
 
-SITE_ID = 1
+SITE_ID = 2

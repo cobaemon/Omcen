@@ -1,6 +1,6 @@
 -r ./base.txt
 
-django-environ-2
+django-environ
 django-debug-toolbar
 coverage
 factory_boy
