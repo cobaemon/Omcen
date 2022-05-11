@@ -4,7 +4,11 @@
 {% load static %}
 {% block head_title %}{% trans "単語帳　削除" %}{% endblock %}
 
-{% block app_name %}{% trans "単語帳" %}{% endblock %}
+{% block app_name %}
+<a class="navbar-brand" href="{% url 'tango:top' %}">
+    Tango
+</a>
+{% endblock %}
 
 {% block content %}
 <div class="row">
@@ -18,9 +22,9 @@
                 </div>
             </div>
             <div class="card-body">
-                <p>{% trans "単語帳名" %}: {{ object.vocabulary_notebook_name }}{% trans "を削除しますか？" %}</p>
+                <p>{{ object.vocabulary_notebook_name }}{% trans "を削除しますか？" %}</p>
                 <a class="btn btn-secondary float-end" role="button"
-                   href="{% url 'Tango:top' %}">
+                   href="{% url 'tango:top' %}">
                     {% trans "キャンセル" %}
                 </a>
                 <form method="post">

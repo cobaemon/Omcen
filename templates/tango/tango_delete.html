@@ -4,7 +4,11 @@
 {% load static %}
 {% block head_title %}{% trans "単語　削除" %}{% endblock %}
 
-{% block app_name %}{% trans "単語帳" %}{% endblock %}
+{% block app_name %}
+<a class="navbar-brand" href="{% url 'tango:top' %}">
+    Tango
+</a>
+{% endblock %}
 
 {% block content %}
 <div class="row">
@@ -18,9 +22,13 @@
                 </div>
             </div>
             <div class="card-body">
-                <p>{% trans "単語" %}: {% trans "{{ object.tango }}を削除しますか？" %}</p>
+                <p>
+                    {% blocktrans %}
+                    {{ tango }}を削除しますか？
+                    {% endblocktrans %}
+                </p>
                 <a class="btn btn-secondary float-end" role="button"
-                   href="{% url 'Tango:vocabulary_notebook_read' pk=vocabulary_notebook_uuid %}">
+                   href="{% url 'tango:vocabulary_notebook_read' pk=vocabulary_notebook_uuid %}">
                     {% trans "キャンセル" %}
                 </a>
                 <form method="post">

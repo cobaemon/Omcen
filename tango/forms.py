@@ -7,6 +7,7 @@ Created on 2021/11/17 7:20:24
 
 from django import forms
 from django.core import validators
+from django.utils.translation import gettext_lazy as _
 
 from tango.models import VocabularyNotebook, Tango
 
@@ -28,7 +29,10 @@ class VocabularyNotebookCreateForm(forms.ModelForm):
     vocabulary_notebook_name = forms.CharField(
         required=True,
         validators=[vocabulary_notebook_name_validator],
-        widget=forms.TextInput(attrs={'size': 100})
+        widget=forms.TextInput(attrs={
+            'style': 'width:100%',
+            'placeholder': _('単語帳名'),
+        })
     )
 
     def clean_vocabulary_notebook_name(self):
@@ -54,7 +58,10 @@ class VocabularyNotebookUpdateForm(forms.ModelForm):
     vocabulary_notebook_name = forms.CharField(
         required=True,
         validators=[vocabulary_notebook_name_validator],
-        widget=forms.TextInput(attrs={'size': 100})
+        widget=forms.TextInput(attrs={
+            'style': 'width:100%',
+            'placeholder': _('単語帳名'),
+        })
     )
 
     def clean_vocabulary_notebook_name(self):
@@ -76,11 +83,18 @@ class TangoCreateForm(forms.ModelForm):
     tango = forms.CharField(
         required=True,
         validators=[tango_validator],
-        widget=forms.TextInput(attrs={'size': 100})
+        widget=forms.TextInput(attrs={
+            'style': 'width:100%',
+            'placeholder': _('単語')
+        })
     )
     contents = forms.CharField(
         required=False,
-        widget=forms.Textarea(attrs={'cols': '150', 'rows': '10'})
+        widget=forms.Textarea(attrs={
+            'style': 'width:100%',
+            'placeholder': _('内容'),
+            'rows': '10',
+        })
     )
 
 
@@ -99,11 +113,18 @@ class TangoUpdateForm(forms.ModelForm):
     tango = forms.CharField(
         required=True,
         validators=[tango_validator],
-        widget=forms.TextInput(attrs={'size': 100})
+        widget=forms.TextInput(attrs={
+            'style': 'width:100%',
+            'placeholder': _('単語')
+        })
     )
     contents = forms.CharField(
         required=False,
-        widget=forms.Textarea(attrs={'cols': '150', 'rows': '10'})
+        widget=forms.Textarea(attrs={
+            'style': 'width:100%',
+            'placeholder': _('内容'),
+            'rows': '10',
+        })
     )
 
 
@@ -112,7 +133,10 @@ class VocabularyNotebookSearchForm(forms.Form):
     vocabulary_notebook_validator = CharFieldValidator()
     vocabulary_notebook_name = forms.CharField(
         validators=[vocabulary_notebook_validator],
-        widget=forms.TextInput(attrs={'size': 100}),
+        widget=forms.TextInput(attrs={
+            'style': 'width:75%',
+            'placeholder': _('単語帳名'),
+        }),
         required=False
     )
     search_type = forms.fields.ChoiceField(
@@ -129,7 +153,10 @@ class TangoSearchForm(forms.Form):
     tango_validator = CharFieldValidator()
     tango = forms.CharField(
         validators=[tango_validator],
-        widget=forms.TextInput(attrs={'size': 100}),
+        widget=forms.TextInput(attrs={
+            'style': 'width:50%',
+            'placeholder': _('単語'),
+        }),
         required=False
     )
     search_type = forms.fields.ChoiceField(

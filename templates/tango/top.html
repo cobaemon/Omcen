@@ -4,7 +4,11 @@
 {% load static %}
 {% block head_title %}{% trans "単語帳" %}{% endblock %}
 
-{% block app_name %}{% trans "単語帳" %}{% endblock %}
+{% block app_name %}
+<a class="navbar-brand" href="{% url 'tango:top' %}">
+    Tango
+</a>
+{% endblock %}
 
 {% block content %}
 <div class="card">
@@ -17,18 +21,18 @@
     </div>
     <div class="card-body">
         <form class="row">
-            <p>
-                {% trans "単語帳名" %}: {{ form.vocabulary_notebook_name }}
-                {% trans "検索タイプ" %}: {{ form.search_type }}
+            <nobr>
+                {{ form.vocabulary_notebook_name }}
+                {{ form.search_type }}
                 <button type="submit" class="btn btn-success float-end">
                     {% trans "検索" %}
                 </button>
-            </p>
+            </nobr>
         </form>
     </div>
     <div class="card-footer">
         <a class="primaryAction btn btn-primary float-end" role="button"
-           href="{% url 'Tango:vocabulary_notebook_create' %}">
+           href="{% url 'tango:vocabulary_notebook_create' %}">
             {% trans "新規作成" %}
         </a>
     </div>
@@ -46,18 +50,20 @@
                 </div>
             </div>
             <div class="card-body">
-                <a class="btn btn-danger float-end"
-                   href="{% url 'Tango:vocabulary_notebook_delete' pk=vocabulary_notebook.uuid %}">
-                    {% trans "削除" %}
-                </a>
-                <a class="btn btn-info float-end me-3"
-                   href="{% url 'Tango:vocabulary_notebook_update' pk=vocabulary_notebook.uuid %}">
-                    {% trans "名前の変更" %}
-                </a>
-                <a class="btn btn-primary float-end me-3"
-                   href="{% url 'Tango:vocabulary_notebook_read' pk=vocabulary_notebook.uuid %}">
-                    {% trans "選択" %}
-                </a>
+                <nobr class="float-end">
+                    <a class="btn btn-primary me-3"
+                       href="{% url 'tango:vocabulary_notebook_read' pk=vocabulary_notebook.uuid %}">
+                        {% trans "選択" %}
+                    </a>
+                    <a class="btn btn-info me-3"
+                       href="{% url 'tango:vocabulary_notebook_update' pk=vocabulary_notebook.uuid %}">
+                        {% trans "名前の変更" %}
+                    </a>
+                    <a class="btn btn-danger"
+                       href="{% url 'tango:vocabulary_notebook_delete' pk=vocabulary_notebook.uuid %}">
+                        {% trans "削除" %}
+                    </a>
+                </nobr>
             </div>
         </div>
     </div>

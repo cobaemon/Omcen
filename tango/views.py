@@ -537,6 +537,10 @@ class TangoDeleteView(LoginRequiredMixin, DeleteView):
         context = super().get_context_data(**kwargs)
 
         context['vocabulary_notebook_uuid'] = self.request.resolver_match.kwargs['vocabulary_notebook_pk']
+        context['tango'] = get_object_or_404(
+            Tango,
+            uuid=self.request.resolver_match.kwargs['pk'],
+        ).tango
 
         return context
 

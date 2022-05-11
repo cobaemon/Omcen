@@ -10,7 +10,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}"/>
     <title>{% block head_title %}{{ self.page_name }}{% endblock %}</title>
     {% block head_css %}
     {% endblock %}
@@ -19,9 +19,11 @@
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mt-3 mb-3">
     <div class="container-fluid">
+        {% block app_name %}
         <a class="navbar-brand" href="#">
-            {% block app_name %}Omcen{% endblock %}
+            Omcen
         </a>
+        {% endblock %}
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,7 +47,7 @@
                         <li><a class="dropdown-item" href="{% url 'File Encryption:top' %}">
                             {% trans "ファイル暗号化" %}
                         </a></li>
-                        <li><a class="dropdown-item" href="{% url 'Tango:top' %}">
+                        <li><a class="dropdown-item" href="{% url 'tango:top' %}">
                             {% trans "単語帳" %}
                         </a></li>
                         <!--                        <li><a class="dropdown-item text-truncate" href="#">ああああああああああああああああああああああああああああああああ</a></li>-->
@@ -119,7 +121,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
             crossorigin="anonymous"></script>
-
 </div>
 </body>
 </html>

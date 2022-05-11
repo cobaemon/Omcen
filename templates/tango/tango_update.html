@@ -4,7 +4,11 @@
 {% load static %}
 {% block head_title %}{% trans "単語　編集" %}{% endblock %}
 
-{% block app_name %}{% trans "単語帳" %}{% endblock %}
+{% block app_name %}
+<a class="navbar-brand" href="{% url 'tango:top' %}">
+    Tango
+</a>
+{% endblock %}
 
 {% block content %}
 <div class="row">
@@ -20,21 +24,19 @@
             <div class="card-body">
                 <form method="post">
                     {% csrf_token %}
-                    {% trans "単語" %}
-                    <br>
                     {{ form.tango }}
                     <br><br>
-                    {% trans "内容" %}
-                    <br>
                     {{ form.contents }}
                     <br>
-                    <a class="btn btn-secondary float-end" role="button"
-                       href="{% url 'Tango:vocabulary_notebook_read' pk=vocabulary_notebook_uuid %}">
-                        {% trans "キャンセル" %}
-                    </a>
-                    <button class="btn btn-info float-end me-3" type="submit">
-                        {% trans "編集" %}
-                    </button>
+                    <nobr class="float-end">
+                        <button class="btn btn-info me-3" type="submit">
+                            {% trans "編集" %}
+                        </button>
+                        <a class="btn btn-secondary" role="button"
+                           href="{% url 'tango:vocabulary_notebook_read' pk=vocabulary_notebook_uuid %}">
+                            {% trans "キャンセル" %}
+                        </a>
+                    </nobr>
                 </form>
             </div>
         </div>
