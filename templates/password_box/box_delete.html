@@ -5,36 +5,35 @@
 
 {% block head_title %}{% trans "ボックス削除" %}{% endblock %}
 
-{% block app_name %}{% trans "パスワードボックス" %}{% endblock %}
+{% block app_name %}
+<a class="navbar-brand" href="{% url 'Password Box:top' %}">
+    Password Box
+</a>
+{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col"></div>
-    <div class="col">
-        <div class="card">
-            <div class="card-header p-3 mb-2 bg-primary text-white">
-                <div class="row">
-                    <div class="col">
-                        <h1>{{ object.box_name }}</h1>
-                    </div>
-                </div>
-            </div>
-            <div class="card-body">
-                <p>{% trans "削除したら二度と元には戻せません" %}</p>
-                <p>{% trans "本当に削除しますか？" %}</p>
-                <a class="btn btn-secondary float-end" role="button"
-                   href="{% url 'Password Box:top' %}">
-                    {% trans "キャンセル" %}
-                </a>
-                <form method="post">
-                    {% csrf_token %}
-                    <button class="btn btn-danger float-end me-3" type="submit">
-                        {% trans "削除" %}
-                    </button>
-                </form>
+<div class="card">
+    <div class="card-header p-3 mb-2 bg-primary text-white">
+        <div class="row">
+            <div class="col">
+                <h1>{{ object.box_name }}</h1>
             </div>
         </div>
     </div>
-    <div class="col"></div>
+    <div class="card-body">
+        <p>{% trans "削除したら二度と元には戻せません" %}</p>
+        <p>{% trans "本当に削除しますか？" %}</p>
+        <br>
+        <a class="btn btn-secondary float-end" role="button"
+           href="{% url 'Password Box:top' %}">
+            {% trans "キャンセル" %}
+        </a>
+        <form method="post">
+            {% csrf_token %}
+            <button class="btn btn-danger float-end me-3" type="submit">
+                {% trans "削除" %}
+            </button>
+        </form>
+    </div>
 </div>
 {% endblock %}

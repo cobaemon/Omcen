@@ -39,7 +39,7 @@ class Top(LoginRequiredMixin, ListView):
         ).exists():
             messages.warning(self.request, _('パスワードボックスサービスを登録していません'), extra_tags='warning')
 
-            return redirect(to=reverse('omcen:plan_selection', kwargs={'service_name': 'Password Box'}))
+            return redirect(to=reverse('Omcen:plan_selection', kwargs={'service_name': 'Password Box'}))
 
         return super().dispatch(self.request, *args, **kwargs)
 
@@ -73,7 +73,7 @@ class BoxCreate(LoginRequiredMixin, CreateView):
         ).exists():
             messages.warning(self.request, _('あなたはパスワードボックスサービスを登録していません'), extra_tags='warning')
 
-            return redirect(to=reverse('omcen:service_list'))
+            return redirect(to=reverse('Omcen:service_list'))
 
         return super().dispatch(self.request, *args, **kwargs)
 
@@ -102,7 +102,7 @@ class BoxCreate(LoginRequiredMixin, CreateView):
         if form.cleaned_data['password_generate_flg']:
             self.cipher_password = aes.encryption(pg._generate(
                 password_type=form.cleaned_data['password_type'],
-                n=form.cleaned_data['password_num']
+                n=form.cleaned_data['password_length']
             ).encode('utf-8'))
         else:
             self.cipher_password = aes.encryption(form.cleaned_data['password'].encode('utf-8'))
@@ -163,7 +163,7 @@ class BoxView(LoginRequiredMixin, TemplateView):
         ).exists():
             messages.warning(self.request, _('あなたはパスワードボックスサービスを登録していません'), extra_tags='warning')
 
-            return redirect(to=reverse('omcen:service_list'))
+            return redirect(to=reverse('Omcen:service_list'))
 
         password_box = get_object_or_404(
             PasswordBox,
@@ -266,7 +266,7 @@ class BoxDelete(LoginRequiredMixin, DeleteView):
         ).exists():
             messages.warning(self.request, _('あなたはパスワードボックスサービスを登録していません'), extra_tags='warning')
 
-            return redirect(to=reverse('omcen:service_list'))
+            return redirect(to=reverse('Omcen:service_list'))
 
         password_box = get_object_or_404(
             PasswordBox,
@@ -316,7 +316,7 @@ class BoxPasswordUpdate(LoginRequiredMixin, UpdateView):
         ).exists():
             messages.warning(self.request, _('あなたはパスワードボックスサービスを登録していません'), extra_tags='warning')
 
-            return redirect(to=reverse('omcen:service_list'))
+            return redirect(to=reverse('Omcen:service_list'))
 
         password_box = get_object_or_404(
             PasswordBox,
@@ -411,6 +411,7 @@ class BoxPasswordUpdate(LoginRequiredMixin, UpdateView):
             uuid=self.request.resolver_match.kwargs['pk'],
         )
         context['box_name'] = password_box.box_name
+        context['uuid'] = self.request.resolver_match.kwargs['pk']
 
         return context
 
@@ -456,7 +457,7 @@ class BoxUpdate(LoginRequiredMixin, UpdateView):
         ).exists():
             messages.warning(self.request, _('あなたはパスワードボックスサービスを登録していません'), extra_tags='warning')
 
-            return redirect(to=reverse('omcen:service_list'))
+            return redirect(to=reverse('Omcen:service_list'))
 
         password_box = get_object_or_404(
             PasswordBox,
@@ -571,6 +572,7 @@ class BoxUpdate(LoginRequiredMixin, UpdateView):
             uuid=self.request.resolver_match.kwargs['pk'],
         )
         context['box_name'] = password_box.box_name
+        context['uuid'] = self.request.resolver_match.kwargs['pk']
 
         return context
 

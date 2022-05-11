@@ -23,15 +23,26 @@ class BoxCreateForm(forms.ModelForm):
         max_length=64,
         validators=[box_name_validator],
         required=True,
+        widget=forms.TextInput(attrs={
+            'style': 'width:100%',
+            'placeholder': _('boxname')
+        })
     )
     user_name = forms.CharField(
         max_length=128,
-        required=False
+        required=False,
+        widget=forms.TextInput(attrs={
+            'style': 'width:100%',
+            'placeholder': _('username')
+        })
     )
     password = forms.CharField(
         max_length=1024,
         required=False,
-        widget=forms.PasswordInput()
+        widget=forms.PasswordInput(attrs={
+            'style': 'width:100%',
+            'placeholder': _('password')
+        })
     )
     password_generate_flg = forms.BooleanField(
         label=_('パスワード生成'),
@@ -40,13 +51,13 @@ class BoxCreateForm(forms.ModelForm):
     )
     password_type = forms.fields.ChoiceField(
         choices=(
-            ('1', '数字のみ'),
-            ('2', '英数字'),
-            ('3', '英数字・記号')
+            ('1', _('数字のみ')),
+            ('2', _('英数字')),
+            ('3', _('英数字・記号'))
         ),
         required=True
     )
-    password_num = forms.IntegerField(
+    password_length = forms.IntegerField(
         max_value=1024,
         min_value=1,
         required=True,
@@ -54,7 +65,11 @@ class BoxCreateForm(forms.ModelForm):
     )
     email = forms.CharField(
         max_length=256,
-        required=False
+        required=False,
+        widget=forms.TextInput(attrs={
+            'style': 'width:100%',
+            'placeholder': _('email')
+        })
     )
 
 
@@ -78,7 +93,10 @@ class BoxPasswordUpdateForm(forms.ModelForm):
 
     password = forms.CharField(
         max_length=1024,
-        widget=forms.PasswordInput(),
+        widget=forms.PasswordInput(attrs={
+            'style': 'width:100%',
+            'placeholder': _('password')
+        }),
         required=True,
     )
 
@@ -100,12 +118,24 @@ class BoxUpdateForm(forms.ModelForm):
         max_length=64,
         validators=[box_name_validator],
         required=True,
+        widget=forms.TextInput(attrs={
+            'style': 'width:100%',
+            'placeholder': _('boxname')
+        }),
     )
     user_name = forms.CharField(
         max_length=128,
-        required=False
+        required=False,
+        widget=forms.TextInput(attrs={
+            'style': 'width:100%',
+            'placeholder': _('username')
+        }),
     )
     email = forms.CharField(
         max_length=256,
-        required=False
+        required=False,
+        widget=forms.TextInput(attrs={
+            'style': 'width:100%',
+            'placeholder': _('email')
+        }),
     )

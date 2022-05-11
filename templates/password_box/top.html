@@ -4,7 +4,11 @@
 {% load i18n %}
 
 {% block head_title %}{% trans "トップ" %}{% endblock %}
-{% block app_name %}{% trans "パスワードボックス" %}{% endblock %}
+{% block app_name %}
+<a class="navbar-brand" href="{% url 'Password Box:top' %}">
+    Password Box
+</a>
+{% endblock %}
 
 {% block content %}
 <div class="row">
@@ -18,13 +22,10 @@
                 </div>
             </div>
             <div class="card-body">
-                <p>
-                    ボックス名
-                    <a class="primaryAction btn btn-primary float-end" role="button"
-                       href="{% url 'Password Box:create' %}">
-                        {% trans "新規作成" %}
-                    </a>
-                </p>
+                <a class="primaryAction btn btn-primary float-end" role="button"
+                   href="{% url 'Password Box:create' %}">
+                    {% trans "新規作成" %}
+                </a>
             </div>
             <div class="card-footer">
                 <table class="table table-striped text-nowrap">

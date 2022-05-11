@@ -37,7 +37,7 @@ class TopView(LoginRequiredMixin, ListView):
         ).exists():
             messages.warning(self.request, _('Tangoサービスを登録していません'), extra_tags='warning')
 
-            return redirect(to=reverse('omcen:plan_selection', kwargs={'service_name': 'Tango'}))
+            return redirect(to=reverse('Omcen:plan_selection', kwargs={'service_name': 'Tango'}))
 
         return super().dispatch(self.request, *args, **kwargs)
 
@@ -101,7 +101,7 @@ class VocabularyNotebookCreateView(LoginRequiredMixin, CreateView):
         ).exists():
             messages.warning(self.request, _('Tangoサービスを登録していません'), extra_tags='warning')
 
-            return redirect(to=reverse('omcen:plan_selection', kwargs={'service_name': 'Tango'}))
+            return redirect(to=reverse('Omcen:plan_selection', kwargs={'service_name': 'Tango'}))
 
         return super().dispatch(self.request, *args, **kwargs)
 
@@ -142,7 +142,7 @@ class VocabularyNotebookReadView(LoginRequiredMixin, ListView):
         ).exists():
             messages.warning(self.request, _('Tangoサービスを登録していません'), extra_tags='warning')
 
-            return redirect(to=reverse('omcen:plan_selection', kwargs={'service_name': 'Tango'}))
+            return redirect(to=reverse('Omcen:plan_selection', kwargs={'service_name': 'Tango'}))
 
         if not VocabularyNotebook.objects.filter(
                 omcen_user__username=self.request.user,
@@ -234,7 +234,7 @@ class VocabularyNotebookUpdateView(LoginRequiredMixin, UpdateView):
         ).exists():
             messages.warning(self.request, _('Tangoサービスを登録していません'), extra_tags='warning')
 
-            return redirect(to=reverse('omcen:plan_selection', kwargs={'service_name': 'Tango'}))
+            return redirect(to=reverse('Omcen:plan_selection', kwargs={'service_name': 'Tango'}))
 
         if not VocabularyNotebook.objects.filter(
                 omcen_user__username=self.request.user,
@@ -288,7 +288,7 @@ class VocabularyNotebookDeleteView(LoginRequiredMixin, DeleteView):
         ).exists():
             messages.warning(self.request, _('Tangoサービスを登録していません'), extra_tags='warning')
 
-            return redirect(to=reverse('omcen:plan_selection', kwargs={'service_name': 'Tango'}))
+            return redirect(to=reverse('Omcen:plan_selection', kwargs={'service_name': 'Tango'}))
 
         if not VocabularyNotebook.objects.filter(
                 omcen_user__username=self.request.user,
@@ -320,7 +320,7 @@ class TangoCreateView(LoginRequiredMixin, CreateView):
         ).exists():
             messages.warning(self.request, _('Tangoサービスを登録していません'), extra_tags='warning')
 
-            return redirect(to=reverse('omcen:plan_selection', kwargs={'service_name': 'Tango'}))
+            return redirect(to=reverse('Omcen:plan_selection', kwargs={'service_name': 'Tango'}))
 
         if not VocabularyNotebook.objects.filter(
                 omcen_user__username=self.request.user,
@@ -389,7 +389,7 @@ class TangoReadView(LoginRequiredMixin, TemplateView):
         ).exists():
             messages.warning(self.request, _('Tangoサービスを登録していません'), extra_tags='warning')
 
-            return redirect(to=reverse('omcen:plan_selection', kwargs={'service_name': 'Tango'}))
+            return redirect(to=reverse('Omcen:plan_selection', kwargs={'service_name': 'Tango'}))
 
         if not VocabularyNotebook.objects.filter(
                 omcen_user__username=self.request.user,
@@ -437,7 +437,7 @@ class TangoUpdateView(LoginRequiredMixin, UpdateView):
         ).exists():
             messages.warning(self.request, _('Tangoサービスを登録していません'), extra_tags='warning')
 
-            return redirect(to=reverse('omcen:plan_selection', kwargs={'service_name': 'Tango'}))
+            return redirect(to=reverse('Omcen:plan_selection', kwargs={'service_name': 'Tango'}))
 
         if not VocabularyNotebook.objects.filter(
                 omcen_user__username=self.request.user,
@@ -515,7 +515,7 @@ class TangoDeleteView(LoginRequiredMixin, DeleteView):
         ).exists():
             messages.warning(self.request, _('Tangoサービスを登録していません'), extra_tags='warning')
 
-            return redirect(to=reverse('omcen:plan_selection', kwargs={'service_name': 'Tango'}))
+            return redirect(to=reverse('Omcen:plan_selection', kwargs={'service_name': 'Tango'}))
 
         if not VocabularyNotebook.objects.filter(
                 omcen_user__username=self.request.user,

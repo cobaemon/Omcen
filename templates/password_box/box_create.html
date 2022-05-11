@@ -4,7 +4,11 @@
 {% load i18n %}
 
 {% block head_title %}{% trans "ボックス新規作成" %}{% endblock %}
-{% block app_name %}{% trans "パスワードボックス" %}{% endblock %}
+{% block app_name %}
+<a class="navbar-brand" href="{% url 'Password Box:top' %}">
+    Password Box
+</a>
+{% endblock %}
 
 {% block content %}
 <div class="row">
@@ -20,11 +24,10 @@
             <div class="card-body">
                 <form method="post">
                     {% csrf_token %}
-                    <p>{% trans "ボックス名" %}: {{ form.box_name }}</p>
-                    <p>{% trans "ユーザー名" %}: {{ form.user_name }}</p>
-                    <p>{% trans "パスワード" %}: {{ form.password }} {% trans "生成" %}: {{ form.password_generate_flg }}
-                        {% trans "タイプ" %}: {{ form.password_type }} {% trans "長さ" %}: {{ form.password_num }}</p>
-                    <p>{% trans "メールアドレス" %}: {{ form.email }}</p>
+                    <p>{{ form.box_name }}</p>
+                    <p>{{ form.user_name }}</p>
+                    <p>{{ form.password }}</p>
+                    <p>{{ form.email }}</p>
                     <a class="btn btn-secondary float-end" role="button"
                        href="{% url 'Password Box:top' %}">
                         {% trans "キャンセル" %}
@@ -33,6 +36,13 @@
                         {% trans "新規作成" %}
                     </button>
                 </form>
+            </div>
+            <div class="card-footer">
+                <p>{% trans "パスワード自動生成を有効化すると入力フォームに入力されているパスワードは上書きされます" %}</p>
+                <br>
+                <nobr><p>{% trans "パスワード自動生成" %}: {{ form.password_generate_flg }}</p></nobr>
+                <nobr><p>{% trans "パスワードタイプ" %}: {{ form.password_type }}</p></nobr>
+                <nobr><p>{% trans "パスワード長" %}: {{ form.password_length }}</p></nobr>
             </div>
         </div>
     </div>
