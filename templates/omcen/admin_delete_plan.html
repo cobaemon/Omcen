@@ -3,8 +3,9 @@
 {% load widget_tweaks %}
 
 {% block breadcrumb %}
-<li class="breadcrumb-item"><a href="{% url 'omcen:service_control' %}">サービス管理</a></li>
-<li class="breadcrumb-item"><a href="{% url 'omcen:service_detail' object.service.pk %}">{{ object.service.service_name }}</a></li>
+<li class="breadcrumb-item"><a href="{% url 'Omcen:service_control' %}">サービス管理</a></li>
+<li class="breadcrumb-item"><a href="{% url 'Omcen:service_detail' object.service.pk %}">{{ object.service.service_name
+    }}</a></li>
 <li class="breadcrumb-item active" aria-current="page">削除</li>
 
 {% endblock %}
@@ -18,10 +19,10 @@
         {% csrf_token %}
         <table class="table table-borderless my-4">
             <tbody>
-                <tr>
-                    <th width="25%">プラン名</th>
-                    <th>{{ object.plan_name }}</th>
-                </tr>
+            <tr>
+                <th width="25%">プラン名</th>
+                <th>{{ object.plan_name }}</th>
+            </tr>
             <tr>
                 <th width="25%">価格</th>
                 <th>{{ object.price }}</th>
@@ -30,8 +31,8 @@
         </table>
         <div class="d-flex flex-row-reverse">
             <button type="submit" class="btn btn-danger">削除</button>
-            <a class="btn btn-secondary mx-3" href="{% url 'omcen:service_detail' object.service.pk %}">戻る</a>
-    </div>
+            <a class="btn btn-secondary mx-3" href="{% url 'Omcen:service_detail' object.service.pk %}">戻る</a>
+        </div>
     </form>
 </div>
 

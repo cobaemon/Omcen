@@ -47,15 +47,15 @@
                         <li><a class="dropdown-item" href="{% url 'File Encryption:top' %}">
                             {% trans "ファイル暗号化" %}
                         </a></li>
-                        <li><a class="dropdown-item" href="{% url 'tango:top' %}">
+                        <li><a class="dropdown-item" href="{% url 'Tango:top' %}">
                             {% trans "単語帳" %}
                         </a></li>
                         <!--                        <li><a class="dropdown-item text-truncate" href="#">ああああああああああああああああああああああああああああああああ</a></li>-->
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-                        <li><a class="dropdown-item" href="{% url 'omcen:service_list' %}">{% trans "サービス一覧" %}</a></li>
-                        <li><a class="dropdown-item" href="{% url 'omcen:service_in_use_list' %}">
+                        <li><a class="dropdown-item" href="{% url 'Omcen:service_list' %}">{% trans "サービス一覧" %}</a></li>
+                        <li><a class="dropdown-item" href="{% url 'Omcen:service_in_use_list' %}">
                             {% trans "登録中のサービス一覧" %}
                         </a></li>
                     </ul>
@@ -67,10 +67,10 @@
                         <span class="material-icons">settings</span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown2">
-                        <li><a class="dropdown-item" href="{% url 'omcen:my_page' %}">{% trans "マイページ" %}</a></li>
-                        <li><a class="dropdown-item" href="#">{% trans "設定" %}</a></li>
-                        <li><a class="dropdown-item" href="{% url 'omcen:linking_omcen_users_to_social_accounts' %}">
-                            {% trans "Omcenアカウントの連携" %}
+                        <li><a class="dropdown-item" href="{% url 'Omcen:my_page' %}">{% trans "マイページ" %}</a></li>
+                        <li><a class="dropdown-item" href="#">{% trans "設定 *未実装*" %}</a></li>
+                        <li><a class="dropdown-item" href="{% url 'Omcen:linking_omcen_users_to_social_accounts' %}">
+                            {% trans "Omcenアカウントの連携 *未実装*" %}
                         </a></li>
                         <li>
                             <hr class="dropdown-divider">
@@ -78,7 +78,7 @@
                         {% if user.is_authenticated %}
                         <li><a class="dropdown-item" href="{% url 'account_logout' %}">{% trans "ログアウト" %}</a></li>
                         <li><a class="dropdown-item text-danger"
-                               href="{% url 'omcen:omcen_user_deactivate' pk=user.uuid %}">
+                               href="{% url 'Omcen:omcen_user_deactivate' pk=user.uuid %}">
                             {% trans "アカウントの停止" %}</a>
                         </li>
                         {% else %}

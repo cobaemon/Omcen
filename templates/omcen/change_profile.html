@@ -6,39 +6,35 @@
 {% block head_title %}{% trans "プロフィールの編集" %}{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col"></div>
-    <div class="col">
-        <div class="card">
-            <div class="card-header p-3 mb-2 bg-primary text-white">
-                <div class="row">
-                    <div class="col">
-                        <h1>{% trans "プロフィールの編集" %}</h1>
-                    </div>
-                </div>
-            </div>
-            <div class="card-body">
-                {% if form.errors %}
-                {{ form.errors }}
-                {% endif %}
-                <br>
-                <form method="post">
-                    {% csrf_token %}
-                    <p>{% trans "ユーザ名" %}: {{ form.username }}</p>
-                    <p>{% trans "名" %}: {{ form.first_name }}</p>
-                    <p>{% trans "姓" %}: {{ form.last_name }}</p>
-                    <p>{% trans "メールアドレス" %}: {{ form.email }}</p>
-                    <a class="btn btn-secondary float-end" role="button"
-                       href="{% url 'omcen:my_page' %}">
-                        {% trans "キャンセル" %}
-                    </a>
-                    <button class="btn btn-danger float-end me-3" type="submit">
-                        {% trans "変更" %}
-                    </button>
-                </form>
+<div class="card">
+    <div class="card-header p-3 mb-2 bg-primary text-white">
+        <div class="row">
+            <div class="col">
+                <h1>{% trans "プロフィールの編集" %}</h1>
             </div>
         </div>
     </div>
-    <div class="col"></div>
+    <div class="card-body">
+        {% if form.errors %}
+        {{ form.errors }}
+        {% endif %}
+        <br>
+        <form method="post">
+            {% csrf_token %}
+            <p>{{ form.username }}</p>
+            <p>{{ form.first_name }}</p>
+            <p>{{ form.last_name }}</p>
+            <p>{{ form.email }}</p>
+            <nobr class="float-end">
+                <button class="btn btn-warning me-3" type="submit">
+                    {% trans "変更" %}
+                </button>
+                <a class="btn btn-secondary" role="button"
+                   href="{% url 'Omcen:my_page' %}">
+                    {% trans "キャンセル" %}
+                </a>
+            </nobr>
+        </form>
+    </div>
 </div>
 {% endblock %}

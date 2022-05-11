@@ -6,34 +6,29 @@
 {% block head_title %}{% trans "サービス登録解除" %}{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col"></div>
-    <div class="col">
-        <div class="card">
-            <div class="card-header p-3 mb-2 bg-primary text-white">
-                <div class="row">
-                    <div class="col">
-                        <h1>{% trans "サービス登録解除" %}</h1>
-                    </div>
-                </div>
-            </div>
-            <div class="card-body">
-                <p>{% trans "サービス名" %}: {{ service_in_use.omcen_service.service.service_name }}</p>
-                <p>{% trans "プラン名" %}: {{ service_in_use.omcen_service.plan.plan_name }}</p>
-                <p>{% trans "価格" %}: {{ service_in_use.omcen_service.plan.price }}{% trans "円" %}</p>
-                <a class="btn btn-secondary float-end" role="button"
-                   href="{% url cancel_url %}">
-                    {% trans "キャンセル" %}
-                </a>
-                <form method="post">
-                    {% csrf_token %}
-                    <button class="btn btn-danger float-end me-3" type="submit">
-                        {% trans "登録解除" %}
-                    </button>
-                </form>
+<div class="card">
+    <div class="card-header p-3 mb-2 bg-primary text-white">
+        <div class="row">
+            <div class="col">
+                <h1>{% trans "サービス登録解除" %}</h1>
             </div>
         </div>
     </div>
-    <div class="col"></div>
+    <div class="card-body">
+        <p>{% trans "サービス名" %}: {{ service_in_use.omcen_service.service.service_name }}</p>
+        <p>{% trans "プラン名" %}: {{ service_in_use.omcen_service.plan.plan_name }}</p>
+        <p>{% trans "価格" %}: {{ service_in_use.omcen_service.plan.price }}{% trans "円" %}</p>
+        <br>
+        <a class="btn btn-secondary float-end" role="button"
+           href="{% url cancel_url %}">
+            {% trans "キャンセル" %}
+        </a>
+        <form method="post">
+            {% csrf_token %}
+            <button class="btn btn-danger float-end me-3" type="submit">
+                {% trans "登録解除" %}
+            </button>
+        </form>
+    </div>
 </div>
 {% endblock %}

@@ -108,7 +108,34 @@ class ChangeProfileForm(forms.ModelForm):
         error_messages={
             'unique': _("A user with that username already exists."),
         },
-        required=True
+        required=True,
+        widget=forms.TextInput(attrs={
+            'style': 'width:100%',
+            'placeholder': _('username')
+        }),
+    )
+    first_name = forms.CharField(
+        max_length=150,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'style': 'width:100%',
+            'placeholder': _('firstname')
+        }),
+    )
+    last_name = forms.CharField(
+        max_length=150,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'style': 'width:100%',
+            'placeholder': _('lastname')
+        }),
+    )
+    email = forms.EmailField(
+        required=True,
+        widget=forms.TextInput(attrs={
+            'style': 'width:100%',
+            'placeholder': _('email')
+        }),
     )
 
 
@@ -128,5 +155,8 @@ class LinkingUserForm(forms.ModelForm):
     linked_id = forms.CharField(
         required=True,
         max_length=36,
-        widget=forms.Textarea(attrs={'cols': '100', 'rows': '1'})
+        widget=forms.TextInput(attrs={
+            'style': 'width:100%',
+            'placeholder': _('連携ID')
+        }),
     )

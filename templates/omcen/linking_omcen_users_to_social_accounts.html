@@ -6,27 +6,21 @@
 {% block head_title %}{% trans "ソーシャルアカウントの連携" %}{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col"></div>
-    <div class="col">
-        <div class="card">
-            <div class="card-header p-3 mb-2 bg-success text-white">
-                <div class="row">
-                    <div class="col">
-                        <h1>{% trans "連携IDの発行" %}</h1>
-                    </div>
-                </div>
-            </div>
-            <div class="card-body">
-                <h2>実装中</h2>
-                <a class="btn btn-primary float-end" role="button"
-                   href="{% url 'omcen:linked_id_publishing' %}">
-                    {% trans "発行" %}
-                </a>
+<div class="card">
+    <div class="card-header p-3 mb-2 bg-success text-white">
+        <div class="row">
+            <div class="col">
+                <h1>{% trans "連携IDの発行" %}</h1>
             </div>
         </div>
     </div>
-    <div class="col"></div>
+    <div class="card-body">
+        <h2>実装中</h2>
+        <a class="btn btn-primary float-end" role="button"
+           href="{% url 'Omcen:linked_id_publishing' %}">
+            {% trans "発行" %}
+        </a>
+    </div>
 </div>
 <br>
 <br>
@@ -51,7 +45,7 @@
                 </a>
                 {% else %}
                 <a class="btn btn-primary float-end" role="button"
-                   href="{% url 'omcen:linking_user' %}">
+                   href="{% url 'Omcen:linking_user' %}">
                     {% trans "連携" %}
                 </a>
                 {% endif %}

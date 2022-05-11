@@ -3,7 +3,7 @@
 {% load widget_tweaks %}
 
 {% block breadcrumb %}
-<li class="breadcrumb-item"><a href="{% url 'omcen:service_control' %}">サービス管理</a></li>
+<li class="breadcrumb-item"><a href="{% url 'Omcen:service_control' %}">サービス管理</a></li>
 <li class="breadcrumb-item active" aria-current="page">{{ service.service_name }}</li>
 
 {% endblock %}
@@ -14,40 +14,42 @@
     <h3 class="my-3 font-monospace service-title">{{ service.service_name }}</h3>
 
     <div class="d-flex flex-row-reverse">
-        <a class="btn btn-success my-3" href="{% url 'omcen:create_plan' service.pk %}">プランの新規作成</a>
+        <a class="btn btn-success my-3" href="{% url 'Omcen:create_plan' service.pk %}">プランの新規作成</a>
     </div>
 
 
     <table class="table">
         <thead>
-            <th width="10%"></th>
-            <th width="40%">プラン名</th>
-            <th width="10%">価格</th>
-            <th width="10%"></th>
-            <th width="10%"></th>
-            <th width="10%"></th>
+        <th width="10%"></th>
+        <th width="40%">プラン名</th>
+        <th width="10%">価格</th>
+        <th width="10%"></th>
+        <th width="10%"></th>
+        <th width="10%"></th>
         </thead>
         <tbody>
-            {% for plan in plans %}
-                <tr>
-                    <th>{{ forloop.counter }}</th>
-                    <td>{{ plan.plan_name }}</td>
-                    <td>{{ plan.price }}</td>
-                    <td align="right">
-                        <a class="btn btn-primary" href="{% url 'omcen:update_plan' plan.service_id plan.pk %}">編集</a>
-                    </td>
-                    <td align="right">
-                        <a class="btn btn-danger" href="{% url 'omcen:delete_plan' plan.service_id plan.pk %}">削除</a>
-                    </td>
-                    <td align="right">
-                        {% if not plan.is_active %}
-                            <a class="btn btn-outline-success" href="{% url 'omcen:switching_enabled' plan.service_id plan.pk 'enabled' %}">有効化</a>
-                        {% else %}
-                            <a class="btn btn-outline-secondary" href="{% url 'omcen:switching_enabled' plan.service_id plan.pk 'disabled' %}">無効化</a>
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
+        {% for plan in plans %}
+        <tr>
+            <th>{{ forloop.counter }}</th>
+            <td>{{ plan.plan_name }}</td>
+            <td>{{ plan.price }}</td>
+            <td align="right">
+                <a class="btn btn-primary" href="{% url 'Omcen:update_plan' plan.service_id plan.pk %}">編集</a>
+            </td>
+            <td align="right">
+                <a class="btn btn-danger" href="{% url 'Omcen:delete_plan' plan.service_id plan.pk %}">削除</a>
+            </td>
+            <td align="right">
+                {% if not plan.is_active %}
+                <a class="btn btn-outline-success"
+                   href="{% url 'Omcen:switching_enabled' plan.service_id plan.pk 'enabled' %}">有効化</a>
+                {% else %}
+                <a class="btn btn-outline-secondary"
+                   href="{% url 'Omcen:switching_enabled' plan.service_id plan.pk 'disabled' %}">無効化</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
         </tbody>
     </table>
 

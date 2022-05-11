@@ -11,7 +11,7 @@ from tango.views import TopView, VocabularyNotebookCreateView, VocabularyNoteboo
     VocabularyNotebookUpdateView, VocabularyNotebookReadView, TangoCreateView, TangoReadView, TangoUpdateView, \
     TangoDeleteView
 
-app_name = 'tango'
+app_name = 'Tango'
 
 urlpatterns = [
     # 単語帳トップページ

@@ -3,8 +3,8 @@
 {% load widget_tweaks %}
 
 {% block breadcrumb %}
-<li class="breadcrumb-item"><a href="{% url 'omcen:service_control' %}">サービス管理</a></li>
-<li class="breadcrumb-item"><a href="{% url 'omcen:service_detail' service.pk %}">{{ service.service_name }}</a></li>
+<li class="breadcrumb-item"><a href="{% url 'Omcen:service_control' %}">サービス管理</a></li>
+<li class="breadcrumb-item"><a href="{% url 'Omcen:service_detail' service.pk %}">{{ service.service_name }}</a></li>
 <li class="breadcrumb-item active" aria-current="page">新規作成</li>
 
 {% endblock %}
@@ -18,10 +18,10 @@
         {% csrf_token %}
         <table class="table table-borderless my-4">
             <tbody>
-                <tr>
-                    <th width="25%">プラン名</th>
-                    <th>{% render_field form.plan_name class="form-control" %}</th>
-                </tr>
+            <tr>
+                <th width="25%">プラン名</th>
+                <th>{% render_field form.plan_name class="form-control" %}</th>
+            </tr>
             <tr>
                 <th width="25%">価格</th>
                 <th>{% render_field form.price class="form-control" %}</th>
@@ -30,8 +30,8 @@
         </table>
         <div class="d-flex flex-row-reverse">
             <button type="submit" class="btn btn-success">作成</button>
-            <a class="btn btn-secondary mx-3" href="{% url 'omcen:service_detail' service.pk %}">戻る</a>
-    </div>
+            <a class="btn btn-secondary mx-3" href="{% url 'Omcen:service_detail' service.pk %}">戻る</a>
+        </div>
     </form>
 </div>
 

@@ -6,34 +6,31 @@
 {% block head_title %}{% trans "マイページ" %}{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col"></div>
-    <div class="col">
-        <div class="card">
-            <div class="card-header p-3 mb-2 bg-primary text-white">
-                <div class="row">
-                    <div class="col">
-                        <h1>{% trans "プロフィール" %}</h1>
-                    </div>
-                </div>
-            </div>
-            <div class="card-body">
-                <p>{% trans "ユーザ名" %}: {{ omcen_user.username }}</p>
-                <p>{% trans "名" %}: {{ omcen_user.first_name }}</p>
-                <p>{% trans "姓" %}: {{ omcen_user.last_name }}</p>
-                <p>{% trans "メールアドレス" %}: {{ omcen_user.email }}</p>
-                <p>{% trans "パスワード" %}: **********</p>
-                <a class="btn btn-warning float-end me-3" role="button"
-                   href="{% url 'account_change_password' %}">
-                    {% trans "パスワードの変更" %}
-                </a>
-                <a class="btn btn-info float-end me-3" role="button"
-                   href="{% url 'omcen:change_profile' pk=user.uuid %}">
-                    {% trans "プロフィールの編集" %}
-                </a>
+<div class="card">
+    <div class="card-header p-3 mb-2 bg-primary text-white">
+        <div class="row">
+            <div class="col">
+                <h1>{% trans "プロフィール" %}</h1>
             </div>
         </div>
     </div>
-    <div class="col"></div>
+    <div class="card-body">
+        <p>{% trans "ユーザ名" %}: {{ omcen_user.username }}</p>
+        <p>{% trans "名" %}: {{ omcen_user.first_name }}</p>
+        <p>{% trans "姓" %}: {{ omcen_user.last_name }}</p>
+        <p>{% trans "メールアドレス" %}: {{ omcen_user.email }}</p>
+        <p>{% trans "パスワード" %}: **********</p>
+        <br>
+        <nobr class="float-end">
+            <a class="btn btn-info me-3" role="button"
+               href="{% url 'Omcen:change_profile' pk=user.uuid %}">
+                {% trans "プロフィールの編集" %}
+            </a>
+            <a class="btn btn-warning" role="button"
+               href="{% url 'account_change_password' %}">
+                {% trans "パスワードの変更" %}
+            </a>
+        </nobr>
+    </div>
 </div>
 {% endblock %}

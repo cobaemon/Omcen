@@ -5,7 +5,7 @@
 {% block head_title %}{% trans "単語帳　削除" %}{% endblock %}
 
 {% block app_name %}
-<a class="navbar-brand" href="{% url 'tango:top' %}">
+<a class="navbar-brand" href="{% url 'Tango:top' %}">
     Tango
 </a>
 {% endblock %}
@@ -24,7 +24,7 @@
             <div class="card-body">
                 <p>{{ object.vocabulary_notebook_name }}{% trans "を削除しますか？" %}</p>
                 <a class="btn btn-secondary float-end" role="button"
-                   href="{% url 'tango:top' %}">
+                   href="{% url 'Tango:top' %}">
                     {% trans "キャンセル" %}
                 </a>
                 <form method="post">

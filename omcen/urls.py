@@ -4,7 +4,7 @@ from omcen.views import ServiceControl, CreateService, ServiceList, ServiceSubsc
     ServiceUnsubscribe, switching_enabled, ServiceDetail, CreatePlan, UpdatePlan, DeletePlan, OmcenUserDeactivate, \
     MyPage, ChangeProfile, LinkingOmcenUsersToSocialAccountsView, LinkedIDPublishing, LinkingUser
 
-app_name = 'omcen'
+app_name = 'Omcen'
 
 urlpatterns = [
     # 管理画面
