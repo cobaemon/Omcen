@@ -398,7 +398,13 @@ class BoxPasswordUpdate(LoginRequiredMixin, UpdateView):
             key=rsa.decryption(cipher_aes_generate_key, private_key)
         )
 
-        self.cipher_password = aes.encryption(form.cleaned_data['password'].encode('utf-8'))
+        if form.cleaned_data['password_generate_flg']:
+            self.cipher_password = aes.encryption(pg._generate(
+                password_type=form.cleaned_data['password_type'],
+                n=form.cleaned_data['password_length']
+            ).encode('utf-8'))
+        else:
+            self.cipher_password = aes.encryption(form.cleaned_data['password'].encode('utf-8'))
 
         form.instance.password = self.cipher_password[0]
 

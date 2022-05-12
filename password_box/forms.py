@@ -97,7 +97,26 @@ class BoxPasswordUpdateForm(forms.ModelForm):
             'style': 'width:100%',
             'placeholder': _('password')
         }),
+        required=False,
+    )
+    password_generate_flg = forms.BooleanField(
+        label=_('パスワード生成'),
+        initial=False,
+        required=False
+    )
+    password_type = forms.fields.ChoiceField(
+        choices=(
+            ('1', _('数字のみ')),
+            ('2', _('英数字')),
+            ('3', _('英数字・記号'))
+        ),
+        required=True
+    )
+    password_length = forms.IntegerField(
+        max_value=1024,
+        min_value=1,
         required=True,
+        initial=16
     )
 
 

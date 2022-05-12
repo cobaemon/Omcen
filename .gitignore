@@ -137,5 +137,7 @@ migrations
 card_template.html
 keys
 
+secret_code_generate.py
+
 omcen_pg_data
 ssl_certs
