@@ -11,12 +11,12 @@ from password_box.views import Top, BoxCreate, BoxView, BoxDelete, BoxUpdate, Bo
 app_name = 'Password Box'
 
 urlpatterns = [
-    path('top', Top.as_view(), name='top'),
-    path('<uuid:pk>/view', BoxView.as_view(), name='view'),
+    path('top/', Top.as_view(), name='top'),
+    path('<uuid:pk>/view/', BoxView.as_view(), name='view'),
 
     # ボックスCRUD
-    path('create', BoxCreate.as_view(), name='create'),
-    path('<uuid:pk>/delete', BoxDelete.as_view(), name='delete'),
-    path('<uuid:pk>/update', BoxUpdate.as_view(), name='update'),
-    path('<uuid:pk>/update password', BoxPasswordUpdate.as_view(), name='update_box_password'),
+    path('create/', BoxCreate.as_view(), name='create'),
+    path('<uuid:pk>/delete/', BoxDelete.as_view(), name='delete'),
+    path('<uuid:pk>/update/', BoxUpdate.as_view(), name='update'),
+    path('<uuid:pk>/update password/', BoxPasswordUpdate.as_view(), name='update_box_password'),
 ]

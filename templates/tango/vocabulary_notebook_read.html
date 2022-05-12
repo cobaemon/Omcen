@@ -39,14 +39,14 @@
     </div>
 </div>
 <br>
-<div class="row row-cols-1 row-cols-md-3 g-5">
+<div class="row row-cols-1 row-cols-md-3 g-4">
     {% for tango in object_list %}
     <div class="col">
         <div class="card">
             <div class="card-header p-3 mb-2 bg-primary text-white">
                 <div class="row">
                     <div class="col">
-                        <h1>{{ tango.tango }}</h1>
+                        <h2>{{ tango.tango }}</h2>
                     </div>
                 </div>
             </div>
@@ -55,11 +55,11 @@
             </div>
             <div class="card-footer">
                 <nobr class="float-end">
-                    <a class="btn btn-primary btn-sm"
+                    <a class="btn btn-primary btn-sm me-1"
                        href="{% url 'Tango:tango_read' vocabulary_notebook_pk=vocabulary_notebook_uuid pk=tango.uuid %}">
                         {% trans "選択" %}
                     </a>
-                    <a class="btn btn-info btn-sm"
+                    <a class="btn btn-info btn-sm me-1"
                        href="{% url 'Tango:tango_update' vocabulary_notebook_pk=vocabulary_notebook_uuid pk=tango.uuid %}">
                         {% trans "単語の編集" %}
                     </a>
@@ -73,7 +73,4 @@
     </div>
     {% endfor %}
 </div>
-<br><br>
-{% include "tango/tango_pagination.html" %}
-<br><br><br><br><br><br><br><br><br><br>
 {% endblock %}

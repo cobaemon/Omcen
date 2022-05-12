@@ -537,6 +537,7 @@ class LinkedIDPublishing(LoginRequiredMixin, FormView):
 # OmcenUserとSocialAccountの連携
 class LinkingOmcenUsersToSocialAccountsView(LoginRequiredMixin, TemplateView):
     template_name = 'omcen/linking_omcen_users_to_social_accounts.html'
+    paginate_by = 30
 
     def dispatch(self, *args, **kwargs):
         if not self.request.user.is_authenticated:
