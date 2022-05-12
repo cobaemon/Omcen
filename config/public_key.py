@@ -10,6 +10,9 @@ import os
 from Crypto.Cipher import PKCS1_OAEP, AES
 from Crypto.PublicKey import RSA
 
+# 本番環境ではコメントアウト
+from config.local_settings import env
+
 
 class Rsa:
     # シークレットコードの読み込み
@@ -22,18 +25,24 @@ class Rsa:
             encoded_key = f.read()
 
         try:
-            aes = AES.new(key=b'omcen service publickey password', mode=AES.MODE_EAX, nonce=cipher_secret_code[2])
+            # 本番環境
+            # key = os.getenv('AES_KEY')
+            # 本番環境ではコメントアウト
+            key = env('AES_KEY')
+            aes = AES.new(key=key.encode('utf-8'),
+                          mode=AES.MODE_EAX,
+                          nonce=cipher_secret_code[2])
             self.secret_code = aes.decrypt(cipher_secret_code[0])
             aes.verify(cipher_secret_code[1])
         except ValueError:
-            return ValueError
+            raise ValueError
 
         try:
             self.key = RSA.import_key(
                 encoded_key, passphrase=self.secret_code
             )
         except (ValueError, IndexError, TypeError):
-            return ValueError
+            raise ValueError
 
     # RSAキーの生成
     # これを実行するとキーが再生成されるため以前に暗号化した暗号文は復号化できなくなるので注意
