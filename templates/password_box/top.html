@@ -42,7 +42,7 @@
     </div>
 </div>
 <br>
-<div class="row row-cols-1 row-cols-md-2 g-5">
+<div class="row row-cols-1 row-cols-md-3 g-4">
     {% for password_box in object_list %}
     <div class="col">
         <div class="card">
@@ -55,7 +55,7 @@
             </div>
             <div class="card-body">
                 <nobr class="float-end">
-                    <a class="btn btn-primary btn-sm me-3"
+                    <a class="btn btn-primary btn-sm me-1"
                        href="{% url 'Password Box:view' pk=password_box.uuid %}">
                         {% trans "表示" %}
                     </a>
