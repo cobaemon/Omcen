@@ -160,7 +160,7 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 # ログイン後の移動先
-LOGIN_REDIRECT_URL = '/mypage/'
+LOGIN_REDIRECT_URL = '/omcen/my_page'
 # ログアウト後の移動先
 ACCOUNT_LOGOUT_REDIRECT_URL = '/accounts/login'
 

@@ -14,7 +14,7 @@ from config.settings import KEYS_DIR
 from config.symmetric_key import Aes
 from omcen.models import ServiceInUse
 from password_box import password_generate as pg
-from password_box.forms import BoxCreateForm, BoxDeleteForm, BoxUpdateForm, BoxPasswordUpdateForm
+from password_box.forms import BoxCreateForm, BoxDeleteForm, BoxUpdateForm, BoxPasswordUpdateForm, BoxSearchForm
 from password_box.models import PasswordBox, PasswordBoxUser, PasswordBoxTag, PasswordBoxNonce
 
 
@@ -23,8 +23,8 @@ class Top(LoginRequiredMixin, ListView):
     template_name = 'password_box/top.html'
     model = PasswordBox
     paginate_by = 30
-    ordering = 'is_active'
-    form = None
+    ordering = 'box_name'
+    form = BoxSearchForm
 
     def dispatch(self, *args, **kwargs):
         if not self.request.user.is_authenticated:
@@ -45,12 +45,34 @@ class Top(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         query_set = super().get_queryset()
+        self.form = BoxSearchForm(self.request.GET or None)
         query_set = query_set.filter(
             password_box_user__omcen_user__username=self.request.user,
             is_active=True
         )
+        if self.form.is_bound:
+            if self.form.is_valid():
+                if self.form.cleaned_data['box_name']:
+                    if self.form.cleaned_data['search_type'] == '0':
+                        query_set = query_set.filter(
+                            box_name__icontains=self.form.cleaned_data['box_name'],
+                        )
+                    else:
+                        query_set = query_set.filter(
+                            box_name=self.form.cleaned_data['box_name'],
+                        )
+
+                if not query_set.exists():
+                    messages.info(self.request, _('該当するボックスがありませんでした。'), extra_tags='info')
 
         return query_set.order_by('box_name')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['form'] = self.form
+
+        return context
 
 
 # 新規作成

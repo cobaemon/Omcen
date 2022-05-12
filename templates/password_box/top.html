@@ -22,37 +22,51 @@
                 </div>
             </div>
             <div class="card-body">
+                <form class="row">
+                    <nobr>
+                        {{ form.box_name }}
+                        {{ form.search_type }}
+                        <button type="submit" class="btn btn-success float-end">
+                            {% trans "検索" %}
+                        </button>
+                    </nobr>
+                </form>
+            </div>
+            <div class="card-footer">
                 <a class="primaryAction btn btn-primary float-end" role="button"
                    href="{% url 'Password Box:create' %}">
                     {% trans "新規作成" %}
                 </a>
             </div>
-            <div class="card-footer">
-                <table class="table table-striped text-nowrap">
-                    <tbody>
-                    {% for password_box in object_list %}
-                    <tr>
-                        <td width="85%">
-                            {{ password_box.box_name }}
-                        </td>
-                        <td>
-                            <a class="btn btn-primary btn-sm"
-                               href="{% url 'Password Box:view' pk=password_box.uuid %}">
-                                {% trans "表示" %}
-                            </a>
-                        </td>
-                        <td>
-                            <a class="btn btn-danger btn-sm"
-                               href="{% url 'Password Box:delete' pk=password_box.uuid %}">
-                                {% trans "削除" %}
-                            </a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+        </div>
+    </div>
+</div>
+<br>
+<div class="row row-cols-1 row-cols-md-2 g-5">
+    {% for password_box in object_list %}
+    <div class="col">
+        <div class="card">
+            <div class="card-header p-3 mb-2 bg-primary text-white">
+                <div class="row">
+                    <div class="col">
+                        <h2 class="text-truncate">{{ password_box.box_name }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <nobr class="float-end">
+                    <a class="btn btn-primary btn-sm me-3"
+                       href="{% url 'Password Box:view' pk=password_box.uuid %}">
+                        {% trans "表示" %}
+                    </a>
+                    <a class="btn btn-danger btn-sm"
+                       href="{% url 'Password Box:delete' pk=password_box.uuid %}">
+                        {% trans "削除" %}
+                    </a>
+                </nobr>
             </div>
         </div>
     </div>
+    {% endfor %}
 </div>
 {% endblock %}

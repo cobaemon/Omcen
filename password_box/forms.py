@@ -158,3 +158,23 @@ class BoxUpdateForm(forms.ModelForm):
             'placeholder': _('email')
         }),
     )
+
+
+# パスワードボックス検索
+class BoxSearchForm(forms.Form):
+    box_name_validator = UnicodeUsernameValidator()
+    box_name = forms.CharField(
+        validators=[box_name_validator],
+        widget=forms.TextInput(attrs={
+            'style': 'width:75%',
+            'placeholder': _('ボックス名'),
+        }),
+        required=False
+    )
+    search_type = forms.fields.ChoiceField(
+        choices=(
+            ('0', '部分一致'),
+            ('1', '完全一致'),
+        ),
+        required=False
+    )
