@@ -1,0 +1,34 @@
+{% extends "omcen/base.html" %}
+
+{% load static %}
+{% load i18n %}
+
+{% block head_title %}{% trans "トップ" %}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header p-3 mb-2 bg-primary text-white">
+        <div class="row">
+            <div class="col">
+                <h1>{% trans "Omcenへようこそ" %}</h1>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        {% blocktrans %}
+        Omcen(オムセン)は、<a href="https://github.com/cobaemon">コバえもん</a>が今までに作成してきた成果物をまとめたwebサービスです
+        <br>
+        成果物を利用す際には、下記またはナビゲーションバーの歯車マークからログイン・新規登録をしてください
+        {% endblocktrans %}
+    </div>
+    {% if not user.is_authenticated %}
+    <div class="card-footer">
+        <p class="float-end">
+            {% blocktrans %}
+            <a href="{{ login_url }}">ログイン</a>または<a href="{{ signup_url }}">新規登録</a>こちらから
+            {% endblocktrans %}
+        </p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

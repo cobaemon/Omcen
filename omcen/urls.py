@@ -2,7 +2,7 @@ from django.urls import path
 
 from omcen.views import ServiceControl, CreateService, ServiceList, ServiceSubscribe, PlanSelection, ServiceInUseList, \
     ServiceUnsubscribe, switching_enabled, ServiceDetail, CreatePlan, UpdatePlan, DeletePlan, OmcenUserDeactivate, \
-    MyPage, ChangeProfile, LinkingOmcenUsersToSocialAccountsView, LinkedIDPublishing, LinkingUser
+    MyPage, ChangeProfile, LinkingOmcenUsersToSocialAccountsView, LinkedIDPublishing, LinkingUser, Top
 
 app_name = 'Omcen'
 
@@ -49,4 +49,7 @@ urlpatterns = [
          name='linking_omcen_users_to_social_accounts'),
     # User連携
     path('account_linking/linking_user/', LinkingUser.as_view(), name='linking_user'),
+    
+    # Top
+    path('top/', Top.as_view(), name='top'),
 ]

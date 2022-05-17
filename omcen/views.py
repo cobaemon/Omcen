@@ -570,7 +570,7 @@ class LinkingUser(LoginRequiredMixin, CreateView):
     template_name = 'omcen/linking_user.html'
     model = LinkingOmcenUsersToSocialAccounts
     form_class = LinkingUserForm
-    success_url = reverse_lazy('omcen:my_page')
+    success_url = reverse_lazy('Omcen:my_page')
 
     def dispatch(self, *args, **kwargs):
         if not self.request.user.is_authenticated:
@@ -616,3 +616,15 @@ class LinkingUser(LoginRequiredMixin, CreateView):
             messages.error(self.request, _(f'{error[0]}: {error[1][0]}'))
 
         return super().form_invalid(form)
+
+
+# トップページ
+class Top(TemplateView):
+    template_name = 'omcen/top.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['login_url'] = '/accounts/login'
+        context['signup_url'] = '/accounts/signup'
+
+        return context
