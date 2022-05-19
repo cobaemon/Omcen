@@ -1,0 +1,80 @@
+{% extends "omcen/base.html" %}
+
+{% load static %}
+{% load i18n %}
+
+{% block head_title %}{% trans "トップ" %}{% endblock %}
+{% block app_name %}
+<a class="navbar-brand" href="{% url 'Portfolio:top' %}">
+    Portfolio
+</a>
+{% endblock %}
+
+{% block nav_item %}
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'Portfolio:top' %}">
+        {% trans "トップ" %}
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'Portfolio:profile' %}">
+        {% trans "プロフィール" %}
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'Portfolio:deliverables' %}">
+        {% trans "成果物" %}
+    </a>
+</li>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        {% blocktrans %}
+        この度は私のポートフォリオに訪問していただき、ありがとうございます
+        <br><br><br>
+        私は現在プログラミングが好きですし、そうであり続けたいと思っています。
+        <br><br>
+        私がプログラミングに初めて触れたのは高校生の時です、最初は、何が何だかわかりませんでしたが
+        <br>
+        基本的な構文を理解し、徐々に自分の考えをプログラミングで表現できるようになりそこに楽しさを感じました。
+        <br><br>
+        それから高校を卒業し、専門学校に入学して本格的にプログラミングを勉強し始めました。
+        <br>
+        入学して数か月あたりで、オセロやじゃんけんゲームなどの作りたいものを実際に作れるようになりましたが
+        <br>
+        作りたいものができてから完成するまで、様々な壁にぶつかりました。
+        <br>
+        しかし、その壁を乗り越えて完成させたときは達成感でいっぱいになりました。
+        <br><br>
+        このようなことを繰り返していくうちに、私はプログラミングが好きになりました。
+        <br><br><br>
+        質問などあれば、いつでもページ下部のメッセージ送信フォームからメッセージをください
+        {% endblocktrans %}
+    </div>
+</div>
+{% endblock %}
+
+{% block messege_form %}
+{% if form %}
+<br><br><br>
+<div class="card">
+    <div class="card-header bg-dark text-white">
+        <h1>{% trans "メッセージ" %}</h1>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.email_title }}
+            <br><br>
+            {{ form.email_message }}
+            <br><br>
+            <button class="btn btn-dark float-end" type="submit">
+                {% trans "送信" %}
+            </button>
+        </form>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,94 @@
+{% extends "omcen/base.html" %}
+
+{% load static %}
+{% load i18n %}
+
+{% block head_title %}{% trans "トップ" %}{% endblock %}
+{% block app_name %}
+<a class="navbar-brand" href="{% url 'Portfolio:top' %}">
+    Portfolio
+</a>
+{% endblock %}
+
+{% block nav_item %}
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'Portfolio:top' %}">
+        {% trans "トップ" %}
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'Portfolio:profile' %}">
+        {% trans "プロフィール" %}
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'Portfolio:deliverables' %}">
+        {% trans "成果物" %}
+    </a>
+</li>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        {% blocktrans %}
+        〇 なぜ、作ろうと思ったのか
+        <br>
+        　試験勉強などをするときに、情報をまとめておける単語帳のようなものがあると便利だなと思い立ったのがきっかけです
+        <br><br>
+        〇 開発環境
+        <br>
+        　OS: Windows
+        <br>
+        　言語: Python
+        <br>
+        　フレームワーク: Django
+        <br>
+        　DB: PostgreSQL
+        <br><br>
+        〇 ソースコード: <a href="https://github.com/cobaemon/Omcen/tree/koba-tango">GitHub</a>
+        <br>
+        〇 完成品: <a href="{{ deliverables_url }}">単語帳</a>
+        <br><br>
+        〇 利用方法
+        <br>
+        　現在単語帳は、Omcenサービスの一部となっているため
+        <br>
+        　Omcenアカウントを持っていない又はログインしていない場合は
+        <br>
+        　サイト上部の歯車マーク又はこちらから、<a href="{{ login_url }}">ログイン</a>または<a href="{{ signup_url }}">新規登録</a>をしてください
+        <br><br>
+        　次にサービス一覧ページにて利用したいサービスを登録してください
+        <br>
+        　サービス一覧ページはサイト上部のサービス又はこちらから、<a href="{{ service_list_url }}">サービス一覧</a>
+        <br><br>
+        　単語帳自体の利用方法は、トップページでは単語帳の一覧が表示され単語帳の検索・新規作成・編集・削除ができます
+        <br>
+        　単語帳を選択すると、選択した単語帳の単語一覧が表示され単語の検索・新規作成・表示・編集・削除ができます
+        {% endblocktrans %}
+    </div>
+</div>
+{% endblock %}
+
+{% block messege_form %}
+{% if form %}
+<br><br><br>
+<div class="card">
+    <div class="card-header bg-dark text-white">
+        <h1>{% trans "メッセージ" %}</h1>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.email_title }}
+            <br><br>
+            {{ form.email_message }}
+            <br><br>
+            <button class="btn btn-dark float-end" type="submit">
+                {% trans "送信" %}
+            </button>
+        </form>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

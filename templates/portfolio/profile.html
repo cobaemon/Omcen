@@ -1,0 +1,128 @@
+{% extends "omcen/base.html" %}
+
+{% load static %}
+{% load i18n %}
+
+{% block head_title %}{% trans "ポートフォリオ" %}{% endblock %}
+
+{% block app_name %}
+<a class="navbar-brand" href="{% url 'Portfolio:top' %}">
+    Portfolio
+</a>
+{% endblock %}
+
+{% block nav_item %}
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'Portfolio:top' %}">
+        {% trans "トップ" %}
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'Portfolio:profile' %}">
+        {% trans "プロフィール" %}
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'Portfolio:deliverables' %}">
+        {% trans "成果物" %}
+    </a>
+</li>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header p-3 mb-2 bg-dark text-white">
+        <div class="row">
+            <div class="col">
+                <img src="{% static 'img/portfolio/profile_img.JPG' %}"
+                     class="rounded float-end"
+                     alt="Responsive image">
+                <h1>{% trans "プロフィール" %}</h1>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col">
+                <h3>{% trans "氏名" %}</h3>
+            </div>
+            <div class="col">
+                <div class="float-end"><h4>{% trans "小林　弘岳" %}</h4></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <h3>{% trans "生年月日" %}</h3>
+            </div>
+            <div class="col">
+                <div class="float-end"><h4>{% trans "2000年07月27日" %}</h4></div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col">
+                <h3>{% trans "好きな言語" %}</h3>
+            </div>
+            <div class="col">
+                <div class="float-end"><h4>{% trans "Python" %}</h4></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <h3>{% trans "好きなフレームワーク" %}</h3>
+            </div>
+            <div class="col">
+                <div class="float-end"><h4>{% trans "Django" %}</h4></div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col">
+                <h3>{% trans "主な資格" %}</h3>
+            </div>
+            <div class="col">
+                <div class="float-end"><h4>{% trans "基本情報技術者" %}</h4></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="float-end"><h4>{% trans "ITパスポート" %}</h4></div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col">
+                <h3>GitHub</h3>
+            </div>
+            <div class="col">
+                <div class="float-end"><h4>
+                    <a href="https://github.com/cobaemon">コバえもん</a>
+                </h4></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block messege_form %}
+{% if form %}
+<br><br><br>
+<div class="card">
+    <div class="card-header bg-dark text-white">
+        <h1>{% trans "メッセージ" %}</h1>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.email_title }}
+            <br><br>
+            {{ form.email_message }}
+            <br><br>
+            <button class="btn btn-dark float-end" type="submit">
+                {% trans "送信" %}
+            </button>
+        </form>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends "omcen/base.html" %}
+
+{% load static %}
+{% load i18n %}
+
+{% block head_title %}{% trans "ポートフォリオ" %}{% endblock %}
+
+{% block app_name %}
+<a class="navbar-brand" href="{% url 'Portfolio:top' %}">
+    Portfolio
+</a>
+{% endblock %}
+
+{% block nav_item %}
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'Portfolio:top' %}">
+        {% trans "トップ" %}
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'Portfolio:profile' %}">
+        {% trans "プロフィール" %}
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'Portfolio:deliverables' %}">
+        {% trans "成果物" %}
+    </a>
+</li>
+{% endblock %}
+
+{% block content %}
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for deliverable in deliverables %}
+    <div class="col">
+        <div class="card">
+            <div class="card-header p-3 mb-2 bg-dark text-white">
+                <div class="row">
+                    <div class="col">
+                        <h1>{{ deliverable.0 }}</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <h3>{{ deliverable.1 }}</h3>
+                <br>
+                <a class="btn btn-dark float-end" role="button"
+                   href="{% url deliverable.2 %}">
+                    {% trans "見る" %}
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block messege_form %}
+{% if form %}
+<br><br><br>
+<div class="card">
+    <div class="card-header bg-dark text-white">
+        <h1>{% trans "メッセージ" %}</h1>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.email_title }}
+            <br><br>
+            {{ form.email_message }}
+            <br><br>
+            <button class="btn btn-dark float-end" type="submit">
+                {% trans "送信" %}
+            </button>
+        </form>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

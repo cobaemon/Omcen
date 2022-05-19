@@ -25,6 +25,7 @@ urlpatterns = [
     path('password box/', include('password_box.urls')),
     path('file encryption/', include('file_encryption.urls')),
     path('tango/', include('tango.urls')),
+    path('portfolio/', include('portfolio.urls')),
 ]
 
 if settings.DEBUG:
