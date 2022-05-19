@@ -1,0 +1,18 @@
+{% extends "omcen/base.html" %}
+
+{% load static %}
+{% load i18n %}
+
+{% block app_name %}
+<a class="navbar-brand" href="{% url 'Password Box:top' %}">
+    <h2>Password Box</h2>
+</a>
+{% endblock %}
+
+{% block nav_item %}
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'Password Box:top' %}">
+        {% trans "トップ" %}
+    </a>
+</li>
+{% endblock %}

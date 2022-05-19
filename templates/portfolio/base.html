@@ -1,0 +1,18 @@
+{% extends "omcen/base.html" %}
+
+{% load static %}
+{% load i18n %}
+
+{% block app_name %}
+<a class="navbar-brand" href="{% url 'Portfolio:top' %}">
+    <h2>Portfolio</h2>
+</a>
+{% endblock %}
+
+{% block nav_item %}
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'Portfolio:top' %}">
+        {% trans "トップ" %}
+    </a>
+</li>
+{% endblock %}

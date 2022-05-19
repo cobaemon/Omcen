@@ -1,33 +1,9 @@
-{% extends "omcen/base.html" %}
+{% extends "portfolio/base.html" %}
 
 {% load static %}
 {% load i18n %}
 
-{% block head_title %}{% trans "ポートフォリオ" %}{% endblock %}
-
-{% block app_name %}
-<a class="navbar-brand" href="{% url 'Portfolio:top' %}">
-    <h2>Portfolio</h2>
-</a>
-{% endblock %}
-
-{% block nav_item %}
-<li class="nav-item">
-    <a class="nav-link" href="{% url 'Portfolio:top' %}">
-        {% trans "トップ" %}
-    </a>
-</li>
-<li class="nav-item">
-    <a class="nav-link" href="{% url 'Portfolio:profile' %}">
-        {% trans "プロフィール" %}
-    </a>
-</li>
-<li class="nav-item">
-    <a class="nav-link" href="{% url 'Portfolio:deliverables' %}">
-        {% trans "成果物" %}
-    </a>
-</li>
-{% endblock %}
+{% block head_title %}{% trans "Portfolio - 成果物" %}{% endblock %}
 
 {% block content %}
 <div class="row row-cols-1 row-cols-md-3 g-4">

@@ -15,7 +15,6 @@ def send_message(form):
         send_mail(
             form.cleaned_data['email_title'],
             form.cleaned_data['email_message'],
-            # 'mgnco@outlook.jp',
             'pb.officialteam@gmail.com',
             ['mgnco@outlook.jp'],
             fail_silently=False

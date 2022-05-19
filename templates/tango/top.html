@@ -1,14 +1,8 @@
-{% extends "omcen/base.html" %}
+{% extends "tango/base.html" %}
 
 {% load i18n %}
 {% load static %}
-{% block head_title %}{% trans "単語帳" %}{% endblock %}
-
-{% block app_name %}
-<a class="navbar-brand" href="{% url 'Tango:top' %}">
-    <h2>Tango</h2>
-</a>
-{% endblock %}
+{% block head_title %}{% trans "Tango - 単語帳" %}{% endblock %}
 
 {% block content %}
 <div class="card">
