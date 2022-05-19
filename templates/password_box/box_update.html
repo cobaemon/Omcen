@@ -5,7 +5,11 @@
 {% load widget_tweaks %}
 
 {% block head_title %}{% trans "ボックス編集" %}{% endblock %}
-{% block app_name %}{% trans "パスワードボックス" %}{% endblock %}
+{% block app_name %}
+<a class="navbar-brand" href="{% url 'Password Box:top' %}">
+    <h2>Password Box</h2>
+</a>
+{% endblock %}
 
 {% block content %}
 <div class="row">
