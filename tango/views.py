@@ -106,17 +106,16 @@ class VocabularyNotebookCreateView(LoginRequiredMixin, CreateView):
         return super().dispatch(self.request, *args, **kwargs)
 
     def form_valid(self, form):
-        form.instance.omcen_user = self.request.user
-        form.instance.vocabulary_notebook_name = form.cleaned_data['vocabulary_notebook_name']
+        if form.is_valid():
+            if VocabularyNotebook.objects.filter(
+                    omcen_user=self.request.user,
+                    vocabulary_notebook_name=form.cleaned_data['vocabulary_notebook_name']).exists():
+                messages.warning(self.request, _('同じ単語帳名が存在します。'), extra_tags='warning')
+                return super().form_invalid(form)
+            form.instance.omcen_user = self.request.user
+            form.instance.vocabulary_notebook_name = form.cleaned_data['vocabulary_notebook_name']
 
         return super().form_valid(form)
-
-    def form_invalid(self, form):
-        if 'vocabulary_notebook_name' in form.errors:
-            for ms in form.errors['vocabulary_notebook_name']:
-                messages.error(self.request, f'{_("単語帳名")}: {ms}', extra_tags='error')
-
-        return super().form_invalid(form)
 
 
 class VocabularyNotebookReadView(LoginRequiredMixin, ListView):
@@ -262,13 +261,6 @@ class VocabularyNotebookUpdateView(LoginRequiredMixin, UpdateView):
 
         return super().form_valid(form)
 
-    def form_invalid(self, form):
-        if 'vocabulary_notebook_name' in form.errors:
-            for ms in form.errors['vocabulary_notebook_name']:
-                messages.error(self.request, f'{_("単語帳名")}: {ms}', extra_tags='error')
-
-        return super().form_invalid(form)
-
 
 class VocabularyNotebookDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'tango/vocabulary_notebook_delete.html'
@@ -354,17 +346,6 @@ class TangoCreateView(LoginRequiredMixin, CreateView):
             messages.error(self.request, _('すでに同じ単語が存在します'), extra_tags='error')
 
             return super().form_invalid(form)
-
-    def form_invalid(self, form):
-        if 'tango' in form.errors:
-            for ms in form.errors['tango']:
-                messages.error(self.request, f'{_("単語")}: {ms}', extra_tags='error')
-
-        if 'contents' in form.errors:
-            for ms in form.errors['contents']:
-                messages.error(self.request, f'{_("内容")}: {ms}', extra_tags='error')
-
-        return super().form_invalid(form)
 
     def get_success_url(self):
         self.success_url = reverse_lazy('Tango:vocabulary_notebook_read',
@@ -479,17 +460,6 @@ class TangoUpdateView(LoginRequiredMixin, UpdateView):
         form.instance.contents = form.cleaned_data['contents']
 
         return super().form_valid(form)
-
-    def form_invalid(self, form):
-        if 'tango' in form.errors:
-            for ms in form.errors['tango']:
-                messages.error(self.request, f'{_("単語")}: {ms}', extra_tags='error')
-
-        if 'contents' in form.errors:
-            for ms in form.errors['contents']:
-                messages.error(self.request, f'{_("内容")}: {ms}', extra_tags='error')
-
-        return super().form_invalid(form)
 
     def get_success_url(self):
         self.success_url = reverse_lazy('Tango:vocabulary_notebook_read',

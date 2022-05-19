@@ -35,14 +35,6 @@ class VocabularyNotebookCreateForm(forms.ModelForm):
         })
     )
 
-    def clean_vocabulary_notebook_name(self):
-        if self.cleaned_data['vocabulary_notebook_name']:
-            if VocabularyNotebook.objects.filter(
-                    vocabulary_notebook_name=self.cleaned_data['vocabulary_notebook_name']).exists():
-                raise forms.ValidationError('同じ単語帳名が存在します。')
-
-        return self.cleaned_data['vocabulary_notebook_name']
-
 
 class VocabularyNotebookUpdateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):

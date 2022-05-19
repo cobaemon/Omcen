@@ -30,7 +30,6 @@ class VocabularyNotebook(models.Model):
     vocabulary_notebook_name = models.CharField(
         '単語帳',
         max_length=64,
-        unique=True,
         blank=True,
         null=True
     )
