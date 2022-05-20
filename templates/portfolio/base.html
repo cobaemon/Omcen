@@ -15,4 +15,14 @@
         {% trans "トップ" %}
     </a>
 </li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'Portfolio:profile' %}">
+        {% trans "プロフィール" %}
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'Portfolio:deliverables' %}">
+        {% trans "成果物" %}
+    </a>
+</li>
 {% endblock %}
