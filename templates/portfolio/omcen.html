@@ -1,0 +1,82 @@
+{% extends "portfolio/base.html" %}
+
+{% load static %}
+{% load i18n %}
+
+{% block head_title %}{% trans "Portfolio - Omcen" %}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header p-3 mb-2 bg-dark text-white">
+        <div class="row">
+            <div class="col">
+                <h1>Omcen</h1>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        {% blocktrans %}
+        〇 なぜ、作ろうと思ったのか
+        <br>
+        　様々な成果物を公開するにあたって、成果物ごとにアカウントを作るのはユーザに冗長な操作を強いてしまうため
+        <br>
+        　その解決策として、統合管理するOmcenを作ろうと思いました
+        <br><br>
+        〇 概要
+        <br>
+        　Omcenの主な機能としては、アカウントの認証周り・アカウントの管理・サービスの管理を行っています
+        <br>
+        　ちなみに、Omcenの名前の由来はラテン語で「全ての中心: Omnes centrum」からきています
+        <br><br>
+        〇 開発環境
+        <br>
+        　OS: Windows
+        <br>
+        　言語: Python
+        <br>
+        　フレームワーク: Django
+        <br>
+        　DB: PostgreSQL
+        <br><br>
+        〇 ソースコード: <a href="https://github.com/cobaemon/Omcen/tree/koba">GitHub</a>
+        <br>
+        〇 完成品: <a href="{{ deliverables_url }}">Omcen</a>
+        <br><br>
+        〇 工夫
+        <br>
+        　認証周りにはDjango-allauthを使用することで、自ら実装するよりも短期間でなおかつセキュリティホールのリスクを軽減しました
+        <br>
+        　さらに、ソーシャルアカウントでのログインにも対応しています
+        <br><br>
+        〇 利用方法
+        <br>
+        　Omcenアカウントを作る場合は
+        <br>
+        　サイト上部の歯車マーク又はこちらから、<a href="{{ signup_url }}">新規登録</a>作ることができます
+        {% endblocktrans %}
+    </div>
+</div>
+{% endblock %}
+
+{% block messege_form %}
+{% if form %}
+<br><br><br>
+<div class="card">
+    <div class="card-header bg-dark text-white">
+        <h1>{% trans "メッセージ" %}</h1>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.email_title }}
+            <br><br>
+            {{ form.email_message }}
+            <br><br>
+            <button class="btn btn-dark float-end" type="submit">
+                {% trans "送信" %}
+            </button>
+        </form>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

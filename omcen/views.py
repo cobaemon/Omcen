@@ -215,7 +215,7 @@ class ServiceList(LoginRequiredMixin, ListView):
                 })
             else:
                 services_dict.update({
-                    service.service_name: 'omcen:plan_selection'
+                    service.service_name: 'Omcen:plan_selection'
                 })
 
         context['service_dict'] = services_dict
