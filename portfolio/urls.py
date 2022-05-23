@@ -2,7 +2,7 @@
 
 from django.urls import path
 
-from portfolio.views import Top, Profile, Deliverables, VocabularyNotebook, Omcen, PasswordBox
+from portfolio.views import Top, Profile, Deliverables, VocabularyNotebook, Omcen, PasswordBox, DBPePro
 
 app_name = 'Portfolio'
 
@@ -13,4 +13,5 @@ urlpatterns = [
     path('vocabulary_notebook/', VocabularyNotebook.as_view(), name='vocabulary_notebook'),
     path('omcen/', Omcen.as_view(), name='omcen'),
     path('password_box/', PasswordBox.as_view(), name='password_box'),
+    path('dbpepro/', DBPePro.as_view(), name='dbpepro'),
 ]

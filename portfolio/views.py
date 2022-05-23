@@ -72,6 +72,7 @@ class Deliverables(FormView):
             ['Tango', '単語帳をWeb上で再現しました', 'Portfolio:vocabulary_notebook'],
             ['Omcen', 'サービスを統合管理するサービス', 'Portfolio:omcen'],
             ['Password Box', 'パスワード管理サービス', 'Portfolio:password_box'],
+            ['DBPePro', 'DB権限管理アプリ', 'Portfolio:dbpepro'],
         ]
 
         return context
@@ -163,3 +164,20 @@ class PasswordBox(FormView):
         context['service_list_url'] = reverse_lazy('Omcen:service_list')
 
         return context
+
+
+# 成果物 DBPePro
+class DBPePro(FormView):
+    template_name = 'portfolio/dbpepro.html'
+    form_class = EmailForm
+    success_url = reverse_lazy('Portfolio:dbpepro')
+
+    def form_valid(self, form):
+        if send_message(form):
+            messages.success(self.request, _('メッセージの送信に成功しました'), extra_tags='success')
+
+            return super().form_valid(form)
+        else:
+            messages.error(self.request, _('メッセージの送信に失敗しました'), extra_tags='error')
+
+            return super().form_invalid(form)

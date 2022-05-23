@@ -1,0 +1,92 @@
+{% extends "portfolio/base.html" %}
+
+{% load static %}
+{% load i18n %}
+
+{% block head_title %}{% trans "Portfolio - DBPePro" %}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header p-3 mb-2 bg-dark text-white">
+        <div class="row">
+            <div class="col">
+                <h1>DBPePro</h1>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        {% blocktrans %}
+        〇 なぜ、作ろうと思ったのか
+        <br>
+        　DBの権限管理を手動で行うのは冗長な作業なため、その解決手段として作ろうと思いました
+        <br><br>
+        〇 概要
+        <br>
+        　DBPeProの主な機能としては、対象に対して権限の付与・削除ができます
+        <br>
+        　DBPeProの名前の由来はラテン語訳で「データベース権限管理: Database permissio procuratio」からきています
+        <br><br>
+        〇 開発環境
+        <br>
+        　OS: Windows
+        <br>
+        　言語:
+        <br>
+        　　フロントエンド: Dart
+        <br>
+        　　バックエンド: Python
+        <br>
+        　フレームワーク:
+        <br>
+        　　フロントエンド: Flutter
+        <br>
+        　　バックエンド: FastAPI
+        <br><br>
+        〇 ソースコード:
+        <br>
+        　フロントエンド: <a href="https://github.com/cobaemon/DBPePro">GitHub</a>
+        <br>
+        　バックエンド: <a href="https://github.com/cobaemon/DBPeProAPI">GitHub</a>
+        <br>
+        〇 完成品:
+        <br>
+        　フロントエンド: <a href="https://github.com/cobaemon/DBPePro/releases">GitHub: releases</a>
+        <br>
+        　バックエンド: <a href="https://github.com/cobaemon/DBPeProAPI/releases">GitHub: releases</a>
+        <br><br>
+        〇 工夫
+        <br>
+        　フロントエンドにDart/Flutterを使うことで、Pythonの苦手な部分をカバーしました
+        <br><br>
+        〇 利用方法
+        <br>
+        　フロントエンド: <a href="https://github.com/cobaemon/DBPePro/blob/main/README.md">GitHub: README</a>
+        <br>
+        　バックエンド: <a href="https://github.com/cobaemon/DBPeProAPI/blob/main/README.md">GitHub: README</a>
+        {% endblocktrans %}
+    </div>
+</div>
+{% endblock %}
+
+{% block messege_form %}
+{% if form %}
+<br><br><br>
+<div class="card">
+    <div class="card-header bg-dark text-white">
+        <h1>{% trans "メッセージ" %}</h1>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.email_title }}
+            <br><br>
+            {{ form.email_message }}
+            <br><br>
+            <button class="btn btn-dark float-end" type="submit">
+                {% trans "送信" %}
+            </button>
+        </form>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
