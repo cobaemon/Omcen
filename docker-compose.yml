@@ -61,11 +61,11 @@ services:
       - "8000:8000"
     tty: true
     working_dir: /var/www/omcen
-#    command: >
-#      bash -c "
-#        ./wait-for-it.sh postgres:${POSTGRES_PORT} -- python manage.py migrate &&
-#        gunicorn config.wsgi:application --bind web:${PYTHON_PORT} --workers 3
-#      "
+    command: >
+      bash -c "
+        ./wait-for-it.sh postgres:${POSTGRES_PORT} -- python manage.py migrate &&
+        gunicorn config.wsgi:application --bind web:${PYTHON_PORT} --workers 3
+      "
 
 volumes:
   omcen_pg_data:

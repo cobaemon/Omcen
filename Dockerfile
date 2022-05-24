@@ -52,3 +52,8 @@ RUN pip install -r ./requirements/product.txt
 RUN python config/public_key.py
 
 RUN python manage.py collectstatic --noinput
+RUN python manage.py makemigrations accounts
+RUN python manage.py makemigrations omcen
+RUN python manage.py makemigrations password_box
+RUN python manage.py makemigrations file_encryption
+RUN python manage.py makemigrations tango
