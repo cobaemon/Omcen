@@ -5,9 +5,9 @@ from Crypto.Cipher import AES
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from accounts.models import OmcenUser
 from config.public_key import Rsa
 from config.settings import KEYS_DIR
-from omcen.models import OmcenUser
 
 
 class PasswordBoxUser(models.Model):

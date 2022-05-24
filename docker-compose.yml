@@ -13,7 +13,7 @@ services:
     volumes:
       - omcen_pg_data:/var/lib/postgresql/data
     ports:
-      - "${POSTGRES_PORT}:5432"
+      - "5432:5432"
     tty: true
 
   https-portal:
@@ -25,12 +25,12 @@ services:
       - web
     #    restart: always
     environment:
-      DOMAINS: "omcen.org -> http://web:${PYTHON_PORT}"
+      DOMAINS: "omcen.org -> http://web:8000"
       STAGE: 'production'
       # FORCE_RENEW: 'true'
     container_name: omcen-https-portal
     volumes:
-      - ssl_certs:/var/lib/https-portal
+      - ./ssl_certs:/var/lib/https-portal
 
   web:
     env_file: .env
@@ -39,6 +39,13 @@ services:
       dockerfile: ./Dockerfile
       args:
         - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+        - AES_KEY=${AES_KEY}
+        - EMAIL_HOST=${EMAIL_HOST}
+        - EMAIL_PORT=${EMAIL_PORT}
+        - EMAIL_HOST_USER=${EMAIL_HOST_USER}
+        - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
+        - SOCIAL_AUTH_GOOGLE_OAUTH2_KEY=${SOCIAL_AUTH_GOOGLE_OAUTH2_KEY}
+        - SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET=${SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET}
         - POSTGRES_DB=${POSTGRES_DB}
         - POSTGRES_HOST=${POSTGRES_HOST}
         - POSTGRES_USER=${POSTGRES_USER}
@@ -51,16 +58,15 @@ services:
     depends_on:
       - postgres
     ports:
-      - "${PYTHON_PORT}:8000"
+      - "8000:8000"
     tty: true
     working_dir: /var/www/omcen
-    command: >
-      bash -c "
-        ./wait-for-it.sh postgres:${POSTGRES_PORT} -- python manage.py migrate &&
-        gunicorn config.wsgi:application --bind web:${PYTHON_PORT} --workers 3
-      "
+#    command: >
+#      bash -c "
+#        ./wait-for-it.sh postgres:${POSTGRES_PORT} -- python manage.py migrate &&
+#        gunicorn config.wsgi:application --bind web:${PYTHON_PORT} --workers 3
+#      "
 
 volumes:
   omcen_pg_data:
-  ssl_certs:
   django_static:

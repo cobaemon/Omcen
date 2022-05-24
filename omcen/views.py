@@ -13,10 +13,11 @@ from django.urls import reverse_lazy, reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import ListView, CreateView, UpdateView, TemplateView, DeleteView, FormView
 
-from file_encryption.models import FileEncryptionUser
+from accounts.models import OmcenUser
+# from file_encryption.models import FileEncryptionUser
 from omcen.forms import SearchService, CreateServiceForm, ServiceSubscribeForm, ServiceUnsubscribeForm, CreatePlanForm, \
     UpdatePlanForm, DeletePlanForm, OmcenUserDeactivateForm, ChangeProfileForm, LinkedIDPublishingForm, LinkingUserForm
-from omcen.models import Service, Plan, ServiceGroup, ServiceInUse, OmcenUser, LinkingOmcenUsersToSocialAccounts, \
+from omcen.models import Service, Plan, ServiceGroup, ServiceInUse, LinkingOmcenUsersToSocialAccounts, \
     LinkedID
 from password_box.models import PasswordBoxUser, PasswordBox
 
@@ -312,11 +313,11 @@ class ServiceSubscribe(LoginRequiredMixin, CreateView):
                 omcen_user=self.request.user,
 
             )
-        elif get_object_or_404(ServiceGroup,
-                               uuid=self.request.resolver_match.kwargs['pk']).service.service_name == 'File Encryption':
-            FileEncryptionUser.objects.create(
-                omcen_user=self.request.user,
-            )
+        # elif get_object_or_404(ServiceGroup,
+        #                        uuid=self.request.resolver_match.kwargs['pk']).service.service_name == 'File Encryption':
+        #     FileEncryptionUser.objects.create(
+        #         omcen_user=self.request.user,
+        #     )
 
         return super().form_valid(form)
 

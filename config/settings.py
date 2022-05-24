@@ -164,6 +164,12 @@ LOGIN_REDIRECT_URL = '/omcen/my_page'
 # ログアウト後の移動先
 ACCOUNT_LOGOUT_REDIRECT_URL = '/accounts/login'
 
+# カスタムアカウント
+ACCOUNT_USER_MODEL_USERNAME_FIELD = 'omcen.OmcenUser.username'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+
 # メールホスト
 EMAIL_HOST = os.environ.get('EMAIL_HOST')
 # ポート

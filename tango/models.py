@@ -2,7 +2,7 @@ import uuid as uuid_lib
 
 from django.db import models
 
-from omcen.models import OmcenUser
+from accounts.models import OmcenUser
 
 
 class VocabularyNotebook(models.Model):
