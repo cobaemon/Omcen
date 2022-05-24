@@ -1,4 +1,4 @@
-django
+django<4
 django-allauth
 psycopg2-binary
 django-bootstrap-v5
