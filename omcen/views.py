@@ -36,13 +36,13 @@ def switching_enabled(request, service_id, plan_id, flag):
         messages.success(request, 'サービスを無効にしました。')
     else:
         messages.error(request, 'サービスの有効・無効切り替えに失敗しました。')
-        return redirect(reverse_lazy('omcen:service_detail', args=[service_id]))
+        return redirect(reverse_lazy('Omcen:service_detail', args=[service_id]))
 
     with transaction.atomic():
         service_group.save()
         service_group.plan.save()
 
-    return redirect(reverse_lazy('omcen:service_detail', args=[service_id]))
+    return redirect(reverse_lazy('Omcen:service_detail', args=[service_id]))
 
 
 # サービス管理画面
@@ -101,7 +101,7 @@ class CreateService(LoginRequiredMixin, CreateView):
     template_name = 'omcen/admin_create_service.html'
     model = ServiceGroup
     form_class = CreateServiceForm
-    success_url = reverse_lazy('omcen:service_control')
+    success_url = reverse_lazy('Omcen:service_control')
 
     def dispatch(self, *args, **kwargs):
         if not self.request.user.is_authenticated:
@@ -153,7 +153,7 @@ class CreatePlan(LoginRequiredMixin, CreateView):
         return context
 
     def get_success_url(self):
-        self.success_url = reverse_lazy('omcen:service_detail', args=[self.kwargs.get('service_id')])
+        self.success_url = reverse_lazy('Omcen:service_detail', args=[self.kwargs.get('service_id')])
         return super().get_success_url()
 
 
@@ -164,7 +164,7 @@ class UpdatePlan(LoginRequiredMixin, UpdateView):
     form_class = UpdatePlanForm
 
     def get_success_url(self):
-        self.success_url = reverse_lazy('omcen:service_detail', args=[self.kwargs.get('service_id')])
+        self.success_url = reverse_lazy('Omcen:service_detail', args=[self.kwargs.get('service_id')])
         return super().get_success_url()
 
 
@@ -175,7 +175,7 @@ class DeletePlan(LoginRequiredMixin, DeleteView):
     form_class = DeletePlanForm
 
     def get_success_url(self):
-        self.success_url = reverse_lazy('omcen:service_detail', args=[self.kwargs.get('service_id')])
+        self.success_url = reverse_lazy('Omcen:service_detail', args=[self.kwargs.get('service_id')])
         return super().get_success_url()
 
 
@@ -241,7 +241,7 @@ class PlanSelection(LoginRequiredMixin, ListView):
         if not Service.objects.filter(service_name=self.request.resolver_match.kwargs['service_name']).exists():
             messages.warning(self.request, _('入力されたサービス名は存在しません'), extra_tags='warning')
 
-            return redirect(to=reverse('omcen:service_list'))
+            return redirect(to=reverse('Omcen:service_list'))
 
         return super().dispatch(self.request, *args, **kwargs)
 
@@ -286,7 +286,7 @@ class ServiceSubscribe(LoginRequiredMixin, CreateView):
                 omcen_service__uuid=self.request.resolver_match.kwargs['pk'],
                 is_active=True
             )
-            return redirect(to=reverse('omcen:service_unsubscribe', kwargs={'pk': service_in_use.uuid}))
+            return redirect(to=reverse('Omcen:service_unsubscribe', kwargs={'pk': service_in_use.uuid}))
 
         return super().dispatch(self.request, *args, **kwargs)
 
@@ -351,7 +351,7 @@ class ServiceUnsubscribe(LoginRequiredMixin, UpdateView):
     template_name = 'omcen/service_unsubscribe.html'
     model = ServiceInUse
     form_class = ServiceUnsubscribeForm
-    success_url = reverse_lazy('omcen:service_list')
+    success_url = reverse_lazy('Omcen:service_list')
 
     def dispatch(self, *args, **kwargs):
         if not self.request.user.is_authenticated:
@@ -360,7 +360,7 @@ class ServiceUnsubscribe(LoginRequiredMixin, UpdateView):
             return self.handle_no_permission()
 
         if not ServiceInUse.objects.filter(uuid=self.request.resolver_match.kwargs['pk'], is_active=True).exists():
-            return redirect(to=reverse('omcen:service_list'))
+            return redirect(to=reverse('Omcen:service_list'))
 
         return super().dispatch(self.request, *args, **kwargs)
 
@@ -481,7 +481,7 @@ class ChangeProfile(LoginRequiredMixin, UpdateView):
     template_name = 'omcen/change_profile.html'
     model = OmcenUser
     form_class = ChangeProfileForm
-    success_url = reverse_lazy('omcen:my_page')
+    success_url = reverse_lazy('Omcen:my_page')
 
     def dispatch(self, *args, **kwargs):
         if not self.request.user.is_authenticated:
@@ -506,7 +506,7 @@ class ChangeProfile(LoginRequiredMixin, UpdateView):
 class LinkedIDPublishing(LoginRequiredMixin, FormView):
     template_name = 'omcen/linked_id_publishing.html'
     form_class = LinkedIDPublishingForm
-    success_url = reverse_lazy('omcen:my_page')
+    success_url = reverse_lazy('Omcen:my_page')
 
     def dispatch(self, *args, **kwargs):
         if not self.request.user.is_authenticated:
