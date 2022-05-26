@@ -21,15 +21,18 @@
                 <p>{% trans "パスワード" %}: {{ box_password }}</p>
                 <p>{% trans "メールアドレス" %}: {{ box_email }}</p>
                 <br>
-                <nobr class="float-end">
+                <div class="float-end">
                     <a class="btn btn-info me-3" role="button"
                        href="{% url 'Password Box:update_box_password' pk=box_uuid %}">
                         {% trans "パスワード編集" %}
                     </a>
-                    <a class="btn btn-info me-3" role="button"
+                    <a class="btn btn-info" role="button"
                        href="{% url 'Password Box:update' pk=box_uuid %}">
                         {% trans "その他の編集" %}
                     </a>
+                </div>
+                <br><br>
+                <div class="float-end">
                     <a class="btn btn-danger me-3" role="button"
                        href="{% url 'Password Box:delete' pk=box_uuid %}">
                         {% trans "削除" %}
@@ -38,7 +41,7 @@
                        href="{% url 'Password Box:top' %}">
                         {% trans "戻る" %}
                     </a>
-                </nobr>
+                </div>
             </div>
         </div>
     </div>
