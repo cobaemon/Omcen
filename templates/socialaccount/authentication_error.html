@@ -6,25 +6,21 @@
 {% block head_title %}{% trans "Social Network Login Failure" %}{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col"></div>
-    <div class="col">
-        <div class="card">
-            <div class="card-header p-3 mb-2 bg-primary text-white">
-                <h1 class="p-3">{% trans "Social Network Login Failure" %}</h1>
-            </div>
-            <div class="card-body">
-                <p>{% trans "An error occurred while attempting to login via your social network account." %}</p>
-            </div>
-            <div class="card-footer">
-                <p>
-                    {% blocktrans %}
-                    Already have an account? Then please <a href="{{ login_url }}">sign in</a>.
-                    {% endblocktrans %}
-                </p>
-            </div>
+<div class="col">
+    <div class="card">
+        <div class="card-header p-3 mb-2 bg-primary text-white">
+            <h1 class="p-3">{% trans "Social Network Login Failure" %}</h1>
+        </div>
+        <div class="card-body">
+            <p>{% trans "An error occurred while attempting to login via your social network account." %}</p>
+        </div>
+        <div class="card-footer">
+            <p>
+                {% blocktrans %}
+                Already have an account? Then please <a href="{{ login_url }}">sign in</a>.
+                {% endblocktrans %}
+            </p>
         </div>
     </div>
-    <div class="col"></div>
 </div>
 {% endblock %}
