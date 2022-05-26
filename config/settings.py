@@ -103,7 +103,7 @@ DATABASES = {
     }
 }
 
-AUTH_USER_MODEL = 'omcen.OmcenUser'
+AUTH_USER_MODEL = 'accounts.OmcenUser'
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -140,18 +140,24 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
-    # os.path.join(BASE_DIR, 'static', 'css'),
-    # os.path.join(BASE_DIR, 'static', 'js'),
-    # os.path.join(BASE_DIR, 'static', 'img'),
+    os.path.join(BASE_DIR, 'static', 'css'),
+    os.path.join(BASE_DIR, 'static', 'js'),
+    os.path.join(BASE_DIR, 'static', 'img'),
 ]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# https
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 
 # login設定
 AUTHENTICATION_BACKENDS = (
@@ -167,7 +173,7 @@ LOGIN_REDIRECT_URL = '/omcen/my_page'
 ACCOUNT_LOGOUT_REDIRECT_URL = '/accounts/login'
 
 # カスタムアカウント
-ACCOUNT_USER_MODEL_USERNAME_FIELD = 'omcen.OmcenUser.username'
+ACCOUNT_USER_MODEL_USERNAME_FIELD = 'username'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
@@ -232,6 +238,64 @@ SOCIALACCOUNT_PROVIDERS = {
             'user',
         ],
     },
+}
+
+# ログ
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'standard': {
+            'format': ('%(levelname)s [%(asctime)s] %(name)s %(message)s'),
+        },
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(name)s %(process)d %(thread)d %(message)s'
+        },
+    },
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        },
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue'
+        },
+    },
+    'handlers': {
+        'debug-console': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],  # settings.DEBUG=Falseなら全て破棄
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose'
+        },
+        'prod-console': {
+            'level': 'INFO',
+            'filters': ['require_debug_false'],  # settings.DEBUG=Trueなら全て破棄
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard'
+        }
+    },
+    'loggers': {
+        '': {  # 'root' の代わり。全てキャッチする
+            'handlers': ['prod-console', 'debug-console'],
+            'level': 'NOTSET',
+            'propagate': False
+        },
+        'django': {
+            'handlers': ['prod-console', 'debug-console'],
+            'level': 'ERROR',  # Djangoモジュール由来のログをERROR以上のみに制限
+            'propagate': False
+        },
+        'django.request': {
+            'handlers': ['prod-console', 'debug-console'],
+            'level': 'ERROR',  # Djangoモジュール由来のログをERROR以上のみに制限
+            'propagate': False,
+        },
+        'django.db.backends': {
+            'handlers': ['prod-console', 'debug-console'],
+            'level': 'DEBUG',  # DBに発行するSQLログを出力（実際の出力はhandlerの方で制御する）
+            'propagate': False
+        },
+    }
 }
 
 SITE_ID = 2
